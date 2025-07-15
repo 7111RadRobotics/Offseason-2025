@@ -30,11 +30,11 @@ public class PathMaster {
     public void setFieldElementMap(FieldElement[] fieldElementArray){
         
     }
-    public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean simonmayremember){
+    public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
         ChassisSpeeds pathSpeeds = new ChassisSpeeds();
         return pathSpeeds;
     }
-    public ChassisSpeeds getPathSpeedsProfiled(Path path, boolean avoidFieldElements, boolean simonmayremember){
+    public ChassisSpeeds getPathSpeedsProfiled(Path path, boolean avoidFieldElements, boolean fieldRelative){
         ChassisSpeeds profiledPathSpeeds = new ChassisSpeeds();
         return profiledPathSpeeds;
     }
