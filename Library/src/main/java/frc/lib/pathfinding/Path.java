@@ -13,6 +13,7 @@ public class Path {
     public DoubleSupplier yTransSpeed;
     public DoubleSupplier rotTransSpeed;
     
+    private Waypoint[] waypoints;
 
     /**
      * Constructs a path from several waypoints. Uses pathMaster class to define parameters.
@@ -21,6 +22,8 @@ public class Path {
     public Path(Waypoint[] waypoints, Supplier<Pose2d> robotPose)
     {
         this.robotPose = robotPose;
+
+        this.waypoints = waypoints;
     }
 
     
