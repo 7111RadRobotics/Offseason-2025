@@ -31,9 +31,11 @@ public class PathMaster {
         
     }
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean simonmayremember){
-
+        ChassisSpeeds pathSpeeds = new ChassisSpeeds();
+        return pathSpeeds;
     }
     public ChassisSpeeds getPathSpeedsProfiled(Path path, boolean avoidFieldElements, boolean simonmayremember){
-
+        ChassisSpeeds profiledPathSpeeds = new ChassisSpeeds();
+        return profiledPathSpeeds;
     }
 }
