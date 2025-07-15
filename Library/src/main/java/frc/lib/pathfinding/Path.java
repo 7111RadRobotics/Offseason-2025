@@ -16,7 +16,7 @@ public class Path {
     private int currentWaypointIndex = 0;
     
     private Waypoint[] waypoints;
-    
+    private boolean isPathFinished = false;
 
     /**
      * Constructs a path from several waypoints. Uses pathMaster class to define parameters.
@@ -56,13 +56,42 @@ public class Path {
     }
 
     /**
-     * Gets the current waypoint the robot is pathing to.
+     * Returns the current waypoint the robot is pathing to.
      */
     public int getCurrentWaypointIndex()
     {
         return currentWaypointIndex;
     }
     
+    /**
+     * Returns if the path is finished or not
+     */
+    public boolean isPathFinished()
+    {
+        return isPathFinished;
+    }
+
+    /**
+     * indexes waypoint to path to if there. 
+     * If path is finished, sets path to finished and will not path to new waypoint.
+     */
+    public void periodic()
+    {
+        if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
+        {
+            if(currentWaypointIndex == waypoints.length)
+            {
+                isPathFinished = true;
+                return;
+            }
+            currentWaypointIndex++;
+        }
+    }
+
+
+
+
+
 
     /**
      * Sets the suppliers for speed on the robot to be equal to local variables.
@@ -70,7 +99,7 @@ public class Path {
      * @param ySpeed -Y axis speed in meters per second.
      * @param rotSpeed -Rotation speed in digrees per second.
      */
-    public void SetSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed)
+    public void setSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed)
     {
         xTransSpeed = xSpeed;
         yTransSpeed = ySpeed;
