@@ -6,23 +6,26 @@ import edu.wpi.first.math.geometry.Pose2d;
 public class Path {
 
     //Robot position as a supplied Pose2d
-    public Supplier<Pose2d> robotPose;
+    private Supplier<Pose2d> robotPose;
 
     //Translation speed of the robot in each axis, and rotation.
-    public DoubleSupplier xTransSpeed;
-    public DoubleSupplier yTransSpeed;
-    public DoubleSupplier rotTransSpeed;
+    private DoubleSupplier xTransSpeed;
+    private DoubleSupplier yTransSpeed;
+    private DoubleSupplier rotTransSpeed;
+
+    private int currentWaypointIndex = 0;
     
     private Waypoint[] waypoints;
+    
 
     /**
      * Constructs a path from several waypoints. Uses pathMaster class to define parameters.
      * @param waypoints -An array of waypoint objects.
+     * @param robotPose -A supplier to be assigned to the local variable, letting path know robot pose.
      */
     public Path(Waypoint[] waypoints, Supplier<Pose2d> robotPose)
     {
         this.robotPose = robotPose;
-
         this.waypoints = waypoints;
     }
 
@@ -33,7 +36,7 @@ public class Path {
      */
     public double getTranslationXSpeed()
     {
-        return;
+        return xTransSpeed.getAsDouble();
     }
 
     /**
@@ -41,7 +44,7 @@ public class Path {
      */
     public double getRotationYSpeed()
     {
-        return;
+        return yTransSpeed.getAsDouble();
     }
 
     /**
@@ -49,7 +52,7 @@ public class Path {
      */
     public double getRotationSpeed()
     {
-        return;
+        return rotTransSpeed.getAsDouble();
     }
 
     /**
@@ -57,8 +60,9 @@ public class Path {
      */
     public int getCurrentWaypointIndex()
     {
-        return;
+        return currentWaypointIndex;
     }
+    
 
     /**
      * Sets the suppliers for speed on the robot to be equal to local variables.
