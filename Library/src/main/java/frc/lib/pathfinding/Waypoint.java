@@ -21,7 +21,7 @@ public class Waypoint {
      * Checks if the robot is within the bounds of the waypoint.
      * @param robotPose - The current pose of the robot.
      */
-    boolean isAtWaypoint(Pose2d robotPose){
+    public boolean isAtWaypoint(Pose2d robotPose){
 
         if (robotPose.getX() < (pose.getX() + translationTolerance) || robotPose.getX() > (pose.getX() - translationTolerance) ){
 
@@ -31,5 +31,11 @@ public class Waypoint {
             }
         }
         return false;
+    }
+    public double getMaxRotationSpeed(){
+        return maxRotationSpeed;
+    }
+    public double getMaxTranslationSpeed(){
+        return maxTranslationSpeed;
     }
 }
