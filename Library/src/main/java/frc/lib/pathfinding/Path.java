@@ -1,9 +1,11 @@
 package frc.lib.pathfinding;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Path {
+public class Path extends SubsystemBase {
 
     //Robot position as a supplied Pose2d
     private Supplier<Pose2d> robotPose;
@@ -72,6 +74,19 @@ public class Path {
     }
 
     /**
+     * Sets the suppliers for speed on the robot to be equal to local variables.
+     * @param xSpeed -X axis speed in meters per second.
+     * @param ySpeed -Y axis speed in meters per second.
+     * @param rotSpeed -Rotation speed in digrees per second.
+     */
+    public void setSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed)
+    {
+        xTransSpeed = xSpeed;
+        yTransSpeed = ySpeed;
+        rotTransSpeed = rotSpeed;
+    }
+
+    /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.
      */
@@ -87,26 +102,6 @@ public class Path {
             currentWaypointIndex++;
         }
     }
-
-
-
-
-
-
-    /**
-     * Sets the suppliers for speed on the robot to be equal to local variables.
-     * @param xSpeed -X axis speed in meters per second.
-     * @param ySpeed -Y axis speed in meters per second.
-     * @param rotSpeed -Rotation speed in digrees per second.
-     */
-    public void setSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed)
-    {
-        xTransSpeed = xSpeed;
-        yTransSpeed = ySpeed;
-        rotTransSpeed = rotSpeed;
-    }
-
-
 
 
 }
