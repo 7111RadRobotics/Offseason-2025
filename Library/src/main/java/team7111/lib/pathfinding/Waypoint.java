@@ -23,9 +23,9 @@ public class Waypoint {
      */
     public boolean isAtWaypoint(Pose2d robotPose){
 
-        if (robotPose.getX() < (pose.getX() + translationTolerance) || robotPose.getX() > (pose.getX() - translationTolerance) ){
+        if (robotPose.getX() < (pose.getX() + translationTolerance) && robotPose.getX() > (pose.getX() - translationTolerance) ){
 
-            if (robotPose.getY() < (pose.getY() + translationTolerance) || robotPose.getY() > (pose.getY() - translationTolerance) ){
+            if (robotPose.getY() < (pose.getY() + translationTolerance) && robotPose.getY() > (pose.getY() - translationTolerance) ){
 
                 return true;
             }

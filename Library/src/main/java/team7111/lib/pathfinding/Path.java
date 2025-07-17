@@ -92,16 +92,14 @@ public class Path extends SubsystemBase {
      */
     public void periodic()
     {
-        if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
+        if(currentWaypointIndex == waypoints.length)
         {
-            if(currentWaypointIndex == waypoints.length)
-            {
-                isPathFinished = true;
-                return;
-            }
+            isPathFinished = true;
+            return;
+        }
+        else if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
+        { 
             currentWaypointIndex++;
         }
     }
-
-
 }
