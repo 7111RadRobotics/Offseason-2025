@@ -38,4 +38,10 @@ public class Waypoint {
     public double getMaxTranslationSpeed(){
         return maxTranslationSpeed;
     }
+
+    public Pose2d getPose(){
+        return pose;
+    }
+
+
 }
