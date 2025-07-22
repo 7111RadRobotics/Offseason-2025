@@ -14,34 +14,44 @@ import team7111.robot.Constants.SwerveConstants;
 
 
 public class PathMaster {
-    PIDController translationPidController;
-    ProfiledPIDController profiledTranslationPidController;
+    PIDController xTranslationPidController;
+    PIDController yTranslationPidController;
     PIDController rotationPidController;
+
+    ProfiledPIDController profiledXTranslationPidController;
+    ProfiledPIDController profiledYTranslationPidController;
     ProfiledPIDController profiledRotationPidController;
+
+    
     Supplier<Pose2d> suppliedPose;
     Supplier<Rotation2d> gyroYaw;
     
     public PathMaster(PIDController translationPidController, ProfiledPIDController profiledTranslationPidController, PIDController rotationPidController,
         ProfiledPIDController profiledRotationPidController,  Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
+        xTranslationPidController = translationPidController;
+        yTranslationPidController = translationPidController;
+        profiledXTranslationPidController = profiledTranslationPidController;
+        profiledYTranslationPidController = profiledTranslationPidController;
+
         this.rotationPidController = rotationPidController;
         this.profiledRotationPidController = profiledRotationPidController;
-        this.translationPidController = translationPidController;
-        this.profiledTranslationPidController = profiledTranslationPidController;
         this.suppliedPose = suppliedPose;
         this.gyroYaw = gyroYaw;
     }
     
     public void setTranslationPID(double P, double I, double D){
-        translationPidController.setPID(P, I, D);
+        xTranslationPidController.setPID(P, I, D);
+        yTranslationPidController.setPID(P, I, D);
     }
 
     public void setRotationPID(double P, double I, double D){
         rotationPidController.setPID(P, I, D);
     }
-    
+
     public void setProfliedTranslationPID(double P, double I, double D){
-        profiledTranslationPidController.setPID(P, I, D);
+        profiledXTranslationPidController.setPID(P, I, D);
+        profiledYTranslationPidController.setPID(P, I, D);
     }
 
     public void setProfiledRotationPID(double P, double I, double D) {

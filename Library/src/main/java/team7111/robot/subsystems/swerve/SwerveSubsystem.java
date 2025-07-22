@@ -1,5 +1,7 @@
 package team7111.robot.subsystems.swerve;
 
+import java.lang.reflect.Executable;
+//import java.nio.file.Path;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,6 +26,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team7111.lib.pathfinding.*;
 import team7111.robot.Constants;
 import team7111.robot.DeviceConfigs;
 import team7111.robot.Constants.ControllerConstants;
@@ -63,6 +66,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private StructArrayPublisher<SwerveModuleState> commandedStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Commanded Swerve States", SwerveModuleState.struct).publish();
     private StructArrayPublisher<SwerveModuleState> actualStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Actual Swerve States", SwerveModuleState.struct).publish();
+
+    private PathMaster pathMaster = new PathMaster(translationXPID, profiledXPID, rotationPID, profiledRotationPID, null);
 
     public SwerveSubsystem() {
         modules = new SwerveModule[] {
@@ -143,6 +148,20 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(chassisSpeeds);
 
             setModuleStates(states, isOpenLoop);
+        });
+    }
+
+    /**
+     * Runs a path object, from the path class.
+     * @param path -Desired path to run.
+     */
+    public Command runPath(Path path)
+    {
+        return run(() -> {
+            path.periodic();
+        
+            SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(pathMaster.getPathSpeeds(path, false, true));
+            setModuleStates(states);
         });
     }
 
