@@ -26,16 +26,15 @@ public class PathMaster {
     Supplier<Pose2d> suppliedPose;
     Supplier<Rotation2d> gyroYaw;
     
-    public PathMaster(PIDController translationPidController, ProfiledPIDController profiledTranslationPidController, PIDController rotationPidController,
-        ProfiledPIDController profiledRotationPidController,  Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
+    public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
-        xTranslationPidController = translationPidController;
-        yTranslationPidController = translationPidController;
-        profiledXTranslationPidController = profiledTranslationPidController;
-        profiledYTranslationPidController = profiledTranslationPidController;
+        xTranslationPidController = new PIDController(1, 0, 0);
+        yTranslationPidController = new PIDController(1, 0, 0);
+        profiledXTranslationPidController = new ProfiledPIDController(1, 0, 0, null);
+        profiledYTranslationPidController = new ProfiledPIDController(1, 0, 0, null);
 
-        this.rotationPidController = rotationPidController;
-        this.profiledRotationPidController = profiledRotationPidController;
+        this.rotationPidController = new PIDController(1, 0, 0);
+        this.profiledRotationPidController = new ProfiledPIDController(1, 0, 0, null);
         this.suppliedPose = suppliedPose;
         this.gyroYaw = gyroYaw;
     }

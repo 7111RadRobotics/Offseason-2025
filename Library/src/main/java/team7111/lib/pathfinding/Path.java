@@ -25,13 +25,10 @@ public class Path {
      * @param waypoints -An array of waypoint objects.
      * @param robotPose -A supplier to be assigned to the local variable, letting path know robot pose.
      */
-    public Path(Waypoint[] waypoints, Supplier<Pose2d> robotPose)
+    public Path(Waypoint[] waypoints)
     {
-        this.robotPose = robotPose;
         this.waypoints = waypoints;
     }
-
-    
 
     /**
      * Returns in meters per second.
@@ -59,10 +56,19 @@ public class Path {
 
     /**
      * Returns the current waypoint the robot is pathing to.
+     * <p>Note current waypoint index is one ahead of array for waypoint.
      */
     public int getCurrentWaypointIndex()
     {
         return currentWaypointIndex;
+    }
+
+    /**
+     * Returns the current waypoint object that the robot is pathing to.
+     */
+    public Waypoint getCurrentWaypoint()
+    {
+        return waypoints[currentWaypointIndex -1];
     }
     
     /**
@@ -86,9 +92,14 @@ public class Path {
         rotTransSpeed = rotSpeed;
     }
 
+    /**
+     * Sets the path robot position equal to an outside pose supplier.
+     */
     public void setPose(Supplier<Pose2d> pose){
         robotPose = pose;
     }
+
+
     /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.

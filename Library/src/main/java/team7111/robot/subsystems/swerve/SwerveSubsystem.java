@@ -66,8 +66,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private StructArrayPublisher<SwerveModuleState> commandedStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Commanded Swerve States", SwerveModuleState.struct).publish();
     private StructArrayPublisher<SwerveModuleState> actualStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Actual Swerve States", SwerveModuleState.struct).publish();
+    
+    private PathMaster pathMaster = null;
 
-    private PathMaster pathMaster = new PathMaster(translationXPID, profiledXPID, rotationPID, profiledRotationPID, null);
 
     public SwerveSubsystem() {
         modules = new SwerveModule[] {
@@ -82,6 +83,8 @@ public class SwerveSubsystem extends SubsystemBase {
             : new SimSwerveGyro(this::getStates, SwerveConstants.kinematics);
         gyro.setInverted(true);
         zeroGyro();
+
+        pathMaster = new PathMaster(this::getPose, this::getYaw);
 
         translationXPID.setTolerance(0.05);
         translationYPID.setTolerance(0.05);
