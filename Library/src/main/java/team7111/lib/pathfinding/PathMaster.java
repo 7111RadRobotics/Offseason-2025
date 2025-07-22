@@ -10,20 +10,38 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class PathMaster {
-    PIDController pathPidController;
-    ProfiledPIDController profiledPathPidController;
+    PIDController translationPidController;
+    ProfiledPIDController profiledTranslationPidController;
+    PIDController rotationPidController;
+    ProfiledPIDController profiledRotationPidController;
     Supplier<Pose2d> suppliedPose;
-    public PathMaster(PIDController pathPidController, ProfiledPIDController profiledPathPidController, Supplier<Pose2d> suppliedPose){
-        this.pathPidController = pathPidController;
-        this.profiledPathPidController = profiledPathPidController;
+    public PathMaster(PIDController translationPidController, ProfiledPIDController profiledTranslationPidController, PIDController rotationPidController,
+        ProfiledPIDController profiledRotationPidController,  Supplier<Pose2d> suppliedPose){
+
+        this.rotationPidController = rotationPidController;
+        this.profiledRotationPidController = profiledRotationPidController;
+        this.translationPidController = translationPidController;
+        this.profiledTranslationPidController = profiledTranslationPidController;
         this.suppliedPose = suppliedPose;
     }
-    public void setPID(double P, double I, double D){
-        pathPidController.setPID(P,I,D);
+    
+    public void setTranslationPID(double P, double I, double D){
+        translationPidController.setPID(P, I, D);
     }
-    public void setProfliedPID(double P, double I, double D){
-        profiledPathPidController.setPID(P, I, D);
+
+    public void setRotationPID(double P, double I, double D){
+        rotationPidController.setPID(P, I, D);
     }
+    
+    public void setProfliedTranslationPID(double P, double I, double D){
+        profiledTranslationPidController.setPID(P, I, D);
+    }
+
+    public void setProfiledRotationPID(double P, double I, double D) {
+        profiledRotationPidController.setPID(P, I, D);
+    }
+
+
     public void setMotionProfile(TrapezoidProfile trapezoidProfile){
 
     }
