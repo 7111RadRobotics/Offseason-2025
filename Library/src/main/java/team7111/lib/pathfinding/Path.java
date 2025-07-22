@@ -86,6 +86,9 @@ public class Path {
         rotTransSpeed = rotSpeed;
     }
 
+    public void setPose(Supplier<Pose2d> pose){
+        robotPose = pose;
+    }
     /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.

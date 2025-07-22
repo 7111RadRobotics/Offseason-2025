@@ -66,6 +66,9 @@ public class PathMaster {
         
     }
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
+        path.setPose(suppliedPose);
+        path.setSpeedSuppliers(()-> xTranslationPidController.calculate(suppliedPose.get().getX(), 0), ()-> yTranslationPidController.calculate(suppliedPose.get().getY(), 0), null);
+
         // Get desired module states.
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getRotationYSpeed(), path.getRotationSpeed(), gyroYaw.get())
