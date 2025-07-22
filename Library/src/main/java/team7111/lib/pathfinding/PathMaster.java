@@ -13,10 +13,16 @@ public class PathMaster {
     PIDController pathPidController;
     ProfiledPIDController profiledPathPidController;
     Supplier<Pose2d> suppliedPose;
+
+    boolean shouldFlipPath;
+
     public PathMaster(PIDController pathPidController, ProfiledPIDController profiledPathPidController, Supplier<Pose2d> suppliedPose){
         this.pathPidController = pathPidController;
         this.profiledPathPidController = profiledPathPidController;
         this.suppliedPose = suppliedPose;
+    }
+    public void flipPath(boolean shouldFlipPath){
+        this.shouldFlipPath = shouldFlipPath;
     }
     public void setPID(double P, double I, double D){
         pathPidController.setPID(P,I,D);
