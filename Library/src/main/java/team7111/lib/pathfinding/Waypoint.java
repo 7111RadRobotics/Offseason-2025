@@ -9,6 +9,16 @@ public class Waypoint {
     double maxTranslationSpeed;
     double maxRotationSpeed;
 
+    /**
+     * Constructs a new {@code Waypoint} with the given pose and tolerances/speeds.
+     * <p> - By ChatGPT-o4 2025
+     *
+     * @param pose The desired position and orientation of the waypoint (as a {@code Pose2d}).
+     * @param translationTolerance The allowable positional error in meters for reaching this waypoint.
+     * @param rotationTolerance The allowable angular error in degrees for reaching this waypoint.
+     * @param maxTranslationSpeed The maximum speed in meters per second to approach this waypoint.
+     * @param maxRotationSpeed The maximum rotational speed in degrees per second when turning toward this waypoint.
+     */
     public Waypoint(Pose2d pose,double translationTolerance,double rotationTolerance,double maxTranslationSpeed,double maxRotationSpeed){
         this.pose = pose;
         this.translationTolerance = translationTolerance;

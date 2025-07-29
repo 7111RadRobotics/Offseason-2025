@@ -84,7 +84,9 @@ public class SwerveSubsystem extends SubsystemBase {
         gyro.setInverted(true);
         zeroGyro();
 
-        pathMaster = new PathMaster(this::getPose, this::getYaw);
+        pathMaster = new PathMaster(this::getPose, () -> getYaw().unaryMinus());
+        pathMaster.setTranslationPID(5.0, 0.0, 0.0);
+        pathMaster.setRotationPID(5.0, 0, 0);
 
         translationXPID.setTolerance(0.05);
         translationYPID.setTolerance(0.05);
@@ -162,9 +164,10 @@ public class SwerveSubsystem extends SubsystemBase {
     {
         return run(() -> {
             path.periodic();
-        
+            
             SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(pathMaster.getPathSpeeds(path, false, true));
             setModuleStates(states);
+            
         });
     }
 

@@ -3,6 +3,8 @@ package team7111.lib.pathfinding;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Path {
@@ -28,6 +30,14 @@ public class Path {
     public Path(Waypoint[] waypoints)
     {
         this.waypoints = waypoints;
+
+        var field = new Field2d();
+        int index = 0;
+        for(Waypoint waypoint : waypoints){
+            field.getObject("Waypoint " + index).setPose(waypoint.getPose());
+            index ++;
+        }
+        SmartDashboard.putData("Path Waypoints", field);
     }
 
     /**
@@ -68,7 +78,11 @@ public class Path {
      */
     public Waypoint getCurrentWaypoint()
     {
-        return waypoints[currentWaypointIndex -1];
+        return waypoints[currentWaypointIndex];
+    }
+
+    public Waypoint[] getWaypoints(){
+        return waypoints;
     }
     
     /**
@@ -106,14 +120,17 @@ public class Path {
      */
     public void periodic()
     {
-        if(currentWaypointIndex == waypoints.length)
-        {
-            isPathFinished = true;
+        if(robotPose == null){
             return;
         }
-        else if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
-        { 
+        if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
+        {
+            if(currentWaypointIndex == waypoints.length - 1){
+                isPathFinished = true;
+                return;
+            }
             currentWaypointIndex++;
+
         }
     }
 }

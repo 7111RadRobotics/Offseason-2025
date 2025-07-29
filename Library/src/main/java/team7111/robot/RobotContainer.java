@@ -2,8 +2,12 @@ package team7111.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+//import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import team7111.lib.pathfinding.Waypoint;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -11,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.subsystems.swerve.SwerveSubsystem;
@@ -31,7 +36,15 @@ public class RobotContainer {
     public RobotContainer() {
         swerve = new SwerveSubsystem();
 
-        autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = new SendableChooser<>();
+
+        Waypoint[] waypoints = new Waypoint[]{
+            new Waypoint(new Pose2d(3, 1, Rotation2d.fromDegrees(0)), 0.1, 20, 1, 1), 
+            new Waypoint(new Pose2d(7, 6, Rotation2d.fromDegrees(0)), 0.1, 20, 1, 1),
+        };
+
+
+        autoChooser.addOption("Path_TEST", swerve.runPath(new Path(waypoints)));
 
         SmartDashboard.putData("autoChooser", autoChooser);
 
@@ -40,7 +53,7 @@ public class RobotContainer {
         // Configure button bindings
         configureButtonBindings();
     }
-    
+
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
