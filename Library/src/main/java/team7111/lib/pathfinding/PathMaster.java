@@ -25,6 +25,14 @@ public class PathMaster {
     
     private Supplier<Pose2d> suppliedPose;
     private Supplier<Rotation2d> gyroYaw;
+
+    private double xCalculation;
+    private double yCalculation;
+    private double rotCalculation;
+
+    private double profiledXCalculation;
+    private double profiledYCalculation;
+    private double profiledRotCalculation;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -39,6 +47,16 @@ public class PathMaster {
         this.gyroYaw = gyroYaw;
     }
     
+    public void useAllianceFlipping(boolean flipField)
+    {
+
+    }
+    
+    public void useFieldRelative(boolean isFieldRelative)
+    {
+
+    }
+
     public void setTranslationPID(double P, double I, double D){
         xPID.setPID(P, I, D);
         yPID.setPID(P, I, D);
@@ -57,18 +75,36 @@ public class PathMaster {
         profiledRotPID.setPID(P, I, D);
     }
 
-
-    public void setMotionProfile(TrapezoidProfile trapezoidProfile){
-
-    }
     public void setFieldElementMap(FieldElement[] fieldElementArray){
         
     }
-    public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
+
+    public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro)
+    {
+
+    }
+
+    public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
-        path.setSpeedSuppliers(()-> xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()),
-        ()-> yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()),
-        ()-> rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()));
+        path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
+    }
+
+    public void initializePathProfiled(Path path){
+
+    }
+
+    public void periodic(Path path)
+    {
+        xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX());
+        yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY());
+        rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees());
+
+        profiledXCalculation = 0;
+        profiledYCalculation = 0;
+        profiledRotCalculation = 0;
+    }
+
+    public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
         // Get desired module states.
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed(), gyroYaw.get())
