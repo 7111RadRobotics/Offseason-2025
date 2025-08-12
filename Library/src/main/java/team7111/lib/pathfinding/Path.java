@@ -51,7 +51,7 @@ public class Path {
     /**
      * Returns in meters per second.
      */
-    public double getRotationYSpeed()
+    public double getTranslationYSpeed()
     {
         return yTransSpeed.getAsDouble();
     }
