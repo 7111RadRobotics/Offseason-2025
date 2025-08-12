@@ -105,6 +105,7 @@ public class PathMaster {
 
         if (invertGyro){
             invertedGyro = -1.0;
+            gyroYaw = ()-> Rotation2d.fromDegrees(gyroYaw.get().getDegrees() * invertedGyro) ;
         }
     }
 
