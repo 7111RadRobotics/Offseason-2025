@@ -131,6 +131,9 @@ public class Path {
         if(robotPose == null){
             return;
         }
+        if(waypoints == null){
+            return;
+        }
         if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
         {
             if(currentWaypointIndex == waypoints.length - 1){
