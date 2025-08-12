@@ -65,7 +65,7 @@ public class PathMaster {
         
     }
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
-        path.setPose(suppliedPose);
+        path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()),
         ()-> yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()),
         ()-> rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()));

@@ -41,30 +41,6 @@ public class Path {
     }
 
     /**
-     * Returns in meters per second.
-     */
-    public double getTranslationXSpeed()
-    {
-        return xTransSpeed.getAsDouble();
-    }
-
-    /**
-     * Returns in meters per second.
-     */
-    public double getTranslationYSpeed()
-    {
-        return yTransSpeed.getAsDouble();
-    }
-
-    /**
-     * Returns in digrees per second, positive clockwise.
-     */
-    public double getRotationSpeed()
-    {
-        return rotTransSpeed.getAsDouble();
-    }
-
-    /**
      * Returns the current waypoint the robot is pathing to.
      * <p>Note current waypoint index is one ahead of array for waypoint.
      */
@@ -86,11 +62,27 @@ public class Path {
     }
     
     /**
-     * Returns if the path is finished or not
+     * Returns in digrees per second, positive clockwise.
      */
-    public boolean isPathFinished()
+    public double getRotationSpeed()
     {
-        return isPathFinished;
+        return rotTransSpeed.getAsDouble();
+    }
+
+    /**
+     * Returns in meters per second.
+     */
+    public double getTranslationXSpeed()
+    {
+        return xTransSpeed.getAsDouble();
+    }
+
+    /**
+     * Returns in meters per second.
+     */
+    public double getTranslationYSpeed()
+    {
+        return yTransSpeed.getAsDouble();
     }
 
     /**
@@ -109,10 +101,26 @@ public class Path {
     /**
      * Sets the path robot position equal to an outside pose supplier.
      */
-    public void setPose(Supplier<Pose2d> pose){
+    public void setPoseSupplier(Supplier<Pose2d> pose){
         robotPose = pose;
     }
+    
+    /**
+     * Returns if the path is finished or not
+     */
+    public boolean isPathFinished()
+    {
+        return isPathFinished;
+    }
 
+    /**
+     * Resets key variables
+     */
+    public void initialize()
+    {
+        currentWaypointIndex = 0;
+        isPathFinished = false;
+    }
 
     /**
      * indexes waypoint to path to if there. 
