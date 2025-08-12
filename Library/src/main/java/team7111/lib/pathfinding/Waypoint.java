@@ -4,10 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public class Waypoint {
     private Pose2d pose;
-    private double translationTolerance;
-    private double rotationTolerance;
-    private double maxTranslationSpeed;
-    private double maxRotationSpeed;
+    private WaypointConstraints transConstraints;
+    private WaypointConstraints rotConstraints;
 
     /**
      * Constructs a new {@code Waypoint} with the given pose and tolerances/speeds.
@@ -19,12 +17,10 @@ public class Waypoint {
      * @param maxTranslationSpeed The maximum speed in meters per second to approach this waypoint.
      * @param maxRotationSpeed The maximum rotational speed in degrees per second when turning toward this waypoint.
      */
-    public Waypoint(Pose2d pose,double translationTolerance,double rotationTolerance,double maxTranslationSpeed,double maxRotationSpeed){
+    public Waypoint(Pose2d pose, WaypointConstraints translationTolerances, WaypointConstraints rotationTolerances){
         this.pose = pose;
-        this.translationTolerance = translationTolerance;
-        this.rotationTolerance = rotationTolerance;
-        this.maxTranslationSpeed = maxTranslationSpeed;
-        this.maxRotationSpeed = maxRotationSpeed;
+        this.transConstraints = translationTolerances;
+        this.rotConstraints = rotationTolerances;
     }
     
     /**
@@ -33,20 +29,20 @@ public class Waypoint {
      */
     public boolean isAtWaypoint(Pose2d robotPose){
 
-        if (robotPose.getX() < (pose.getX() + translationTolerance) && robotPose.getX() > (pose.getX() - translationTolerance) ){
+        if (robotPose.getX() < (pose.getX() + transConstraints.getTolerance()) && robotPose.getX() > (pose.getX() - transConstraints.getTolerance()) ){
 
-            if (robotPose.getY() < (pose.getY() + translationTolerance) && robotPose.getY() > (pose.getY() - translationTolerance) ){
+            if (robotPose.getY() < (pose.getY() + transConstraints.getTolerance()) && robotPose.getY() > (pose.getY() - transConstraints.getTolerance()) ){
 
                 return true;
             }
         }
         return false;
     }
-    public double getMaxRotationSpeed(){
-        return maxRotationSpeed;
+    public WaypointConstraints getRotationConstraints(){
+        return rotConstraints;
     }
-    public double getMaxTranslationSpeed(){
-        return maxTranslationSpeed;
+    public WaypointConstraints getTranslationConstraints(){
+        return transConstraints;
     }
 
     public Pose2d getPose(){
