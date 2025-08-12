@@ -90,7 +90,7 @@ public class PathMaster {
         invertedY = 1.0;
         invertedRot = 1.0;
         invertedGyro = 1.0;
-        
+
         if (invertX){
             invertedX = - 1.0;
         }
@@ -119,9 +119,9 @@ public class PathMaster {
 
     public void periodic(Path path)
     {
-        xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX());
-        yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY());
-        rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees());
+        xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
+        yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()) * invertedY;
+        rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
 
         profiledXCalculation = 0;
         profiledYCalculation = 0;
