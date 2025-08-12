@@ -14,13 +14,13 @@ import team7111.robot.Constants.SwerveConstants;
 
 
 public class PathMaster {
-    private PIDController xTranslationPidController;
-    private PIDController yTranslationPidController;
-    private PIDController rotationPidController;
+    private PIDController xPID;
+    private PIDController yPID;
+    private PIDController rotPID;
 
-    private ProfiledPIDController profiledXTranslationPidController;
-    private ProfiledPIDController profiledYTranslationPidController;
-    private ProfiledPIDController profiledRotationPidController;
+    private ProfiledPIDController profiledXPID;
+    private ProfiledPIDController profiledYPID;
+    private ProfiledPIDController profiledRotPID;
 
     
     private Supplier<Pose2d> suppliedPose;
@@ -28,33 +28,33 @@ public class PathMaster {
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
-        xTranslationPidController = new PIDController(1, 0, 0);
-        yTranslationPidController = new PIDController(1, 0, 0);
-        profiledXTranslationPidController = new ProfiledPIDController(1, 0, 0, null);
-        profiledYTranslationPidController = new ProfiledPIDController(1, 0, 0, null);
+        xPID = new PIDController(1, 0, 0);
+        yPID = new PIDController(1, 0, 0);
+        profiledXPID = new ProfiledPIDController(1, 0, 0, null);
+        profiledYPID = new ProfiledPIDController(1, 0, 0, null);
 
-        this.rotationPidController = new PIDController(1, 0, 0);
-        this.profiledRotationPidController = new ProfiledPIDController(1, 0, 0, null);
+        this.rotPID = new PIDController(1, 0, 0);
+        this.profiledRotPID = new ProfiledPIDController(1, 0, 0, null);
         this.suppliedPose = suppliedPose;
         this.gyroYaw = gyroYaw;
     }
     
     public void setTranslationPID(double P, double I, double D){
-        xTranslationPidController.setPID(P, I, D);
-        yTranslationPidController.setPID(P, I, D);
+        xPID.setPID(P, I, D);
+        yPID.setPID(P, I, D);
     }
 
     public void setRotationPID(double P, double I, double D){
-        rotationPidController.setPID(P, I, D);
+        rotPID.setPID(P, I, D);
     }
 
     public void setProfliedTranslationPID(double P, double I, double D){
-        profiledXTranslationPidController.setPID(P, I, D);
-        profiledYTranslationPidController.setPID(P, I, D);
+        profiledXPID.setPID(P, I, D);
+        profiledYPID.setPID(P, I, D);
     }
 
     public void setProfiledRotationPID(double P, double I, double D) {
-        profiledRotationPidController.setPID(P, I, D);
+        profiledRotPID.setPID(P, I, D);
     }
 
 
@@ -66,9 +66,9 @@ public class PathMaster {
     }
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
         path.setPose(suppliedPose);
-        path.setSpeedSuppliers(()-> xTranslationPidController.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()),
-        ()-> yTranslationPidController.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()),
-        ()-> rotationPidController.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()));
+        path.setSpeedSuppliers(()-> xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()),
+        ()-> yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()),
+        ()-> rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()));
         // Get desired module states.
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed(), gyroYaw.get())
