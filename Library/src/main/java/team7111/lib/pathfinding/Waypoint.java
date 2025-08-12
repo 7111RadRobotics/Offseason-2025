@@ -3,11 +3,11 @@ package team7111.lib.pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class Waypoint {
-    Pose2d pose;
-    double translationTolerance;
-    double rotationTolerance;
-    double maxTranslationSpeed;
-    double maxRotationSpeed;
+    private Pose2d pose;
+    private double translationTolerance;
+    private double rotationTolerance;
+    private double maxTranslationSpeed;
+    private double maxRotationSpeed;
 
     /**
      * Constructs a new {@code Waypoint} with the given pose and tolerances/speeds.

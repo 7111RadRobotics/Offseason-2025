@@ -14,17 +14,17 @@ import team7111.robot.Constants.SwerveConstants;
 
 
 public class PathMaster {
-    PIDController xTranslationPidController;
-    PIDController yTranslationPidController;
-    PIDController rotationPidController;
+    private PIDController xTranslationPidController;
+    private PIDController yTranslationPidController;
+    private PIDController rotationPidController;
 
-    ProfiledPIDController profiledXTranslationPidController;
-    ProfiledPIDController profiledYTranslationPidController;
-    ProfiledPIDController profiledRotationPidController;
+    private ProfiledPIDController profiledXTranslationPidController;
+    private ProfiledPIDController profiledYTranslationPidController;
+    private ProfiledPIDController profiledRotationPidController;
 
     
-    Supplier<Pose2d> suppliedPose;
-    Supplier<Rotation2d> gyroYaw;
+    private Supplier<Pose2d> suppliedPose;
+    private Supplier<Rotation2d> gyroYaw;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
