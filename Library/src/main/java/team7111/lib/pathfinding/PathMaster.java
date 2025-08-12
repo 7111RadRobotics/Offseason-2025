@@ -33,6 +33,11 @@ public class PathMaster {
     private double profiledXCalculation;
     private double profiledYCalculation;
     private double profiledRotCalculation;
+
+    private double invertedX = 1.0;
+    private double invertedY = 1.0;
+    private double invertedRot = 1.0;
+    private double invertedGyro = 1.0;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -81,7 +86,26 @@ public class PathMaster {
 
     public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro)
     {
+        invertedX = 1.0;
+        invertedY = 1.0;
+        invertedRot = 1.0;
+        invertedGyro = 1.0;
+        
+        if (invertX){
+            invertedX = - 1.0;
+        }
 
+        if (invertY){
+            invertedY = - 1.0;
+        }
+
+        if (invertRot){
+            invertedRot = -1.0;
+        }
+
+        if (invertGyro){
+            invertedGyro = -1.0;
+        }
     }
 
     public void initializePath(Path path){
