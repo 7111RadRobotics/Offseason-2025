@@ -69,6 +69,16 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private PathMaster pathMaster = null;
 
+    private SwerveState currentSwerveState;
+
+    private Path path = null;
+
+    public enum SwerveState{
+        initializePath,
+        runPath,
+        manual,
+        stationary
+    };
 
     public SwerveSubsystem() {
         modules = new SwerveModule[] {
@@ -169,6 +179,38 @@ public class SwerveSubsystem extends SubsystemBase {
             setModuleStates(states);
             
         });
+    }
+
+    public void manageSwerveState(){
+        switch(currentSwerveState){
+            case initializePath:
+                if(path == null){
+                    setSwerveState(SwerveState.stationary);
+                    break;
+                }
+                pathMaster.initializePath(path);
+                setSwerveState(SwerveState.runPath);
+                
+            case runPath:
+                if(path == null){
+                    setSwerveState(SwerveState.initializePath);
+                    break;
+                }
+                pathMaster.periodic(path);
+                setModuleStates(SwerveConstants.kinematics.toSwerveModuleStates(pathMaster.getPathSpeeds(path, false, true))); 
+                if(path.getWaypoints().length == 0){
+                    path = null;
+                }
+        }
+
+    }
+
+    public void setSwerveState(SwerveState swerveState){
+        currentSwerveState = swerveState;
+    }
+
+    public SwerveState getSwerveState(){
+        return currentSwerveState;
     }
 
     /** To be used by auto. Use the drive method during teleop. */
