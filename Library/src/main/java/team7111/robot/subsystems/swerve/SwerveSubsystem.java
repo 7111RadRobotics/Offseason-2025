@@ -73,6 +73,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private Path path = null;
 
+    private boolean isDriveFieldRelative;
+
+    private DoubleSupplier joystickYTranslation = ()-> 0;
+    private DoubleSupplier joystickXTranslation;
+    private DoubleSupplier joystickYaw = ()-> 0;
+
     public enum SwerveState{
         initializePath,
         runPath,
@@ -275,7 +281,18 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(speeds);
         setModuleStates(states);
     }
-    
+
+    public void setJoysickInputs(DoubleSupplier joystickYTranslation, DoubleSupplier joystickXTranslation, DoubleSupplier joystickYaw){
+        this.joystickXTranslation = joystickXTranslation;
+        this.joystickYTranslation = joystickYTranslation;
+        this.joystickYaw = joystickYaw;
+    }
+
+    public void setDriveFieldRelative(boolean isFieldRelative){
+        isDriveFieldRelative = isFieldRelative;
+
+    }
+
     @Override 
     public void periodic() {
         gyro.update();
