@@ -20,6 +20,7 @@ import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.subsystems.swerve.SwerveSubsystem;
+import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,7 +46,7 @@ public class RobotContainer {
         };
 
 
-        autoChooser.addOption("Path_TEST", swerve.runPath(new Path(waypoints)));
+        autoChooser.addOption("Path_TEST", swerve.setPath(new Path(waypoints)));
 
         SmartDashboard.putData("autoChooser", autoChooser);
 
@@ -56,7 +57,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return autoChooser.getSelected().alongWith(swerve.setSwerveStateCommand(SwerveState.initializePath));
     }
 
     /**
