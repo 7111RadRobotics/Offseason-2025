@@ -172,6 +172,32 @@ public class SwerveSubsystem extends SubsystemBase {
         });
     }
 
+    public void manual(DoubleSupplier forwardBackAxis, DoubleSupplier leftRightAxis, DoubleSupplier rotationAxis, boolean isFieldRelative, boolean isOpenLoop){
+        // Grabbing input from suppliers.
+        double forwardBack = forwardBackAxis.getAsDouble();
+        double leftRight = leftRightAxis.getAsDouble();
+        double rotation = rotationAxis.getAsDouble();
+
+        // Adding deadzone.
+        forwardBack = Math.abs(forwardBack) < ControllerConstants.axisDeadzone ? 0 : forwardBack;
+        leftRight = Math.abs(leftRight) < ControllerConstants.axisDeadzone ? 0 : leftRight;
+        rotation = Math.abs(rotation) < ControllerConstants.axisDeadzone ? 0 : rotation;
+
+        // Converting to m/s
+        forwardBack *= SwerveConstants.maxDriveVelocity;
+        leftRight *= SwerveConstants.maxDriveVelocity;
+        rotation *= SwerveConstants.maxAngularVelocity;
+
+        // Get desired module states.
+        ChassisSpeeds chassisSpeeds = isFieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(forwardBack, leftRight, rotation, getYaw())
+            : new ChassisSpeeds(forwardBack, leftRight, rotation);
+
+        SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(chassisSpeeds);
+
+        setModuleStates(states, isOpenLoop);
+    }
+    
     /**
      * Runs a path object, from the path class.
      * @param path -Desired path to run.
@@ -207,8 +233,16 @@ public class SwerveSubsystem extends SubsystemBase {
                 if(path.getWaypoints().length == 0){
                     path = null;
                 }
+
+            case manual:
+                manual(joystickXTranslation, joystickYTranslation, joystickYaw, isDriveFieldRelative, false);
         }
 
+    }
+
+    public Command setSwerveStateCommand(SwerveState swerveState){
+        
+        return runOnce(()-> currentSwerveState = swerveState);
     }
 
     public void setSwerveState(SwerveState swerveState){
