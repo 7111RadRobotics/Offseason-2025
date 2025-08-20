@@ -13,9 +13,9 @@ public class Path {
     private Supplier<Pose2d> robotPose;
 
     //Translation speed of the robot in each axis, and rotation.
-    private DoubleSupplier xTransSpeed;
-    private DoubleSupplier yTransSpeed;
-    private DoubleSupplier rotTransSpeed;
+    private DoubleSupplier xTransSpeed = () -> 0.0;
+    private DoubleSupplier yTransSpeed = () -> 0.0;
+    private DoubleSupplier rotTransSpeed = () -> 0.0;
 
     private int currentWaypointIndex = 0;
     
