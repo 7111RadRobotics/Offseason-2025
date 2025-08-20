@@ -293,6 +293,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putData(field);
 
         actualStatePublisher.set(getStates());
+
+        manageSwerveState();
     }
 
     public void simulationPeriodic(){
