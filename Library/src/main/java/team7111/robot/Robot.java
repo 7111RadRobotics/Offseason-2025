@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -56,6 +58,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.swerve.setSwerveState(SwerveState.initializePath);
+    
     autoCommand = robotContainer.getAutonomousCommand();
 
     if(autoCommand != null){
@@ -75,7 +79,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    robotContainer.swerve.setSwerveState(SwerveState.manual);
+  }
 
   /** This function is called periodically during operator control. */
   @Override

@@ -20,6 +20,7 @@ import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.subsystems.swerve.SwerveSubsystem;
+import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,7 +46,7 @@ public class RobotContainer {
         };
 
 
-        autoChooser.addOption("Path_TEST", swerve.runPath(new Path(waypoints)));
+        autoChooser.addOption("Path_TEST", swerve.setPath(new Path(waypoints)));
 
         SmartDashboard.putData("autoChooser", autoChooser);
 
@@ -56,7 +57,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return autoChooser.getSelected().alongWith(swerve.setSwerveStateCommand(SwerveState.initializePath));
     }
 
     /**
@@ -66,13 +67,12 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        swerve.setDefaultCommand(swerve.drive(
+        swerve.setJoysickInputs(
             () -> -ControllerConstants.xDriveLimiter.calculate((Math.pow(driverController.getLeftY(), 3) / SwerveConstants.sensitivity)), 
             () -> -ControllerConstants.yDriveLimiter.calculate((Math.pow(driverController.getLeftX(), 3) / SwerveConstants.sensitivity)),  
-            () -> ControllerConstants.rotationLimiter.calculate((Math.pow(driverController.getRightX(), 3) / SwerveConstants.sensitivity)),
-            true,
-            false
-        ));
+            () -> ControllerConstants.rotationLimiter.calculate((Math.pow(driverController.getRightX(), 3) / SwerveConstants.sensitivity)));
+
+        swerve.setDriveFieldRelative(true);
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
     }

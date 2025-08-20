@@ -327,6 +327,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     }
 
+    public Command setPath(Path path){
+        return runOnce(() -> this.path = path);
+    }
+
     @Override 
     public void periodic() {
         gyro.update();
