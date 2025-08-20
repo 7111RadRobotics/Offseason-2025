@@ -29,13 +29,23 @@ public class Waypoint {
      */
     public boolean isAtWaypoint(Pose2d robotPose){
 
-        if (robotPose.getX() < (pose.getX() + transConstraints.getTolerance()) && robotPose.getX() > (pose.getX() - transConstraints.getTolerance()) ){
-
-            if (robotPose.getY() < (pose.getY() + transConstraints.getTolerance()) && robotPose.getY() > (pose.getY() - transConstraints.getTolerance()) ){
-
-                return true;
+        //Checks translation tolerance
+        if (robotPose.getX() < (pose.getX() + transConstraints.getTolerance()) && robotPose.getX() > (pose.getX() - transConstraints.getTolerance()) )
+        {
+            if (robotPose.getY() < (pose.getY() + transConstraints.getTolerance()) && robotPose.getY() > (pose.getY() - transConstraints.getTolerance()) )
+            {
+                //Checks rotation tolerance
+                if(robotPose.getRotation().getDegrees() < pose.getRotation().getDegrees() + rotConstraints.getTolerance())
+                {
+                    if(robotPose.getRotation().getDegrees() > pose.getRotation().getDegrees() - rotConstraints.getTolerance())
+                    {
+                        return true;
+                    }
+                }
             }
         }
+
+        
         return false;
     }
     public WaypointConstraints getRotationConstraints(){
