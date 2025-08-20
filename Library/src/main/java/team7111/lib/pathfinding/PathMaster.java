@@ -38,6 +38,9 @@ public class PathMaster {
     private double invertedY = 1.0;
     private double invertedRot = 1.0;
     private double invertedGyro = 1.0;
+
+    private boolean fieldFlipped = false;
+    private boolean fieldRelative = false;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -54,12 +57,12 @@ public class PathMaster {
     
     public void useAllianceFlipping(boolean flipField)
     {
-
+        fieldFlipped = flipField;
     }
     
     public void useFieldRelative(boolean isFieldRelative)
     {
-
+        fieldRelative = isFieldRelative;
     }
 
     public void setTranslationPID(double P, double I, double D){

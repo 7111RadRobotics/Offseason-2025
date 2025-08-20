@@ -141,7 +141,6 @@ public class Path {
                 return;
             }
             currentWaypointIndex++;
-
         }
     }
 }
