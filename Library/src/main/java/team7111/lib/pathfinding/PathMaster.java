@@ -39,6 +39,9 @@ public class PathMaster {
     private double invertedRot = 1.0;
     private double invertedGyro = 1.0;
 
+    //Houses pointers to field elements
+    private FieldElement fieldElements[];
+
     private boolean fieldFlipped = false;
     private boolean fieldRelative = false;
     
@@ -84,7 +87,7 @@ public class PathMaster {
     }
 
     public void setFieldElementMap(FieldElement[] fieldElementArray){
-        
+            fieldElements = fieldElementArray;
     }
 
     public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro)

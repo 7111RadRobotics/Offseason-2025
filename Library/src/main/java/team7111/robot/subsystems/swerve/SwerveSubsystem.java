@@ -69,7 +69,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private PathMaster pathMaster = null;
 
-    private SwerveState currentSwerveState;
+    private SwerveState currentSwerveState = SwerveState.manual;
 
     private Path path = null;
 
