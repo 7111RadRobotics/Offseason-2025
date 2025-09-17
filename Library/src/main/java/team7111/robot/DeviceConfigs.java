@@ -71,20 +71,20 @@ public class DeviceConfigs {
             return config;
         }
 
-        public static SparkMaxConfig getSparkMaxDrive(SwerveMotorConfig constants){
+        public static SparkMaxConfig getSparkMaxDrive(){
             SparkMaxConfig config = new SparkMaxConfig();
-            config.inverted(constants.isCCW);
-            SparkBaseConfig idleMode = constants.isBreakMode
+            config.inverted(SwerveConstants.driveInversion);
+            SparkBaseConfig idleMode = SwerveConstants.driveBreakMode
                 ? config.idleMode(IdleMode.kBrake)
                 : config.idleMode(IdleMode.kCoast);
             config.openLoopRampRate(SwerveConstants.openLoopRamp);
             config.closedLoopRampRate(SwerveConstants.closedLoopRamp);
-            config.smartCurrentLimit(constants.currentLimit);
+            config.smartCurrentLimit(SwerveConstants.driveCurrentLimit);
 
             ClosedLoopConfig pidConfig = new ClosedLoopConfig();
-            pidConfig.p(constants.pid.getP());
-            pidConfig.i(constants.pid.getI());
-            pidConfig.d(constants.pid.getD());
+            pidConfig.p(SwerveConstants.drivePID.getP());
+            pidConfig.i(SwerveConstants.drivePID.getI());
+            pidConfig.d(SwerveConstants.drivePID.getD());
             pidConfig.velocityFF(0.1);
         
             AbsoluteEncoderConfig encoderConfig = new AbsoluteEncoderConfig();
@@ -98,21 +98,21 @@ public class DeviceConfigs {
             return config;
         }
 
-        public static SparkMaxConfig getSparkMaxRotation(SwerveMotorConfig constants){
+        public static SparkMaxConfig getSparkMaxRotation(){
             SparkMaxConfig config = new SparkMaxConfig();
             // configuration goes here...
 
-            config.inverted(constants.isCCW);
-            SparkBaseConfig idleMode = constants.isBreakMode
+            config.inverted(SwerveConstants.angleInversion);
+            SparkBaseConfig idleMode = SwerveConstants.angleBreakMode
                 ? config.idleMode(IdleMode.kBrake)
                 : config.idleMode(IdleMode.kCoast);
             
-            config.smartCurrentLimit(constants.currentLimit);
+            config.smartCurrentLimit(SwerveConstants.angleCurrentLimit);
 
             ClosedLoopConfig pidConfig = new ClosedLoopConfig();
-            pidConfig.p(constants.pid.getP());
-            pidConfig.i(constants.pid.getI());
-            pidConfig.d(constants.pid.getD());
+            pidConfig.p(SwerveConstants.anglePID.getP());
+            pidConfig.i(SwerveConstants.anglePID.getI());
+            pidConfig.d(SwerveConstants.anglePID.getD());
             pidConfig.velocityFF(0.1);
 
             pidConfig.positionWrappingEnabled(true);
@@ -124,7 +124,7 @@ public class DeviceConfigs {
             encoderConfig.velocityConversionFactor(1 / SwerveConstants.angleGearRatio);
 
             config.apply(idleMode);
-            config.closedLoop.apply(pidConfig);
+            //config.closedLoop.apply(pidConfig);
             config.absoluteEncoder.apply(encoderConfig);
 
             return config;
