@@ -5,12 +5,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.subsystems.swerve.config.DrivebaseConfig;
 import team7111.robot.subsystems.swerve.config.SwerveModuleConfig;
@@ -67,11 +69,13 @@ public class DeviceConfigs {
 
         public static CANcoderConfiguration getCANCoder(){
             CANcoderConfiguration config = new CANcoderConfiguration();
+          
+            config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
             return config;
         }
 
-        public static SparkMaxConfig getSparkMaxDrive(){
+        public static SparkMaxConfig getSparkMaxDrive(PIDController pid){
             SparkMaxConfig config = new SparkMaxConfig();
             config.inverted(SwerveConstants.driveInversion);
             SparkBaseConfig idleMode = SwerveConstants.driveBreakMode
@@ -82,9 +86,9 @@ public class DeviceConfigs {
             config.smartCurrentLimit(SwerveConstants.driveCurrentLimit);
 
             ClosedLoopConfig pidConfig = new ClosedLoopConfig();
-            pidConfig.p(SwerveConstants.drivePID.getP());
-            pidConfig.i(SwerveConstants.drivePID.getI());
-            pidConfig.d(SwerveConstants.drivePID.getD());
+            pidConfig.p(pid.getP());
+            pidConfig.i(pid.getI());
+            pidConfig.d(pid.getD());
             pidConfig.velocityFF(0.1);
         
             AbsoluteEncoderConfig encoderConfig = new AbsoluteEncoderConfig();
@@ -98,7 +102,7 @@ public class DeviceConfigs {
             return config;
         }
 
-        public static SparkMaxConfig getSparkMaxRotation(){
+        public static SparkMaxConfig getSparkMaxRotation(PIDController pid){
             SparkMaxConfig config = new SparkMaxConfig();
             // configuration goes here...
 
@@ -110,9 +114,9 @@ public class DeviceConfigs {
             config.smartCurrentLimit(SwerveConstants.angleCurrentLimit);
 
             ClosedLoopConfig pidConfig = new ClosedLoopConfig();
-            pidConfig.p(SwerveConstants.anglePID.getP());
-            pidConfig.i(SwerveConstants.anglePID.getI());
-            pidConfig.d(SwerveConstants.anglePID.getD());
+            pidConfig.p(pid.getP());
+            pidConfig.i(pid.getI());
+            pidConfig.d(pid.getD());
             pidConfig.velocityFF(0.1);
 
             pidConfig.positionWrappingEnabled(true);

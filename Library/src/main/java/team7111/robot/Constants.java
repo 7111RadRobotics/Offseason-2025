@@ -37,7 +37,7 @@ public class Constants {
 
     /** All swerve constants. */
     public static class SwerveConstants {
-        public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getStormSurge(true);
+        public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getSoundWave(true);
         public static final double moi = 0.006;//0.01;
         /** Constants that apply to the whole drive train. */
         public static final double wheelBaseWidth = drivebaseConfig.width; // Width of the drivetrain measured from the middle of the wheels.
@@ -73,7 +73,7 @@ public class Constants {
         public static final double sensitivity = 1;
 
         /** 
-         * Module specific constants.
+d         * Module specific constants.c
          * CanCoder offset is in DEGREES, not radians like the rest of the repo.
          * This is to make offset slightly more accurate and easier to measure.
          */
