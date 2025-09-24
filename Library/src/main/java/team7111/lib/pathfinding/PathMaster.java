@@ -3,6 +3,8 @@ package team7111.lib.pathfinding;
 import java.lang.reflect.Array;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,11 +19,6 @@ public class PathMaster {
     private PIDController xPID;
     private PIDController yPID;
     private PIDController rotPID;
-
-    private ProfiledPIDController profiledXPID;
-    private ProfiledPIDController profiledYPID;
-    private ProfiledPIDController profiledRotPID;
-
     
     private Supplier<Pose2d> suppliedPose;
     private Supplier<Rotation2d> gyroYaw;
@@ -29,10 +26,6 @@ public class PathMaster {
     private double xCalculation;
     private double yCalculation;
     private double rotCalculation;
-
-    private double profiledXCalculation;
-    private double profiledYCalculation;
-    private double profiledRotCalculation;
 
     private double invertedX = 1.0;
     private double invertedY = 1.0;
@@ -49,11 +42,8 @@ public class PathMaster {
 
         xPID = new PIDController(1, 0, 0);
         yPID = new PIDController(1, 0, 0);
-        profiledXPID = new ProfiledPIDController(1, 0, 0, null);
-        profiledYPID = new ProfiledPIDController(1, 0, 0, null);
 
         this.rotPID = new PIDController(1, 0, 0);
-        this.profiledRotPID = new ProfiledPIDController(1, 0, 0, null);
         this.suppliedPose = suppliedPose;
         this.gyroYaw = gyroYaw;
     }
@@ -77,17 +67,8 @@ public class PathMaster {
         rotPID.setPID(P, I, D);
     }
 
-    public void setProfliedTranslationPID(double P, double I, double D){
-        profiledXPID.setPID(P, I, D);
-        profiledYPID.setPID(P, I, D);
-    }
-
-    public void setProfiledRotationPID(double P, double I, double D) {
-        profiledRotPID.setPID(P, I, D);
-    }
-
     public void setFieldElementMap(FieldElement[] fieldElementArray){
-            fieldElements = fieldElementArray;
+        fieldElements = fieldElementArray;
     }
 
     public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro)
@@ -120,19 +101,11 @@ public class PathMaster {
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
     }
 
-    public void initializePathProfiled(Path path){
-
-    }
-
     public void periodic(Path path)
     {
         xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
         yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()) * invertedY;
         rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
-
-        profiledXCalculation = 0;
-        profiledYCalculation = 0;
-        profiledRotCalculation = 0;
     }
 
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
@@ -143,9 +116,5 @@ public class PathMaster {
 
         return chassisSpeeds;
 
-    }
-    public ChassisSpeeds getPathSpeedsProfiled(Path path, boolean avoidFieldElements, boolean fieldRelative){
-        ChassisSpeeds profiledPathSpeeds = new ChassisSpeeds();
-        return profiledPathSpeeds;
     }
 }
