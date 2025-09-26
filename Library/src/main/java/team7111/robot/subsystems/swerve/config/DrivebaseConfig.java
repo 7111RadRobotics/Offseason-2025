@@ -47,17 +47,17 @@ public class DrivebaseConfig {
         double driveGearing = 6.75 / 1.0; 
         double angleGearing = 6.75 / 1.0;
         double driveMOI = 0.019835507; //weight of robot in pounds 56.1
-        double angleMOI = 0.019835507   ;
+        double angleMOI = 0.0000000001;
         int driveCurrentLimit = 40;
         int angleCurrentLimit = 40;
         boolean driveInversion = false;
         boolean angleInversion = true;
         boolean driveBreakMode = true;
         boolean angleBreakMode = false;
-        PIDController drivePID = new PIDController(5, 0.0, 0.0);
-        PIDController anglePID = new PIDController(5, 0.0, 0.0);
-        SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.001, 0.0);
-        SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0.001, 0.0);
+        PIDController drivePID = new PIDController(5000, 0.0, 0.0);
+        PIDController anglePID = new PIDController(10, 0.0, 0.15);
+        SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
+        SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
         SparkMaxConfig driveConfig = SwerveModuleConfigs.getSparkMaxDrive(drivePID);
         SparkMaxConfig angleConfig = SwerveModuleConfigs.getSparkMaxRotation(anglePID);
 
