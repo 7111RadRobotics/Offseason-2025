@@ -234,7 +234,6 @@ public class SwerveSubsystem extends SubsystemBase {
                 if(path.getWaypoints().length == 0){
                     path = null;
                 }
-
             case manual:
                 manual(joystickXTranslation, joystickYTranslation, joystickYaw, isDriveFieldRelative, false);
         }

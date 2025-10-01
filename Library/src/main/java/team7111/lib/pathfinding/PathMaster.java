@@ -100,8 +100,10 @@ public class PathMaster {
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
+        path.initialize();
 
     }
+
 
     public void periodic(Path path)
     {
@@ -111,6 +113,8 @@ public class PathMaster {
         
         SmartDashboard.putNumber("XSpeed", xCalculation);
         SmartDashboard.putNumber("YSpeed", yCalculation);
+
+        path.periodic();
     }
 
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
