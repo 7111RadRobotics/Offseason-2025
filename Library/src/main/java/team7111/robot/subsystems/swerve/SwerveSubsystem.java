@@ -350,6 +350,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         actualStatePublisher.set(getStates());
 
+        SmartDashboard.putString("SwerveState", currentSwerveState.toString());
         manageSwerveState();
     }
 
