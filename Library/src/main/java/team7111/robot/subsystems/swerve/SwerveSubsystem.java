@@ -216,6 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void manageSwerveState(){
         switch(currentSwerveState){
             case initializePath:
+                SmartDashboard.putBoolean("ispath alive ", path != null);
                 if(path == null){
                     setSwerveState(SwerveState.stationary);
                     break;
