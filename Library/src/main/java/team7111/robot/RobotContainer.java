@@ -57,7 +57,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected().alongWith(swerve.setSwerveStateCommand(SwerveState.initializePath));
+        return autoChooser.getSelected().andThen(swerve.setSwerveStateCommand(SwerveState.initializePath));
     }
 
     /**
