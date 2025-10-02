@@ -343,6 +343,8 @@ public class SwerveSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
         }
         SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
+       
+        SmartDashboard.putNumber("ChassisX", getRelSpeeds().vxMetersPerSecond);
 
         field.setRobotPose(getPose());
         SmartDashboard.putData(field);
