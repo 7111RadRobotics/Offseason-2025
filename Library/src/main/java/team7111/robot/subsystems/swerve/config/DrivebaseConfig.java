@@ -141,22 +141,22 @@ public class DrivebaseConfig {
             new SwerveModuleConfig(
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 1, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig), 
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 2, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF, angleConfig), 
-                new CTREEncoder(0, SwerveModuleConfigs.getCANCoder()), 0),
+                new CTREEncoder(1, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 3, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig), 
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 4, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF, angleConfig), 
-                new CTREEncoder(1, SwerveModuleConfigs.getCANCoder()), 0),
+                new CTREEncoder(2, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 5, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig), 
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 6, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF, angleConfig), 
-                new CTREEncoder(2, SwerveModuleConfigs.getCANCoder()), 0),
+                new CTREEncoder(3, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 7, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig), 
                 new SwerveMotorConfig(DCMotor.getKrakenX60(1), 8, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF, angleConfig), 
-                new CTREEncoder(3, SwerveModuleConfigs.getCANCoder()), 0),
+                new CTREEncoder(4, SwerveModuleConfigs.getCANCoder()), 0),
         };
 
         GenericSwerveModule[] moduleTypes;

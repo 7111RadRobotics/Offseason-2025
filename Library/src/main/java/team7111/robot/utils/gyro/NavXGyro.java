@@ -12,7 +12,9 @@ public class NavXGyro implements GenericGyro{
     private AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     private Rotation3d gyroValues = new Rotation3d();
-    private Rotation2d yawOffset, pitchOffset, rollOffset = Rotation2d.kZero;
+    private Rotation2d yawOffset = Rotation2d.kZero;
+    private Rotation2d pitchOffset = Rotation2d.kZero;
+    private Rotation2d rollOffset = Rotation2d.kZero;
 
     private double yawInversion = 1;
     private double pitchInversion = 1;
