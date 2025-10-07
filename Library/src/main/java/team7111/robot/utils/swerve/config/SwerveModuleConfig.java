@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.config;
+package team7111.robot.utils.swerve.config;
 
 import team7111.robot.utils.encoder.GenericEncoder;
 

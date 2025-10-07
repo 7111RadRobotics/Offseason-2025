@@ -10,10 +10,10 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import team7111.robot.subsystems.swerve.config.DrivebaseConfig;
-import team7111.robot.subsystems.swerve.config.SwerveModuleConfig;
-import team7111.robot.subsystems.swerve.modules.GenericSwerveModule;
 import team7111.robot.utils.encoder.CTREEncoder;
+import team7111.robot.utils.swerve.config.DrivebaseConfig;
+import team7111.robot.utils.swerve.config.SwerveModuleConfig;
+import team7111.robot.utils.swerve.modules.GenericSwerveModule;
 
 /**
  * This class contains values that remain constant while the robot is running.

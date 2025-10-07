@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.modules;
+package team7111.robot.utils.swerve.modules;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -12,8 +12,8 @@ import edu.wpi.first.math.util.Units;
 import team7111.robot.Constants;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.DeviceConfigs.SwerveModuleConfigs;
-import team7111.robot.subsystems.swerve.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
+import team7111.robot.utils.swerve.config.SwerveModuleConfig;
 
 public class TalonFXSwerveModule implements GenericSwerveModule{
 

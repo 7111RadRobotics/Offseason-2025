@@ -5,7 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.subsystems.swerve.modules.GenericSwerveModule;
+import team7111.robot.utils.swerve.modules.GenericSwerveModule;
 
 public class SwerveModule {
     public final int moduleNumber;

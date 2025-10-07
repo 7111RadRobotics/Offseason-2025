@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.swervegyro;
+package team7111.robot.utils.swerve.gyro;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 

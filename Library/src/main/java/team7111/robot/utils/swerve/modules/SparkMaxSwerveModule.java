@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.modules;
+package team7111.robot.utils.swerve.modules;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -15,8 +15,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import team7111.robot.DeviceConfigs;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.subsystems.swerve.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
+import team7111.robot.utils.swerve.config.SwerveModuleConfig;
 
 public class SparkMaxSwerveModule implements GenericSwerveModule {
 

@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.config;
+package team7111.robot.utils.swerve.config;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.revrobotics.spark.config.ClosedLoopConfig;

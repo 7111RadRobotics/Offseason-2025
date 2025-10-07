@@ -14,9 +14,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.subsystems.swerve.config.DrivebaseConfig;
-import team7111.robot.subsystems.swerve.config.SwerveModuleConfig;
-import team7111.robot.subsystems.swerve.config.SwerveMotorConfig;
+import team7111.robot.utils.swerve.config.DrivebaseConfig;
+import team7111.robot.utils.swerve.config.SwerveModuleConfig;
+import team7111.robot.utils.swerve.config.SwerveMotorConfig;
 
 /**
  * This class is for defining the configurations of each device (motors, encoders, etc.)

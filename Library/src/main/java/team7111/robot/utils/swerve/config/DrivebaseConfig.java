@@ -1,4 +1,4 @@
-package team7111.robot.subsystems.swerve.config;
+package team7111.robot.utils.swerve.config;
 
 import java.io.ObjectInputFilter.Config;
 
@@ -11,11 +11,11 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import team7111.robot.DeviceConfigs;
 import team7111.robot.DeviceConfigs.SwerveModuleConfigs;
-import team7111.robot.subsystems.swerve.modules.GenericSwerveModule;
-import team7111.robot.subsystems.swerve.modules.SimSwerveModule;
-import team7111.robot.subsystems.swerve.modules.SparkMaxSwerveModule;
-import team7111.robot.subsystems.swerve.modules.TalonFXSwerveModule;
 import team7111.robot.utils.encoder.CTREEncoder;
+import team7111.robot.utils.swerve.modules.GenericSwerveModule;
+import team7111.robot.utils.swerve.modules.SimSwerveModule;
+import team7111.robot.utils.swerve.modules.SparkMaxSwerveModule;
+import team7111.robot.utils.swerve.modules.TalonFXSwerveModule;
 
 public class DrivebaseConfig {
     
@@ -37,7 +37,7 @@ public class DrivebaseConfig {
     }
 
     /**
-     * Hi simone :)
+     * Hi simon :)
      */
     public static DrivebaseConfig getSoundWave(boolean isSim){
         double width = Units.inchesToMeters(28);
