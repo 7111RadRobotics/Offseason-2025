@@ -12,7 +12,6 @@ import edu.wpi.first.math.util.Units;
 import team7111.robot.DeviceConfigs;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.DeviceConfigs.SwerveModuleConfigs;
-import team7111.robot.utils.MotorConfig;
 import team7111.robot.utils.encoder.CTREEncoder;
 import team7111.robot.utils.swerve.modules.GenericSwerveModule;
 import team7111.robot.utils.swerve.modules.SimSwerveModule;
@@ -60,8 +59,8 @@ public class DrivebaseConfig {
         PIDController anglePID = new PIDController(10, 0.0, 0.15);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
         SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
-        MotorConfig driveConfig = new MotorConfig();
-        SparkMaxConfig angleConfig = SwerveModuleConfigs.getSparkMaxRotation(anglePID);
+        SwerveMotorConfig driveConfig = ;
+        SwerveMotorConfig angleConfig = SwerveModuleConfigs.getSparkMaxRotation(anglePID);
 
         double canCoder1Offset = isSim
             ? 0
@@ -83,7 +82,7 @@ public class DrivebaseConfig {
                 new CTREEncoder(2, SwerveModuleConfigs.getCANCoder()), canCoder2Offset),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getNEO(1), 5, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig.getSparkMaxConfig();), 
+                new SwerveMotorConfig(DCMotor.getNEO(1), 5, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF, driveConfig), 
                 new SwerveMotorConfig(DCMotor.getNEO(1), 6, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF, angleConfig), 
                 new CTREEncoder(3, SwerveModuleConfigs.getCANCoder()), canCoder3Offset),
 

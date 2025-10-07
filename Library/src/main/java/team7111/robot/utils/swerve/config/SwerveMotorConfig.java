@@ -25,7 +25,7 @@ public class SwerveMotorConfig {
 
     public SwerveMotorConfig(
         DCMotor dcMotor, int id, boolean isCCW, boolean isBreakMode, double gearRatio, double momentOfInertia, 
-        int currentLimit, PIDController pid, SimpleMotorFeedforward ff, SparkBaseConfig sparkMaxConfig){
+        int currentLimit, PIDController pid, SimpleMotorFeedforward ff){
             this.dcMotor = dcMotor;
             this.id = id;
             this.isCCW = isCCW;
@@ -35,8 +35,7 @@ public class SwerveMotorConfig {
             this.currentLimit = currentLimit;
             this.pid = pid;
             this.ff = ff;
-            this.sparkMaxConfig = sparkMaxConfig;
-
+            
             sparkMaxConfig = isBreakMode
                 ? sparkMaxConfig.idleMode(IdleMode.kBrake)
                 : sparkMaxConfig.idleMode(IdleMode.kCoast);
@@ -50,17 +49,5 @@ public class SwerveMotorConfig {
                 .velocityFF(ff.getKv());
     }
 
-    public SwerveMotorConfig(
-        DCMotor dcMotor, int id, boolean isCCW, boolean isBreakMode, double gearRatio, double momentOfInertia, 
-        int currentLimit, PIDController pid, SimpleMotorFeedforward ff, TalonFXConfiguration talonFXConfig){
-            this.dcMotor = dcMotor;
-            this.id = id;
-            this.isCCW = isCCW;
-            this.isBreakMode = isBreakMode;
-            this.gearRatio = gearRatio;
-            this.momentOfInertia = momentOfInertia;
-            this.currentLimit = currentLimit;
-            this.pid = pid;
-            this.ff = ff;
-    }
+    
 }

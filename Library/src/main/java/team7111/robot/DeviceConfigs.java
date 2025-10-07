@@ -81,7 +81,6 @@ public class DeviceConfigs {
             SparkBaseConfig idleMode = SwerveConstants.driveBreakMode
                 ? config.idleMode(IdleMode.kBrake)
                 : config.idleMode(IdleMode.kCoast);
-            config.openLoopRampRate(SwerveConstants.openLoopRamp);
             config.closedLoopRampRate(SwerveConstants.closedLoopRamp);
             config.smartCurrentLimit(SwerveConstants.driveCurrentLimit);
 
