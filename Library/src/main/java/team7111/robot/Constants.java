@@ -10,7 +10,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import team7111.robot.utils.MotorConfig;
 import team7111.robot.utils.encoder.CTREEncoder;
 import team7111.robot.utils.swerve.config.DrivebaseConfig;
 import team7111.robot.utils.swerve.config.SwerveModuleConfig;
@@ -41,8 +40,6 @@ public class Constants {
     /** All swerve constants. */
     public static class SwerveConstants {
         public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getSoundWave(RobotBase.isSimulation());
-        public static final MotorConfig driveConfig = new MotorConfig();
-        public static final MotorConfig angleConfig = new MotorConfig();
         public static final double moi = 0.006;//0.01;
         /** Constants that apply to the whole drive train. */
         public static final double wheelBaseWidth = drivebaseConfig.width; // Width of the drivetrain measured from the middle of the wheels.
