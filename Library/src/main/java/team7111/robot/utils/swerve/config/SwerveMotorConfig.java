@@ -36,7 +36,7 @@ public class SwerveMotorConfig {
             this.pid = pid;
             this.ff = ff;
             
-            sparkMaxConfig = isBreakMode
+            /*sparkMaxConfig = isBreakMode
                 ? sparkMaxConfig.idleMode(IdleMode.kBrake)
                 : sparkMaxConfig.idleMode(IdleMode.kCoast);
             sparkMaxConfig
@@ -46,7 +46,7 @@ public class SwerveMotorConfig {
                 .p(pid.getP())
                 .i(pid.getI())
                 .d(pid.getD())
-                .velocityFF(ff.getKv());
+                .velocityFF(ff.getKv());*/
     }
 
     

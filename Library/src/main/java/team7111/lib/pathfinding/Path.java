@@ -128,16 +128,21 @@ public class Path {
      */
     public void periodic()
     {
+        System.out.println("Path.periodic Running");
         if(robotPose == null){
+            System.out.println("RobotPose null");
             return;
         }
         if(waypoints == null){
+            System.out.println("waypoints null");
             return;
         }
         if(waypoints[currentWaypointIndex].isAtWaypoint(robotPose.get()))
         {
+            System.out.println("Next Waypoint");
             if(currentWaypointIndex == waypoints.length - 1){
                 isPathFinished = true;
+                System.out.println("Path Finished");
                 return;
             }
             currentWaypointIndex++;

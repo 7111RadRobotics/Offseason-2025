@@ -229,7 +229,11 @@ public class SwerveSubsystem extends SubsystemBase {
                     break;
                 }
                 pathMaster.periodic(path);
-                setModuleStates(SwerveConstants.kinematics.toSwerveModuleStates(pathMaster.getPathSpeeds(path, false, true))); 
+                ChassisSpeeds speeds = pathMaster.getPathSpeeds(path, false, true);
+                speeds.omegaRadiansPerSecond = -speeds.omegaRadiansPerSecond;
+                speeds.vxMetersPerSecond = -speeds.vxMetersPerSecond;
+                speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
+                setModuleStates(SwerveConstants.kinematics.toSwerveModuleStates(speeds)); 
                 if(path.getWaypoints().length == 0){
                     path = null;
                 }
@@ -350,6 +354,8 @@ public class SwerveSubsystem extends SubsystemBase {
         actualStatePublisher.set(getStates());
 
         manageSwerveState();
+
+        SmartDashboard.putString("swerveState", currentSwerveState.name());
     }
 
     public void simulationPeriodic(){
