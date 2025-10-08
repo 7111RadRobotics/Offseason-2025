@@ -128,7 +128,6 @@ public class Path {
      */
     public void periodic()
     {
-        System.out.println("Path.periodic Running");
         if(robotPose == null){
             System.out.println("RobotPose null");
             return;
