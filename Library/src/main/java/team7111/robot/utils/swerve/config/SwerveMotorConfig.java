@@ -41,6 +41,7 @@ public class SwerveMotorConfig {
                 this.ff = ff;
             
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             /*sparkMaxConfig = isBreakMode
                 ? sparkMaxConfig.idleMode(IdleMode.kBrake)
                 : sparkMaxConfig.idleMode(IdleMode.kCoast);
@@ -53,6 +54,8 @@ public class SwerveMotorConfig {
                 .d(pid.getD())
                 .velocityFF(ff.getKv());*/
 =======
+=======
+>>>>>>> Stashed changes
             
     }
     
@@ -100,6 +103,9 @@ public class SwerveMotorConfig {
 
         return talonFXConfig;
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 
