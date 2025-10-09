@@ -37,10 +37,10 @@ public class SimSwerveModule implements GenericSwerveModule{
         angleMotorOutput = constants.angleMotor.dcMotor;
 
         driveMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(driveMotorOutput, constants.driveMotor.momentOfInertia, constants.driveMotor.gearRatio), 
+            LinearSystemId.createDCMotorSystem(driveMotorOutput, constants.driveMotor.moi, constants.driveMotor.gearRatio), 
             driveMotorOutput);
         angleMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(angleMotorOutput, constants.angleMotor.momentOfInertia, constants.angleMotor.gearRatio), 
+            LinearSystemId.createDCMotorSystem(angleMotorOutput, constants.angleMotor.moi, constants.angleMotor.gearRatio), 
             angleMotorOutput);
 
         encoder = constants.encoder;

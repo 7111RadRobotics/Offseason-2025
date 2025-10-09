@@ -45,10 +45,10 @@ public class DeviceConfigs {
 
             config.Feedback.SensorToMechanismRatio = motorConfig.gearRatio;
 
-            config.MotorOutput.NeutralMode = motorConfig.isBreakMode
+            config.MotorOutput.NeutralMode = motorConfig.isBrakeMode
                 ? NeutralModeValue.Brake
                 : NeutralModeValue.Coast;
-            config.MotorOutput.Inverted = motorConfig.isCCW
+            config.MotorOutput.Inverted = motorConfig.Inverted
                 ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.CounterClockwise_Positive;
 

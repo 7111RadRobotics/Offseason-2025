@@ -88,12 +88,12 @@ d         * Module specific constants.c
         public static final SwerveModuleConfig mod3Constants = drivebaseConfig.moduleConstants[3];
 
         /** Motor direction */
-        public static final boolean driveInversion = mod0Constants.driveMotor.isCCW;
-        public static final boolean angleInversion = mod0Constants.angleMotor.isCCW;
+        public static final boolean driveInversion = mod0Constants.driveMotor.Inverted;
+        public static final boolean angleInversion = mod0Constants.angleMotor.Inverted;
 
         /** Idle modes */
-        public static final boolean driveBreakMode = mod0Constants.driveMotor.isBreakMode;
-        public static final boolean angleBreakMode = mod0Constants.angleMotor.isBreakMode;
+        public static final boolean driveBreakMode = mod0Constants.driveMotor.isBrakeMode;
+        public static final boolean angleBreakMode = mod0Constants.angleMotor.isBrakeMode;
 
         /** PID Controllers */
         public static final PIDController drivePID = mod0Constants.driveMotor.pid;

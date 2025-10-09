@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import team7111.robot.DeviceConfigs;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.DeviceConfigs.SwerveModuleConfigs;
@@ -25,6 +26,7 @@ public class DrivebaseConfig {
     public double width;
     public double length;
     public double wheelDiameter;
+    public SwerveMotorConfig swerveMotorConfig;
 
     public DrivebaseConfig(
         GenericSwerveModule[] moduleTypes, SwerveModuleConfig[] moduleConstants, 
@@ -41,6 +43,8 @@ public class DrivebaseConfig {
      * Hi simon :)
      */
     public static DrivebaseConfig getSoundWave(boolean isSim){
+
+
         double width = Units.inchesToMeters(28);
         double length = Units.inchesToMeters(28);
         double wheelDiameter = Units.inchesToMeters(4);
@@ -53,15 +57,16 @@ public class DrivebaseConfig {
         int angleCurrentLimit = 40;
         boolean driveInversion = false;
         boolean angleInversion = true;
-        boolean driveBreakMode = true;
-        boolean angleBreakMode = false;
+        boolean driveBrakeMode = true;
+        boolean angleBrakeMode = false;
         PIDController drivePID = new PIDController(5000, 0.0, 0.0);
         PIDController anglePID = new PIDController(10, 0.0, 0.15);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
         SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
-        //SwerveMotorConfig driveConfig = new SwerveMotorConfig(DCMotor.getNEO(1), 0, driveBreakMode, angleBreakMode, angleMOI, driveCurrentLimit, angleCurrentLimit, anglePID, angleFF);
-        //SwerveMotorConfig angleConfig = new SwerveMotorConfig(DCMotor.getNEO(1), 0, driveBreakMode, angleBreakMode, angleMOI, driveCurrentLimit, angleCurrentLimit, anglePID, angleFF);
 
+        SwerveMotorConfig driveMotorConfig = new SwerveMotorConfig(DCMotor.getNEO(1), driveInversion, driveBrakeMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF);
+        SwerveMotorConfig angleMotorConfig = new SwerveMotorConfig(DCMotor.getNEO(1), angleInversion, angleBrakeMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF);
+       
         double canCoder1Offset = isSim
             ? 0
             : 134.4;
@@ -77,23 +82,23 @@ public class DrivebaseConfig {
 
         SwerveModuleConfig[] moduleConstants = new SwerveModuleConfig[]{
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getNEO(1), 3, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getNEO(1), 4, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(3, driveMotorConfig), 
+                new SwerveMotorConfig(4, angleMotorConfig), 
                 new CTREEncoder(2, SwerveModuleConfigs.getCANCoder()), canCoder2Offset),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getNEO(1), 5, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getNEO(1), 6, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(5, driveMotorConfig), 
+                new SwerveMotorConfig(6, angleMotorConfig), 
                 new CTREEncoder(3, SwerveModuleConfigs.getCANCoder()), canCoder3Offset),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getNEO(1), 1, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getNEO(1), 2, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(1, driveMotorConfig), 
+                new SwerveMotorConfig(2, angleMotorConfig), 
                 new CTREEncoder(1, SwerveModuleConfigs.getCANCoder()), canCoder1Offset),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getNEO(1), 7, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getNEO(1), 8, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(7, driveMotorConfig), 
+                new SwerveMotorConfig(8, angleMotorConfig), 
                 new CTREEncoder(4, SwerveModuleConfigs.getCANCoder()), canCoder4Offset),
         };
 
@@ -129,34 +134,35 @@ public class DrivebaseConfig {
         int angleCurrentLimit = 40;
         boolean driveInversion = false;
         boolean angleInversion = true;
-        boolean driveBreakMode = true;
-        boolean angleBreakMode = false;
+        boolean driveBrakeMode = true;
+        boolean angleBrakeMode = false;
         PIDController drivePID = new PIDController(50, 0.0, 0.0);
         PIDController anglePID = new PIDController(50, 0.0, 0.0);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.001, 0.0);
         SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0.001, 0.0);
-        TalonFXConfiguration driveConfig = SwerveModuleConfigs.getTalonFXDrive();
-        TalonFXConfiguration angleConfig = SwerveModuleConfigs.getTalonFXRotation();
+        SwerveMotorConfig driveMotorConfig = new SwerveMotorConfig(DCMotor.getKrakenX60(1), driveInversion, driveBrakeMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF);
+        SwerveMotorConfig angleMotorConfig = new SwerveMotorConfig(DCMotor.getKrakenX60(1), angleInversion, angleBrakeMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF);
+       
 
         SwerveModuleConfig[] moduleConstants = new SwerveModuleConfig[]{
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 1, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 2, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(1, driveMotorConfig), 
+                new SwerveMotorConfig(2, angleMotorConfig), 
                 new CTREEncoder(1, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 3, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 4, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(3, driveMotorConfig), 
+                new SwerveMotorConfig(4, angleMotorConfig), 
                 new CTREEncoder(2, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 5, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 6, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(5, driveMotorConfig), 
+                new SwerveMotorConfig(6, angleMotorConfig), 
                 new CTREEncoder(3, SwerveModuleConfigs.getCANCoder()), 0),
 
             new SwerveModuleConfig(
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 7, driveInversion, driveBreakMode, driveGearing, driveMOI, driveCurrentLimit, drivePID, driveFF), 
-                new SwerveMotorConfig(DCMotor.getKrakenX60(1), 8, angleInversion, angleBreakMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF), 
+                new SwerveMotorConfig(7, driveMotorConfig), 
+                new SwerveMotorConfig(8, angleMotorConfig), 
                 new CTREEncoder(4, SwerveModuleConfigs.getCANCoder()), 0),
         };
 
