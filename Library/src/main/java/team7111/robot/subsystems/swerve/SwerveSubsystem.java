@@ -103,6 +103,7 @@ public class SwerveSubsystem extends SubsystemBase {
         pathMaster = new PathMaster(this::getPose, () -> getYaw().unaryMinus());
         pathMaster.setTranslationPID(5.0, 0.0, 0.0);
         pathMaster.setRotationPID(5.0, 0, 0);
+        pathMaster.setInversions(false, false, false, true);
 
         translationXPID.setTolerance(0.05);
         translationYPID.setTolerance(0.05);
