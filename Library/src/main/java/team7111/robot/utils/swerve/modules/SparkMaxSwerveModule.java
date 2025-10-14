@@ -35,15 +35,15 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     private SparkClosedLoopController anglePID;
 
     public SparkMaxSwerveModule(SwerveModuleConfig constants){
+        this.encoder = constants.encoder;
+        encoderOffsetDegrees = constants.canCoderOffsetDegrees;
+
         driveMotorConfig = constants.driveMotor.getSparkMaxConfig();
         angleMotorConfig = constants.angleMotor.getSparkMaxConfig();
         driveMotor = new SparkMax(constants.driveMotor.id, MotorType.kBrushless);
         driveEncoder = driveMotor.getEncoder();
         driveFeedforward = constants.driveMotor.ff;//new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
         drivePID = driveMotor.getClosedLoopController();
-
-        this.encoder = constants.encoder;
-        encoderOffsetDegrees = constants.canCoderOffsetDegrees;
 
         angleMotor = new SparkMax(constants.angleMotor.id, MotorType.kBrushless);
         angleEncoder = angleMotor.getEncoder();
