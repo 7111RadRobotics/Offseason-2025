@@ -5,18 +5,6 @@ import com.revrobotics.spark.SparkMax;
 
 public class Mechanisms {
     
-    private SparkMax intakePivot;
-
-    private SparkMax intakeWheels;
-    private SparkMax indexWheels;
-
-    private TalonFX shooterPivot;
-    
-    //private SparkMax[] shooterWheels;
-
-    private SparkMax shooterWheel1;
-    private SparkMax shooterWheel2;
-
     mechanismStates state = mechanismStates.manual;
 
     private enum mechanismStates {

@@ -12,7 +12,7 @@ public class Intake {
 
     public enum intakeStates {  
         store,
-        deploy,
+        intake,
         transition,
         defualtState,
     };

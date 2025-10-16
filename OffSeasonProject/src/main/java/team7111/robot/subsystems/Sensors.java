@@ -8,5 +8,5 @@ class Sensors {
     Encoder shooterEncoder;
     DigitalInput beambrake;
 
-
+    
 }
