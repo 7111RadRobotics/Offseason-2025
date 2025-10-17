@@ -5,7 +5,17 @@ import com.revrobotics.spark.SparkMax;
 
 public class Shooter {
     
+    /**
+     * Constructor for shooter class, assigns motors.
+     */
+    public Shooter(SparkMax indexWheel, TalonFX shooterPivot, SparkMax shooterWheel1, SparkMax shooterWheel2) {
+        this.indexWheels = indexWheel;
+        this.shooterPivot = shooterPivot;
+        this.shooterWheel1 = shooterWheel1;
+        this.shooterWheel2 = shooterWheel2;
+    }
 
+    //Motors
     private SparkMax indexWheels;
 
     private TalonFX shooterPivot;
@@ -13,6 +23,7 @@ public class Shooter {
     private SparkMax shooterWheel1;
     private SparkMax shooterWheel2;
 
+    //Potentially use array for shooter wheels
     //private SparkMax[] shooterWheels;
 
     shooterStates state = shooterStates.defaultState;
@@ -25,10 +36,19 @@ public class Shooter {
         overshot,
         unloaded,
         defaultState,
+        manual,
     };
-
 
     public void setState(shooterStates state) {
         this.state = state;
+    }
+
+    /**
+     * Sets motor positions based off of state.
+     * <p>
+     * Returns false if an error has occurred.
+     */
+    public boolean periodic() {
+        return true;
     }
 }

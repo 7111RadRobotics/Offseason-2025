@@ -8,5 +8,21 @@ class Sensors {
     Encoder shooterEncoder;
     DigitalInput beambrake;
 
-    
+    /**
+     * Returns current state of the beambreak sensor.
+     * <p>
+     * Returns false if broken.
+     */
+    public boolean getBeam() {
+        return beambrake.get();
+    }
+
+    /**
+     * Periodic function for sensors.
+     * <p>
+     * Returns false if an error has occurred.
+     */
+    public boolean periodic() {
+        return true;
+    }
 }

@@ -1,11 +1,8 @@
 package team7111.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkMax;
-
 public class Mechanisms {
     
-    mechanismStates state = mechanismStates.manual;
+    mechanismStates state = mechanismStates.defaultState;
 
     private enum mechanismStates {
         intake,
@@ -13,6 +10,7 @@ public class Mechanisms {
         shootVision,
         prepShot,
         manual,
+        defaultState
     };
 
 
@@ -21,5 +19,14 @@ public class Mechanisms {
     public void setMechState(mechanismStates state)
     {
         this.state = state;
+    }
+
+    /**
+     * Acts on current state of mechanisms and sets motor positions and other subsystem states accordingly.
+     * <p>
+     * Returns false if an error has occurred.
+     */
+    public boolean periodic() {
+        return true;
     }
 }

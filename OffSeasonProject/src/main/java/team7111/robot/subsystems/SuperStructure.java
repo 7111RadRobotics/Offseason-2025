@@ -7,7 +7,6 @@ import team7111.robot.subsystems.Shooter.shooterStates;
 class SuperStructure {
 
 
-
     Vision vision;
     Sensors sensors;
     Intake intake;
@@ -81,28 +80,30 @@ class SuperStructure {
             default:
                 break;
         }
+
+        manageActual();
     
     }
 
     private void manageActual() {
         switch (actual) {
             case intake:
-                
+                intakeState();
                 break;
             case shootClose:
-                
+                shootClose();
                 break;
             case shootVision:
-                
+                shootVision();
                 break;
             case prepShot:
-                
+                prepShot();
                 break;
             case manual:
-                
+                manual();
                 break;
             case defaultState:
-                
+                defaultState();
                 break;      
             default:
                 break;
@@ -112,25 +113,35 @@ class SuperStructure {
 
 
 
-    private void intakeState()
-    {
+    private void intakeState() {
         shooter.setState(shooterStates.intake);
         intake.setState(intakeStates.intake);
     }
 
-    private void shootVision()
-    {
+    private void shootVision() {
         shooter.setState(shooterStates.shoot);
     }
     
-    private void shootClose()
-    {
+    private void shootClose() {
         shooter.setState(shooterStates.shoot);
     }
 
-    private void prepShot()
-    {
+    private void prepShot() {
         shooter.setState(shooterStates.prepareShot);
         intake.setState(intakeStates.transition);
+    }
+
+    private void manual() {
+        shooter.setState(shooterStates.manual);
+        intake.setState(intakeStates.manual);
+    }
+
+    private void defaultState() {
+        shooter.setState(shooterStates.defaultState);
+        intake.setState(intakeStates.defualtState);
+    }
+
+    public boolean periodic() {
+        return true;
     }
 }
