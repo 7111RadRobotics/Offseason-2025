@@ -216,6 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void manageSwerveState(){
         switch(currentSwerveState){
             case initializePath:
+                SmartDashboard.putBoolean("ispath alive ", path != null);
                 if(path == null){
                     setSwerveState(SwerveState.stationary);
                     break;
@@ -233,7 +234,6 @@ public class SwerveSubsystem extends SubsystemBase {
                 if(path.getWaypoints().length == 0){
                     path = null;
                 }
-
             case manual:
                 manual(joystickXTranslation, joystickYTranslation, joystickYaw, isDriveFieldRelative, false);
         }
@@ -343,12 +343,15 @@ public class SwerveSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
         }
         SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
+       
+        SmartDashboard.putNumber("ChassisX", getRelSpeeds().vxMetersPerSecond);
 
         field.setRobotPose(getPose());
         SmartDashboard.putData(field);
 
         actualStatePublisher.set(getStates());
 
+        SmartDashboard.putString("SwerveState", currentSwerveState.toString());
         manageSwerveState();
     }
 

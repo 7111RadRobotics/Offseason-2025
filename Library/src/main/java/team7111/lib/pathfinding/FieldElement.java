@@ -21,6 +21,9 @@ public class FieldElement {
     public FieldElement(Pose2d corners[])
     {
         this.corners = corners;
+
+        this.radius = -1;
+        this.center = null;
     }
 
     /**
@@ -32,6 +35,8 @@ public class FieldElement {
     {
         this.center = center;
         this.radius = radius;
+
+        this.corners = null;
     }
 
 
@@ -57,6 +62,10 @@ public class FieldElement {
     {
         //Checks if null (not a circle)
         if(center == null)
+        {
+            return null;
+        }
+        if(radius == -1)
         {
             return null;
         }

@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
 
 
@@ -99,13 +100,22 @@ public class PathMaster {
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
+        path.initialize();
+
     }
+
 
     public void periodic(Path path)
     {
         xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
         yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()) * invertedY;
         rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
+        
+        SmartDashboard.putNumber("XSpeed", xCalculation);
+        SmartDashboard.putNumber("YSpeed", yCalculation);
+        
+
+        path.periodic();
     }
 
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
