@@ -96,6 +96,8 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     }
 
     public void configure(){
+        driveMotorConfig.encoder.positionConversionFactor(SwerveConstants.driveRotationsToMeters);
+        driveMotorConfig.encoder.velocityConversionFactor(SwerveConstants.driveRPMToMPS);
         driveMotor.configure(driveMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
         angleMotor.configure(angleMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }
