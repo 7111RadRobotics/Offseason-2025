@@ -1,19 +1,14 @@
-package team7111.robot.utils.swerve.config;
+package team7111.robot.utils.config;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.config.EncoderConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class SwerveMotorConfig {
     public DCMotor dcMotor;
@@ -37,9 +32,6 @@ public class SwerveMotorConfig {
                 this.pid = pid;
                 this.ff = ff;
             
-
-
-            
     }
     
     public SwerveMotorConfig(int id, SwerveMotorConfig motorConfig) {
@@ -52,7 +44,8 @@ public class SwerveMotorConfig {
         SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.closedLoopRampRate(0);
         
-        sparkMaxConfig.absoluteEncoder.positionConversionFactor(gearRatio);  
+        sparkMaxConfig.absoluteEncoder.positionConversionFactor(gearRatio);
+        sparkMaxConfig.encoder.positionConversionFactor(gearRatio);
         
         if (isBrakeMode) {
             sparkMaxConfig.idleMode(IdleMode.kBrake);
@@ -72,12 +65,14 @@ public class SwerveMotorConfig {
 
     public TalonFXConfiguration getTalonFXConfiguration() {
         TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
-        talonFXConfig.Feedback.SensorToMechanismRatio = gearRatio;
+        //talonFXConfig.Feedback.SensorToMechanismRatio = gearRatio;
         talonFXConfig.CurrentLimits.StatorCurrentLimit = currentLimit;
         talonFXConfig.Slot0.kP = pid.getP();
         talonFXConfig.Slot0.kI = pid.getI();
         talonFXConfig.Slot0.kD = pid.getD();
+        talonFXConfig.Slot0.kS = ff.getKs();
         talonFXConfig.Slot0.kV = ff.getKv();
+        talonFXConfig.Slot0.kA = ff.getKa();
         talonFXConfig.MotorOutput.Inverted = Inverted
             ? InvertedValue.CounterClockwise_Positive
             : InvertedValue.Clockwise_Positive;
@@ -86,11 +81,5 @@ public class SwerveMotorConfig {
             : NeutralModeValue.Coast;
 
         return talonFXConfig;
-
-
-    }
-
-    
-
-    
+    }    
 }

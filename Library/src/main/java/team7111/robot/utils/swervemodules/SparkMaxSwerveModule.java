@@ -1,4 +1,4 @@
-package team7111.robot.utils.swerve.modules;
+package team7111.robot.utils.swervemodules;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -13,10 +13,9 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import team7111.robot.DeviceConfigs;
 import team7111.robot.Constants.SwerveConstants;
+import team7111.robot.utils.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
-import team7111.robot.utils.swerve.config.SwerveModuleConfig;
 
 public class SparkMaxSwerveModule implements GenericSwerveModule {
 
@@ -34,22 +33,20 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     private RelativeEncoder angleEncoder;
     private SparkClosedLoopController anglePID;
 
-    public SparkMaxSwerveModule(SwerveModuleConfig constants){
-        this.encoder = constants.encoder;
-        encoderOffsetDegrees = constants.canCoderOffsetDegrees;
+    public SparkMaxSwerveModule(SwerveModuleConfig config){
+        this.encoder = config.encoder;
+        encoderOffsetDegrees = config.canCoderOffsetDegrees;
 
-        driveMotorConfig = constants.driveMotor.getSparkMaxConfig();
-        angleMotorConfig = constants.angleMotor.getSparkMaxConfig();
-        driveMotor = new SparkMax(constants.driveMotor.id, MotorType.kBrushless);
+        driveMotorConfig = config.driveMotor.getSparkMaxConfig();
+        angleMotorConfig = config.angleMotor.getSparkMaxConfig();
+        driveMotor = new SparkMax(config.driveMotor.id, MotorType.kBrushless);
         driveEncoder = driveMotor.getEncoder();
-        driveFeedforward = constants.driveMotor.ff;//new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
+        driveFeedforward = config.driveMotor.ff;//new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
         drivePID = driveMotor.getClosedLoopController();
 
-        angleMotor = new SparkMax(constants.angleMotor.id, MotorType.kBrushless);
+        angleMotor = new SparkMax(config.angleMotor.id, MotorType.kBrushless);
         angleEncoder = angleMotor.getEncoder();
         anglePID = angleMotor.getClosedLoopController(); 
-
-        
     }
 
     @Override
@@ -98,6 +95,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     public void configure(){
         driveMotorConfig.encoder.positionConversionFactor(SwerveConstants.driveRotationsToMeters);
         driveMotorConfig.encoder.velocityConversionFactor(SwerveConstants.driveRPMToMPS);
+        angleMotorConfig.closedLoop.positionWrappingEnabled(true);
         driveMotor.configure(driveMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
         angleMotor.configure(angleMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }

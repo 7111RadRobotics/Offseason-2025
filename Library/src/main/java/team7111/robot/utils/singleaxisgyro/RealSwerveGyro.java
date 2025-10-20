@@ -1,8 +1,7 @@
-package team7111.robot.utils.swerve.gyro;
+package team7111.robot.utils.singleaxisgyro;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import team7111.robot.utils.gyro.GenericGyro;
-import team7111.robot.utils.gyro.NavXGyro;
+import team7111.robot.utils.gyro.GenericGyro;;
 
 public class RealSwerveGyro implements GenericSwerveGyro{
     

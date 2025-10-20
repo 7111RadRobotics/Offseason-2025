@@ -1,4 +1,4 @@
-package team7111.robot.utils.swerve.modules;
+package team7111.robot.utils.swervemodules;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;

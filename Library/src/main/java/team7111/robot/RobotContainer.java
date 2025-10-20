@@ -1,26 +1,22 @@
 package team7111.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-//import com.pathplanner.lib.path.Waypoint;
-import com.pathplanner.lib.auto.NamedCommands;
-
 import team7111.lib.pathfinding.Waypoint;
 import team7111.lib.pathfinding.WaypointConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.subsystems.swerve.SwerveSubsystem;
-import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
+import team7111.robot.subsystems.SwerveSubsystem;
+import team7111.robot.subsystems.SwerveSubsystem.SwerveState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,11 +27,11 @@ import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
 public class RobotContainer {
     public final CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.driverControllerID);
-    public PathPlannerAuto auto1;
     public final SwerveSubsystem swerve;
     public SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        DriverStation.silenceJoystickConnectionWarning(true);
         swerve = new SwerveSubsystem();
 
         autoChooser = new SendableChooser<>();
@@ -50,14 +46,15 @@ public class RobotContainer {
 
         SmartDashboard.putData("autoChooser", autoChooser);
 
-        NamedCommands.registerCommand("test command", auto1);
-
         // Configure button bindings
         configureButtonBindings();
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected().andThen(swerve.setSwerveStateCommand(SwerveState.initializePath));
+        Command auto = Commands.print("autochooser null");
+        if(autoChooser != null)
+            auto = autoChooser.getSelected().andThen(swerve.setSwerveStateCommand(SwerveState.initializePath));
+        return auto;
     }
 
     /**

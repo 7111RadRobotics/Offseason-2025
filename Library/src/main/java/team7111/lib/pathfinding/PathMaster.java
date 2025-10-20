@@ -1,16 +1,11 @@
 package team7111.lib.pathfinding;
 
-import java.lang.reflect.Array;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import team7111.robot.Constants.SwerveConstants;
-
 
 public class PathMaster {
     private PIDController xPID;
@@ -41,17 +36,17 @@ public class PathMaster {
         yPID = new PIDController(1, 0, 0);
 
         this.rotPID = new PIDController(1, 0, 0);
+        rotPID.enableContinuousInput(-180, 180);
         this.suppliedPose = suppliedPose;
-        this.gyroYaw = gyroYaw;
+        this.gyroYaw = () -> Rotation2d.fromDegrees(gyroYaw.get().getDegrees() * invertedGyro);
+        //this.gyroYaw = gyroYaw;
     }
     
-    public void useAllianceFlipping(boolean flipField)
-    {
+    public void useAllianceFlipping(boolean flipField){
         fieldFlipped = flipField;
     }
     
-    public void useFieldRelative(boolean isFieldRelative)
-    {
+    public void useFieldRelative(boolean isFieldRelative){
         fieldRelative = isFieldRelative;
     }
 
@@ -65,22 +60,21 @@ public class PathMaster {
     }
 
     public void setFieldElementMap(FieldElement[] fieldElementArray){
-            fieldElements = fieldElementArray;
+        fieldElements = fieldElementArray;
     }
 
-    public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro)
-    {
+    public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro){
         invertedX = 1.0;
         invertedY = 1.0;
         invertedRot = 1.0;
         invertedGyro = 1.0;
 
         if (invertX){
-            invertedX = - 1.0;
+            invertedX = -1.0;
         }
 
         if (invertY){
-            invertedY = - 1.0;
+            invertedY = -1.0;
         }
 
         if (invertRot){
@@ -89,17 +83,16 @@ public class PathMaster {
 
         if (invertGyro){
             invertedGyro = -1.0;
-            gyroYaw = ()-> Rotation2d.fromDegrees(gyroYaw.get().getDegrees() * invertedGyro) ;
         }
     }
 
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
+        path.initialize();
     }
 
-    public void periodic(Path path)
-    {
+    public void periodic(Path path){
         path.periodic();
         xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
         yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()) * invertedY;
@@ -108,7 +101,7 @@ public class PathMaster {
     }
 
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
-        // Get desired module states.
+        
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed(), gyroYaw.get())
             : new ChassisSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed());

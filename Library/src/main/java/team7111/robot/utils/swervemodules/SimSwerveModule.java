@@ -1,7 +1,5 @@
-package team7111.robot.utils.swerve.modules;
+package team7111.robot.utils.swervemodules;
 
-
-import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -9,14 +7,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
+import team7111.robot.utils.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
-import team7111.robot.utils.swerve.config.DrivebaseConfig;
-import team7111.robot.utils.swerve.config.SwerveModuleConfig;
 
 public class SimSwerveModule implements GenericSwerveModule{
     private DCMotor driveMotorOutput;
@@ -32,26 +27,26 @@ public class SimSwerveModule implements GenericSwerveModule{
     private PIDController anglePID;
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.01, 2.69, 0.19);
 
-    public SimSwerveModule(SwerveModuleConfig constants){
-        driveMotorOutput = constants.driveMotor.dcMotor;
-        angleMotorOutput = constants.angleMotor.dcMotor;
+    public SimSwerveModule(SwerveModuleConfig config){
+        driveMotorOutput = config.driveMotor.dcMotor;
+        angleMotorOutput = config.angleMotor.dcMotor;
 
         driveMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(driveMotorOutput, constants.driveMotor.moi, constants.driveMotor.gearRatio), 
+            LinearSystemId.createDCMotorSystem(driveMotorOutput, config.driveMotor.moi, config.driveMotor.gearRatio), 
             driveMotorOutput);
         angleMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(angleMotorOutput, constants.angleMotor.moi, constants.angleMotor.gearRatio), 
+            LinearSystemId.createDCMotorSystem(angleMotorOutput, config.angleMotor.moi, config.angleMotor.gearRatio), 
             angleMotorOutput);
 
-        encoder = constants.encoder;
+        encoder = config.encoder;
 
-        driveMotorAmps = constants.driveMotor.currentLimit; //TODO is there some formula/estimation?
-        angleMotorAmps = constants.angleMotor.currentLimit;
+        driveMotorAmps = config.driveMotor.currentLimit; //TODO is there some formula/estimation?
+        angleMotorAmps = config.angleMotor.currentLimit;
         // constructs a new PID controller for each object. 
         // this avoids the PID from doing too much and trying to compensate for it by causing unwanted behavior
-        anglePID = constants.angleMotor.pid;
+        anglePID = config.angleMotor.pid;
         anglePID = new PIDController(anglePID.getP(), anglePID.getI(), anglePID.getD());
-        drivePID = constants.angleMotor.pid;
+        drivePID = config.driveMotor.pid;
         drivePID = new PIDController(drivePID.getP(), drivePID.getI(), drivePID.getD());
 
         anglePID.enableContinuousInput(-0.5, 0.5);

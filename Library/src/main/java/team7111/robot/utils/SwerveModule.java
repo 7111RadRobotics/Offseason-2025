@@ -1,16 +1,15 @@
-package team7111.robot.subsystems.swerve;
+package team7111.robot.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.utils.swerve.modules.GenericSwerveModule;
+import team7111.robot.utils.swervemodules.GenericSwerveModule;
 
 public class SwerveModule {
     public final int moduleNumber;
     public final GenericSwerveModule module;
-    private double timesRotated = 0;
 
     public SwerveModule(int moduleNumber, GenericSwerveModule moduleType) {
         this.moduleNumber = moduleNumber;

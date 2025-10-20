@@ -1,4 +1,4 @@
-package team7111.robot.utils.swerve.gyro;
+package team7111.robot.utils.singleaxisgyro;
 
 import java.util.function.Supplier;
 
@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
-import team7111.robot.utils.gyro.SimGyro;
 
 public class SimSwerveGyro implements GenericSwerveGyro {
 

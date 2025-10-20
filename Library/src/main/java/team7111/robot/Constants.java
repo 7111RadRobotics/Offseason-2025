@@ -1,19 +1,13 @@
 package team7111.robot;
 
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import team7111.robot.utils.encoder.CTREEncoder;
-import team7111.robot.utils.swerve.config.DrivebaseConfig;
-import team7111.robot.utils.swerve.config.SwerveModuleConfig;
-import team7111.robot.utils.swerve.modules.GenericSwerveModule;
+import team7111.robot.utils.config.DrivebaseConfig;
+import team7111.robot.utils.config.SwerveModuleConfig;
 
 /**
  * This class contains values that remain constant while the robot is running.
@@ -40,7 +34,7 @@ public class Constants {
     /** All swerve constants. */
     public static class SwerveConstants {
         public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getSoundWave(RobotBase.isSimulation());
-        public static final double moi = 0.006;//0.01;
+        
         /** Constants that apply to the whole drive train. */
         public static final double wheelBaseWidth = drivebaseConfig.width; // Width of the drivetrain measured from the middle of the wheels.
         public static final double wheelBaseLength = drivebaseConfig.length; // Length of the drivetrain measured from the middle of the wheels.
@@ -54,10 +48,10 @@ public class Constants {
             new Translation2d(-wheelBaseLength / 2.0, -wheelBaseWidth / 2.0)
         );
 
-        public static final double driveGearRatio = 6.75 / 1.0; // 6.75:1
+        public static final double driveGearRatio = drivebaseConfig.moduleConstants[0].driveMotor.gearRatio;
         public static final double driveRotationsToMeters = wheelCircumference / driveGearRatio;
         public static final double driveRPMToMPS = driveRotationsToMeters / 60.0;
-        public static final double angleGearRatio = 21.43 / 1.0; // 21.43:1
+        public static final double angleGearRatio = drivebaseConfig.moduleConstants[0].angleMotor.gearRatio;
         public static final double angleRPMToRPS = angleGearRatio / 60;
 
         /** Speed ramp. */

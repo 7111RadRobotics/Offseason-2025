@@ -1,46 +1,31 @@
-package team7111.robot.subsystems.swerve;
+package team7111.robot.subsystems;
 
-import java.lang.reflect.Executable;
-//import java.nio.file.Path;
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team7111.lib.pathfinding.*;
-import team7111.robot.Constants;
-import team7111.robot.DeviceConfigs;
-import team7111.robot.Constants.ControllerConstants;
-import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.utils.gyro.NavXGyro;
-import team7111.robot.utils.swerve.gyro.GenericSwerveGyro;
-import team7111.robot.utils.swerve.gyro.RealSwerveGyro;
-import team7111.robot.utils.swerve.gyro.SimSwerveGyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import team7111.lib.pathfinding.*;
+import team7111.robot.Constants.ControllerConstants;
+import team7111.robot.Constants.SwerveConstants;
+import team7111.robot.utils.SwerveModule;
+import team7111.robot.utils.gyro.NavXGyro;
+import team7111.robot.utils.singleaxisgyro.GenericSwerveGyro;
+import team7111.robot.utils.singleaxisgyro.RealSwerveGyro;
+import team7111.robot.utils.singleaxisgyro.SimSwerveGyro;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule[] modules;
@@ -51,21 +36,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private final GenericSwerveGyro gyro;
     private SwerveModuleState[] states = new SwerveModuleState[]{};
 
-    public PIDController translationXPID = new PIDController(1, 0, 0);
-    public PIDController translationYPID = translationXPID;
-    public PIDController rotationPID = new PIDController(1, 0, 0);
-
-    private TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(30, 30);
-    public ProfiledPIDController profiledXPID = new ProfiledPIDController(1, 0, 0, xConstraints);
-
-    private TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(30, 30);
-    public ProfiledPIDController profiledYPID = new ProfiledPIDController(1, 0, 0, yConstraints);
-
-    private TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(720, 720);
-    public ProfiledPIDController profiledRotationPID = new ProfiledPIDController(1, 0, 0, rotationConstraints);
-
-    private StructArrayPublisher<SwerveModuleState> commandedStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Commanded Swerve States", SwerveModuleState.struct).publish();
-    private StructArrayPublisher<SwerveModuleState> actualStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Actual Swerve States", SwerveModuleState.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> commandedStatePublisher = 
+            NetworkTableInstance.getDefault().getStructArrayTopic("Commanded Swerve States", SwerveModuleState.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> actualStatePublisher = 
+            NetworkTableInstance.getDefault().getStructArrayTopic("Actual Swerve States", SwerveModuleState.struct).publish();
     
     private PathMaster pathMaster = null;
 
@@ -75,9 +49,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private boolean isDriveFieldRelative;
 
-    private DoubleSupplier joystickYTranslation = ()-> 0;
-    private DoubleSupplier joystickXTranslation;
-    private DoubleSupplier joystickYaw = ()-> 0;
+    private DoubleSupplier joystickYTranslation = () -> 0;
+    private DoubleSupplier joystickXTranslation = () -> 0;
+    private DoubleSupplier joystickYaw = () -> 0;
 
     public enum SwerveState{
         initializePath,
@@ -100,85 +74,54 @@ public class SwerveSubsystem extends SubsystemBase {
         gyro.setInverted(true);
         zeroGyro();
 
-        pathMaster = new PathMaster(this::getPose, () -> getYaw().unaryMinus());
+        pathMaster = new PathMaster(this::getPose, () -> getYaw());
         pathMaster.setTranslationPID(5.0, 0.0, 0.0);
         pathMaster.setRotationPID(5.0, 0, 0);
-        pathMaster.setInversions(false, false, false, true);
-
-        translationXPID.setTolerance(0.05);
-        translationYPID.setTolerance(0.05);
-        rotationPID.setTolerance(1);
-        rotationPID.enableContinuousInput(-180, 180);
+        pathMaster.setInversions(false, false, true, false);
 
         swerveOdometry = new SwerveDriveOdometry(SwerveConstants.kinematics, getYaw(), getPositions());
         
-        RobotConfig config = null;
-        try{
-            config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
+    }
+
+    public void manageSwerveState(){
+        switch(currentSwerveState){
+            case initializePath:
+                if(path == null){
+                    setSwerveState(SwerveState.stationary);
+                    break;
+                }
+                pathMaster.initializePath(path);
+                setSwerveState(SwerveState.runPath);
+                break;
+                
+            case runPath:
+                if(path == null){
+                    setSwerveState(SwerveState.initializePath);
+                    break;
+                }
+                if(path.isPathFinished()){
+                    setSwerveState(SwerveState.stationary);
+                    break;
+                }
+                pathMaster.periodic(path);
+                ChassisSpeeds speeds = pathMaster.getPathSpeeds(path, false, true);
+                setModuleStates(SwerveConstants.kinematics.toSwerveModuleStates(speeds)); 
+                if(path.getWaypoints().length == 0){
+                    path = null;
+                }
+                break;
+
+            case manual:
+                manual(joystickXTranslation.getAsDouble(), joystickYTranslation.getAsDouble(), joystickYaw.getAsDouble(), isDriveFieldRelative, false);
+                break;
+            case stationary:
+                manual(0, 0, 0, false, false);
+            default:
+                break;
         }
-
-        AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getRelSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::setRelSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config,
-            () -> 
-                DriverStation.getAlliance().isPresent()
-                    ? DriverStation.getAlliance().get() == Alliance.Red
-                    : false,
-            this // Reference to this subsystem to set requirements
-        );
     }
 
-    /** 
-     * This is called a command factory method, and these methods help reduce the
-     * number of files in the command folder, increasing readability and reducing
-     * boilerplate. 
-     * 
-     * Double suppliers are just any function that returns a double.
-     */
-    public Command drive(DoubleSupplier forwardBackAxis, DoubleSupplier leftRightAxis, DoubleSupplier rotationAxis, boolean isFieldRelative, boolean isOpenLoop) {
-        return run(() -> {
-            // Grabbing input from suppliers.
-            double forwardBack = forwardBackAxis.getAsDouble();
-            double leftRight = leftRightAxis.getAsDouble();
-            double rotation = rotationAxis.getAsDouble();
-
-            // Adding deadzone.
-            forwardBack = Math.abs(forwardBack) < ControllerConstants.axisDeadzone ? 0 : forwardBack;
-            leftRight = Math.abs(leftRight) < ControllerConstants.axisDeadzone ? 0 : leftRight;
-            rotation = Math.abs(rotation) < ControllerConstants.axisDeadzone ? 0 : rotation;
-
-            // Converting to m/s
-            forwardBack *= SwerveConstants.maxDriveVelocity;
-            leftRight *= SwerveConstants.maxDriveVelocity;
-            rotation *= SwerveConstants.maxAngularVelocity;
-
-            // Get desired module states.
-            ChassisSpeeds chassisSpeeds = isFieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(forwardBack, leftRight, rotation, getYaw())
-                : new ChassisSpeeds(forwardBack, leftRight, rotation);
-
-            SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(chassisSpeeds);
-
-            setModuleStates(states, isOpenLoop);
-        });
-    }
-
-    public void manual(DoubleSupplier forwardBackAxis, DoubleSupplier leftRightAxis, DoubleSupplier rotationAxis, boolean isFieldRelative, boolean isOpenLoop){
-        // Grabbing input from suppliers.
-        double forwardBack = forwardBackAxis.getAsDouble();
-        double leftRight = leftRightAxis.getAsDouble();
-        double rotation = rotationAxis.getAsDouble();
-
+    public void manual(double forwardBack, double leftRight, double rotation, boolean isFieldRelative, boolean isOpenLoop){
         // Adding deadzone.
         forwardBack = Math.abs(forwardBack) < ControllerConstants.axisDeadzone ? 0 : forwardBack;
         leftRight = Math.abs(leftRight) < ControllerConstants.axisDeadzone ? 0 : leftRight;
@@ -198,55 +141,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         setModuleStates(states, isOpenLoop);
     }
-    
-    /**
-     * Runs a path object, from the path class.
-     * @param path -Desired path to run.
-     */
-    public Command runPath(Path path)
-    {
-        return run(() -> {
-            path.periodic();
-            
-            SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(pathMaster.getPathSpeeds(path, false, true));
-            setModuleStates(states);
-            
-        });
-    }
-
-    public void manageSwerveState(){
-        switch(currentSwerveState){
-            case initializePath:
-                if(path == null){
-                    setSwerveState(SwerveState.stationary);
-                    break;
-                }
-                pathMaster.initializePath(path);
-                setSwerveState(SwerveState.runPath);
-                
-            case runPath:
-                if(path == null){
-                    setSwerveState(SwerveState.initializePath);
-                    break;
-                }
-                pathMaster.periodic(path);
-                ChassisSpeeds speeds = pathMaster.getPathSpeeds(path, false, true);
-                speeds.omegaRadiansPerSecond = -speeds.omegaRadiansPerSecond;
-                speeds.vxMetersPerSecond = -speeds.vxMetersPerSecond;
-                speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
-                setModuleStates(SwerveConstants.kinematics.toSwerveModuleStates(speeds)); 
-                if(path.getWaypoints().length == 0){
-                    path = null;
-                }
-
-            case manual:
-                manual(joystickXTranslation, joystickYTranslation, joystickYaw, isDriveFieldRelative, false);
-        }
-
-    }
 
     public Command setSwerveStateCommand(SwerveState swerveState){
-        
         return runOnce(()-> currentSwerveState = swerveState);
     }
 
@@ -329,7 +225,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setDriveFieldRelative(boolean isFieldRelative){
         isDriveFieldRelative = isFieldRelative;
-
     }
 
     public Command setPath(Path path){
