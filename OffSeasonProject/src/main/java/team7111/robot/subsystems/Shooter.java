@@ -5,6 +5,9 @@ import com.revrobotics.spark.SparkMax;
 
 public class Shooter {
     
+    
+    private final double minimumAngle = ;
+    private final double maximumAngle = ;
     /**
      * Constructor for shooter class, assigns motors.
      */
@@ -41,6 +44,15 @@ public class Shooter {
 
     public void setState(shooterStates state) {
         this.state = state;
+    }
+
+    /**
+     * Sets the shooter angle from minimum to maximum shooter angle.
+     * Minimum angle is 
+     */
+    public void setAngle(double angle)
+    {
+        
     }
 
     /**
