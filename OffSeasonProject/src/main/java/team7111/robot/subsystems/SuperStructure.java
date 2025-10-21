@@ -8,7 +8,6 @@ class SuperStructure {
 
 
     Vision vision;
-    Sensors sensors;
     Intake intake;
     Shooter shooter;
 

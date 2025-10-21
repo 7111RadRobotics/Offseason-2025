@@ -5,27 +5,6 @@ import com.revrobotics.spark.SparkMax;
 
 public class Shooter {
     
-    
-    private final double minimumAngle = ;
-    private final double maximumAngle = ;
-    /**
-     * Constructor for shooter class, assigns motors.
-     */
-    public Shooter(SparkMax indexWheel, TalonFX shooterPivot, SparkMax shooterWheel1, SparkMax shooterWheel2) {
-        this.indexWheels = indexWheel;
-        this.shooterPivot = shooterPivot;
-        this.shooterWheel1 = shooterWheel1;
-        this.shooterWheel2 = shooterWheel2;
-    }
-
-    //Motors
-    private SparkMax indexWheels;
-
-    private TalonFX shooterPivot;
-
-    private SparkMax shooterWheel1;
-    private SparkMax shooterWheel2;
-
     //Potentially use array for shooter wheels
     //private SparkMax[] shooterWheels;
 
