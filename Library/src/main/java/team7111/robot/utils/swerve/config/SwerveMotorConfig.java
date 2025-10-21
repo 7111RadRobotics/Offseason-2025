@@ -25,8 +25,7 @@ public class SwerveMotorConfig {
     public int currentLimit;
     public PIDController pid;
     public SimpleMotorFeedforward ff;
-    public SparkBaseConfig sparkMaxConfig;
-    public TalonFXConfiguration talonFXConfig;
+   
 
     public SwerveMotorConfig(DCMotor dcMotor, boolean Inverted, boolean isBrakeMode, double gearRatio, double moi, 
             int currentLimit, PIDController pid, SimpleMotorFeedforward ff){
