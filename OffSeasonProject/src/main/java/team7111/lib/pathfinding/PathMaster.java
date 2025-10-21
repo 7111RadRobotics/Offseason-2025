@@ -98,6 +98,13 @@ public class PathMaster {
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
     }
 
+    /**
+     * Flips path waypoint's positions and rotations. Keeps origin.
+     */
+    public void flipField(Path path){
+        path.flipPath();
+    }
+
     public void periodic(Path path)
     {
         path.periodic();
