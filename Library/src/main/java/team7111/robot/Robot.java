@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import team7111.robot.subsystems.swerve.SwerveSubsystem.SwerveState;
+import team7111.robot.subsystems.SwerveSubsystem.SwerveState;
 
 
 /**
