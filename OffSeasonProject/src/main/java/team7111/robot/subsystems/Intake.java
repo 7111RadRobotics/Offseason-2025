@@ -36,7 +36,6 @@ public class Intake {
      * <p>
      * Returns false if an error has occurred.
      */
-    public boolean periodic() {
-        return true;
+    public void periodic() {
     }
 }
