@@ -1,7 +1,7 @@
 package team7111.robot.subsystems;
 
 public class Barrel {
-    private 
+    private Barrelstates state = Barrelstates.intake;
 
     public enum Barrelstates {
         intake,
