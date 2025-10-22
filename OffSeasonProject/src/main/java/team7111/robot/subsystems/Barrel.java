@@ -1,15 +1,24 @@
 package team7111.robot.subsystems;
 
 public class Barrel {
-    private Barrelstates state = Barrelstates.intake;
 
-    public enum Barrelstates {
+    private barrelStates state = barrelStates.defaultState;
+
+    public enum barrelStates {
         intake,
         adjust,
         readjust,
         shoot,
         reverse,
         unload,
-        loaded
+        loaded,
+        defaultState
     };
+
+    public void setState(barrelStates state) {
+        this.state = state;
+    }
+
+    public void periodic() {
+    }
 }

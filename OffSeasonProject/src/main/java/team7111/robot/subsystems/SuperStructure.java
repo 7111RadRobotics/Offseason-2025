@@ -140,7 +140,6 @@ class SuperStructure {
         intake.setState(intakeStates.defualtState);
     }
 
-    public boolean periodic() {
-        return true;
+    public void periodic() {
     }
 }
