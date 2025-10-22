@@ -5,23 +5,24 @@ import com.revrobotics.spark.SparkMax;
 
 public class Shooter {
     
+    public Shooter() {}
+
     //Potentially use array for shooter wheels
     //private SparkMax[] shooterWheels;
 
-    shooterStates state = shooterStates.defaultState;
+    ShooterStates state = ShooterStates.defaultState;
 
-    public enum shooterStates {
-        intake,
-        loaded,
+    public enum ShooterStates {
         prepareShot,
         shoot,
-        overshot,
-        unloaded,
+        reverse,
+        prepareShotVision,
         defaultState,
         manual,
+        idle,
     };
 
-    public void setState(shooterStates state) {
+    public void setState(ShooterStates state) {
         this.state = state;
     }
 
@@ -34,12 +35,35 @@ public class Shooter {
         
     }
 
+    private void manageState() {
+        switch (state) {
+            case prepareShot:
+
+                break;
+            case shoot:
+
+                break;
+            case reverse:
+
+                break;
+            case prepareShotVision:
+
+                break;
+            case manual:
+
+                break;
+            case idle:
+
+                break;
+        }
+    }
+
     /**
      * Sets motor positions based off of state.
      * <p>
      * Returns false if an error has occurred.
      */
-    public boolean periodic() {
-        return true;
+    public void periodic() {
+        manageState();
     }
 }
