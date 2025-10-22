@@ -1,8 +1,8 @@
 
 package team7111.robot.subsystems;
 
-import team7111.robot.subsystems.Intake.intakeStates;
-import team7111.robot.subsystems.Shooter.shooterStates;
+import team7111.robot.subsystems.Intake.IntakeStates;
+import team7111.robot.subsystems.Shooter.ShooterStates;
 
 class SuperStructure {
 
@@ -113,31 +113,30 @@ class SuperStructure {
 
 
     private void intakeState() {
-        shooter.setState(shooterStates.intake);
-        intake.setState(intakeStates.intake);
+        
     }
 
     private void shootVision() {
-        shooter.setState(shooterStates.shoot);
+        shooter.setState(ShooterStates.shoot);
     }
     
     private void shootClose() {
-        shooter.setState(shooterStates.shoot);
+        shooter.setState(ShooterStates.shoot);
     }
 
     private void prepShot() {
-        shooter.setState(shooterStates.prepareShot);
-        intake.setState(intakeStates.transition);
+        shooter.setState(ShooterStates.prepareShot);
+        intake.setState(IntakeStates.transition);
     }
 
     private void manual() {
-        shooter.setState(shooterStates.manual);
-        intake.setState(intakeStates.manual);
+        shooter.setState(ShooterStates.manual);
+        intake.setState(IntakeStates.manual);
     }
 
     private void defaultState() {
-        shooter.setState(shooterStates.defaultState);
-        intake.setState(intakeStates.defualtState);
+        shooter.setState(ShooterStates.defaultState);
+        intake.setState(IntakeStates.defualtState);
     }
 
     public void periodic() {
