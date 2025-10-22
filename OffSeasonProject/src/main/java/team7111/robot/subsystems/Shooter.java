@@ -38,22 +38,22 @@ public class Shooter {
     private void manageState() {
         switch (state) {
             case prepareShot:
-
+            prepareShot();
                 break;
             case shoot:
-
+            shoot();
                 break;
             case reverse:
-
+            reverse();
                 break;
             case prepareShotVision:
-
+            prepareShotVision();
                 break;
             case manual:
-
+            manual();
                 break;
             case idle:
-
+            idle();
                 break;
         }
     }
@@ -66,4 +66,16 @@ public class Shooter {
     public void periodic() {
         manageState();
     }
+
+    private void prepareShot() {}
+
+    private void shoot() {}
+
+    private void reverse() {}
+
+    private void prepareShotVision() {}
+
+    private void manual() {}
+
+    private void idle() {}
 }

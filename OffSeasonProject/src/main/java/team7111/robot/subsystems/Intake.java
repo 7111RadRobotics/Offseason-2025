@@ -25,19 +25,19 @@ public class Intake {
     private void manageState() {
         switch (state) {
             case store:
-
+            store();
                 break;
             case deploy:
-
+            deploy();
                 break;
             case transition:
-
+            transition();
                 break;
             case eject:
-
+            eject();
                 break;
             case manual:
-
+            manual();
                 break;
         }
     }
@@ -50,4 +50,14 @@ public class Intake {
     public void periodic() {
         manageState();
     }
+
+    private void store() {}
+
+    private void deploy() {}
+
+    private void transition() {}
+
+    private void eject() {}
+
+    private void manual() {}
 }
