@@ -24,6 +24,7 @@ public class SwerveModule {
         // E.G. rotating from 10 to 270 degrees CW vs CCW.
         // System.out.println("Angle: " + state.angle.getRadians() + "Mod #: " + moduleNumber);
 
+        SmartDashboard.putNumber("wanted drive velocity", state.speedMetersPerSecond);
         state.optimize(getAngle());
 
         if (isOpenLoop) {
@@ -35,7 +36,7 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
-        SmartDashboard.putNumber("driveVelocity", module.getDriveVelocity() / SwerveConstants.wheelCircumference);
+        SmartDashboard.putNumber("returned drive velocity", module.getDriveVelocity());
         return new SwerveModuleState(module.getDriveVelocity(), getAngle());
     }
 
