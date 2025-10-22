@@ -2,13 +2,22 @@ package team7111.lib.pathfinding;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Path {
 
+    //In meters. 0 means flipping will happen around origin.
+    private final double mapLengthX = 0;
+    private final double mapLengthY = 0;
+
+    /** True = cut lengthWise (like 2025 field). False = cut widthWise.*/
+    private final boolean symmetry = true;
     //Robot position as a supplied Pose2d
     private Supplier<Pose2d> robotPose;
 
@@ -120,6 +129,33 @@ public class Path {
     {
         currentWaypointIndex = 0;
         isPathFinished = false;
+    }
+
+    /**
+     * Flips the waypoint positions and rotations of all waypoints
+     */
+    public void flipPath()
+    {
+        //X and y from origins.
+        double length = mapLengthX;
+        double width = mapLengthY;
+        for(int i = 0; i < waypoints.length; i++) {
+            //Gets waypoint position
+            double waypointX = waypoints[i].getPose().getX();
+            double waypointY = waypoints[i].getPose().getY();
+            double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
+
+            //Flips
+            double newWayX = length - waypointX;
+            double newWayY = width - waypointY;
+            double newWayRot = waypointRot + 180;
+            newWayRot = newWayRot % 360; //Sets angle to within 360.
+
+            Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, new Rotation2d()), 
+            waypoints[i].getTranslationConstraints(), waypoints[i].getRotationConstraints());
+
+            waypoints[i] = newWaypoint;
+        }
     }
 
     /**
