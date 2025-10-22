@@ -16,6 +16,9 @@ public class Path {
     private final double mapLengthX = 0;
     private final double mapLengthY = 0;
 
+    //Determines how flipping function works.
+    private boolean isflipped = false;
+
     /** True = cut lengthWise (like 2025 field). False = cut widthWise.*/
     private final boolean symmetry = true;
     //Robot position as a supplied Pose2d
@@ -145,10 +148,23 @@ public class Path {
             double waypointY = waypoints[i].getPose().getY();
             double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
 
-            //Flips
-            double newWayX = length - waypointX;
-            double newWayY = width - waypointY;
-            double newWayRot = waypointRot + 180;
+            double newWayX;
+            double newWayY;
+            double newWayRot;
+            //if true, then it needs to be blue alliance aligned again.
+            if(isflipped){
+                //Undoes flip
+                newWayX = -waypointX + length;
+                newWayY = -waypointY + width;
+                isflipped = false;
+            }else{
+                //Flips
+                newWayX = length - waypointX;
+                newWayY = width - waypointY;
+                isflipped = true;
+            }
+            //Rotation flipping
+            newWayRot = waypointRot + 180;
             newWayRot = newWayRot % 360; //Sets angle to within 360.
 
             Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, new Rotation2d()), 
@@ -156,6 +172,7 @@ public class Path {
 
             waypoints[i] = newWaypoint;
         }
+
     }
 
     /**
