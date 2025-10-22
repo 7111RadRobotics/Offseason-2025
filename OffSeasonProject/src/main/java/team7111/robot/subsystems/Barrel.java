@@ -17,9 +17,8 @@ public class Barrel {
 
     public void setState(barrelStates state) {
         this.state = state;
-    };
+    }
 
-    public boolean periodic() {
-        return true;
-    };
+    public void periodic() {
+    }
 }

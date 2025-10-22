@@ -44,14 +44,6 @@ public class PathSubsystem {
      * <p>
      * Returns false if an error has occurred.
      */
-    public boolean periodic() {
-        if(currentPath == null) {
-            return false;
-        }
-        else
-        {
-            currentPath.periodic();
-            return true;
-        }
+    public void periodic() {
     }
 }
