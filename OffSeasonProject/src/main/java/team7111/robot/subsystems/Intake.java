@@ -4,31 +4,42 @@ import com.revrobotics.spark.SparkMax;
 
 public class Intake {
 
-    /**
-     * Constructor for intake class. Assigns intake motors.
-     */
-    public Intake(SparkMax intakePivot, SparkMax intakeWheels) {
-        this.intakePivot = intakePivot;
-        this.intakeWheels = intakeWheels;
-    }
+    public Intake() {}
 
-    //Motors
-    private SparkMax intakePivot;
-    private SparkMax intakeWheels;
-
-    private intakeStates state = intakeStates.defualtState;
-
-    public enum intakeStates {  
+    public enum IntakeStates {  
         store,
-        intake,
-        transition,
         defualtState,
+        deploy,
+        transition,
+        eject,
         manual,
     };
 
-    public void setState(intakeStates state)
+    private IntakeStates state = IntakeStates.defualtState;
+
+    public void setState(IntakeStates state)
     {
         this.state = state;
+    }
+
+    private void manageState() {
+        switch (state) {
+            case store:
+            store();
+                break;
+            case deploy:
+            deploy();
+                break;
+            case transition:
+            transition();
+                break;
+            case eject:
+            eject();
+                break;
+            case manual:
+            manual();
+                break;
+        }
     }
 
     /**
@@ -37,5 +48,16 @@ public class Intake {
      * Returns false if an error has occurred.
      */
     public void periodic() {
+        manageState();
     }
+
+    private void store() {}
+
+    private void deploy() {}
+
+    private void transition() {}
+
+    private void eject() {}
+
+    private void manual() {}
 }

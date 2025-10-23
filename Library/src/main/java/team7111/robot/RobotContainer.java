@@ -37,8 +37,8 @@ public class RobotContainer {
         autoChooser = new SendableChooser<>();
 
         Waypoint[] waypoints = new Waypoint[]{
-            new Waypoint(new Pose2d(3, 1, Rotation2d.fromDegrees(0)), new WaypointConstraints(1, 0, 0.1), new WaypointConstraints(360, 0, 5)), 
-            new Waypoint(new Pose2d(7, 6, Rotation2d.fromDegrees(0)), new WaypointConstraints(1, 0, 0.1), new WaypointConstraints(360, 0, 5)),
+            new Waypoint(new Pose2d(3, 1, Rotation2d.fromDegrees(0)), new WaypointConstraints(10, 4, 0.5), new WaypointConstraints(360, 0, 5)), 
+            new Waypoint(new Pose2d(7, 6, Rotation2d.fromDegrees(0)), new WaypointConstraints(10, 0, 0.1), new WaypointConstraints(360, 0, 5)),
         };
 
 

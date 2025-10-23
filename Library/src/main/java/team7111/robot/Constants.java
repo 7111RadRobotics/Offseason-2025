@@ -33,6 +33,7 @@ public class Constants {
 
     /** All swerve constants. */
     public static class SwerveConstants {
+        /** Contains robot-specific drivebase constants */
         public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getSoundWave(RobotBase.isSimulation());
         
         /** Constants that apply to the whole drive train. */

@@ -27,6 +27,8 @@ public class SimSwerveModule implements GenericSwerveModule{
     private PIDController anglePID;
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.01, 2.69, 0.19);
 
+    private double driveGearRatio;
+
     public SimSwerveModule(SwerveModuleConfig config){
         driveMotorOutput = config.driveMotor.dcMotor;
         angleMotorOutput = config.angleMotor.dcMotor;
@@ -40,6 +42,7 @@ public class SimSwerveModule implements GenericSwerveModule{
 
         encoder = config.encoder;
 
+        driveGearRatio = config.driveMotor.gearRatio;
         driveMotorAmps = config.driveMotor.currentLimit; //TODO is there some formula/estimation?
         angleMotorAmps = config.angleMotor.currentLimit;
         // constructs a new PID controller for each object. 
@@ -59,10 +62,10 @@ public class SimSwerveModule implements GenericSwerveModule{
 
     @Override
     public void setClosedDriveState(SwerveModuleState state) {
-        SmartDashboard.putNumber("setMPS", state.speedMetersPerSecond);
+        //SmartDashboard.putNumber("setMPS", state.speedMetersPerSecond);
         SmartDashboard.putBoolean("isAtSetpoint", drivePID.atSetpoint());
         double ffCalc = driveFeedforward.calculate(state.speedMetersPerSecond);
-        double input = drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond);
+        double input = drivePID.calculate(getDriveVelocity() / SwerveConstants.wheelCircumference, state.speedMetersPerSecond * driveGearRatio / SwerveConstants.wheelCircumference);
         //input = drivePID.calculate(getDriveVelocity(), 100 * SwerveConstants.wheelCircumference);
 
         driveMotorSim.setInputVoltage(input);
@@ -70,14 +73,14 @@ public class SimSwerveModule implements GenericSwerveModule{
 
     @Override
     public double getDriveVelocity() {
-        SmartDashboard.putNumber("driveVel", ((driveMotorSim.getAngularVelocityRadPerSec() / (2*Math.PI)) * SwerveConstants.wheelCircumference));
+        //SmartDashboard.putNumber("driveVel", ((driveMotorSim.getAngularVelocityRadPerSec() / (2*Math.PI)) * SwerveConstants.wheelCircumference));
         SmartDashboard.putNumber("driveVoltage", driveMotorSim.getInputVoltage());
         return ((driveMotorSim.getAngularVelocityRadPerSec() / (2*Math.PI)) * SwerveConstants.wheelCircumference);
     }
 
     @Override
     public double getDrivePosition() {
-        return driveMotorSim.getAngularPositionRotations();
+        return driveMotorSim.getAngularPositionRotations() * SwerveConstants.wheelCircumference;
     }
 
     @Override

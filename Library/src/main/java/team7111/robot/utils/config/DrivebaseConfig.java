@@ -44,7 +44,7 @@ public class DrivebaseConfig {
         double wheelDiameter = Units.inchesToMeters(4);
 
         double driveGearing = 6.75 / 1.0;
-        double angleGearing = 6.75 / 1.0;
+        double angleGearing = 150.0 / 7.0;
         double driveMOI = 0.019835507; //weight of robot in pounds 56.1
         double angleMOI = 0.0000000001;
         int driveCurrentLimit = 40;
@@ -54,7 +54,7 @@ public class DrivebaseConfig {
         boolean driveBrakeMode = true;
         boolean angleBrakeMode = false;
         PIDController drivePID = new PIDController(5, 0.0, 0.0);
-        PIDController anglePID = new PIDController(5, 0.0, 0.0);
+        PIDController anglePID = new PIDController(50, 0.0, 0.0);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
         SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
 

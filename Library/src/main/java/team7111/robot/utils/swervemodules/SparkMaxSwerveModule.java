@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.utils.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
@@ -27,6 +28,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     private RelativeEncoder driveEncoder;
     private SparkClosedLoopController drivePID;
     private SimpleMotorFeedforward driveFeedforward;
+    private double driveGearRatio;
 
     private SparkMax angleMotor;
     private SparkBaseConfig angleMotorConfig;
@@ -43,6 +45,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
         driveEncoder = driveMotor.getEncoder();
         driveFeedforward = config.driveMotor.ff;//new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
         drivePID = driveMotor.getClosedLoopController();
+        driveGearRatio = config.driveMotor.gearRatio;
 
         angleMotor = new SparkMax(config.angleMotor.id, MotorType.kBrushless);
         angleEncoder = angleMotor.getEncoder();
@@ -57,18 +60,22 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
 
     @Override
     public void setClosedDriveState(SwerveModuleState state) {
-        drivePID.setReference(state.speedMetersPerSecond, SparkMax.ControlType.kVelocity, ClosedLoopSlot.kSlot0, driveFeedforward.calculate(state.speedMetersPerSecond));
+        double speedRPM = (state.speedMetersPerSecond * driveGearRatio * 60.0) / SwerveConstants.wheelCircumference;
+        SmartDashboard.putNumber("converted velocity", speedRPM);
+        SmartDashboard.putNumber("received state", state.speedMetersPerSecond);
+        SmartDashboard.putNumber("reconverted state", speedRPM * SwerveConstants.wheelCircumference / (60.0 * driveGearRatio));
+        drivePID.setReference(speedRPM, SparkMax.ControlType.kVelocity, ClosedLoopSlot.kSlot0, driveFeedforward.calculate(speedRPM));
     }
 
     @Override
     public double getDriveVelocity() {
-        double velocity = driveEncoder.getVelocity();
+        double velocity = driveEncoder.getVelocity() * SwerveConstants.wheelCircumference / (60.0 * driveGearRatio);
         return velocity;
     }
 
     @Override
     public double getDrivePosition() {
-        double distance = driveEncoder.getPosition();
+        double distance = driveEncoder.getPosition() * SwerveConstants.wheelCircumference / driveGearRatio;
         return distance;
     }
 
@@ -93,8 +100,10 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     }
 
     public void configure(){
-        driveMotorConfig.encoder.positionConversionFactor(SwerveConstants.driveRotationsToMeters);
-        driveMotorConfig.encoder.velocityConversionFactor(SwerveConstants.driveRPMToMPS);
+        driveMotorConfig.encoder.positionConversionFactor(1);
+        driveMotorConfig.encoder.velocityConversionFactor(1);
+        driveMotorConfig.absoluteEncoder.positionConversionFactor(1);
+        driveMotorConfig.absoluteEncoder.velocityConversionFactor(1);
         angleMotorConfig.closedLoop.positionWrappingEnabled(true);
         driveMotor.configure(driveMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
         angleMotor.configure(angleMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
