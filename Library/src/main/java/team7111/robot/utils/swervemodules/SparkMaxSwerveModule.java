@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.utils.config.SwerveModuleConfig;
 import team7111.robot.utils.encoder.GenericEncoder;
@@ -59,13 +60,16 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
 
     @Override
     public void setClosedDriveState(SwerveModuleState state) {
-        double speedRPM = state.speedMetersPerSecond * driveGearRatio * 60 / SwerveConstants.wheelCircumference;
+        double speedRPM = (state.speedMetersPerSecond * driveGearRatio * 60.0) / SwerveConstants.wheelCircumference;
+        SmartDashboard.putNumber("converted velocity", speedRPM);
+        SmartDashboard.putNumber("received state", state.speedMetersPerSecond);
+        SmartDashboard.putNumber("reconverted state", speedRPM * SwerveConstants.wheelCircumference / (60.0 * driveGearRatio));
         drivePID.setReference(speedRPM, SparkMax.ControlType.kVelocity, ClosedLoopSlot.kSlot0, driveFeedforward.calculate(speedRPM));
     }
 
     @Override
     public double getDriveVelocity() {
-        double velocity = driveEncoder.getVelocity() * SwerveConstants.wheelCircumference / (60 * driveGearRatio);
+        double velocity = driveEncoder.getVelocity() * SwerveConstants.wheelCircumference / (60.0 * driveGearRatio);
         return velocity;
     }
 

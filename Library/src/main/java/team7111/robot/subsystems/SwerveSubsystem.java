@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +41,8 @@ public class SwerveSubsystem extends SubsystemBase {
             NetworkTableInstance.getDefault().getStructArrayTopic("Commanded Swerve States", SwerveModuleState.struct).publish();
     private StructArrayPublisher<SwerveModuleState> actualStatePublisher = 
             NetworkTableInstance.getDefault().getStructArrayTopic("Actual Swerve States", SwerveModuleState.struct).publish();
+    private StructPublisher<Pose2d> robotPosePublisher = 
+            NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
     
     private PathMaster pathMaster = null;
 
@@ -246,6 +249,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         field.setRobotPose(getPose());
         SmartDashboard.putData(field);
+        robotPosePublisher.set(getPose());
 
         actualStatePublisher.set(getStates());
 
