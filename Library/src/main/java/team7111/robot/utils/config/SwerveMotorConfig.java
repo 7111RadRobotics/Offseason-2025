@@ -44,8 +44,8 @@ public class SwerveMotorConfig {
         SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.closedLoopRampRate(0);
         
-        sparkMaxConfig.absoluteEncoder.positionConversionFactor(gearRatio);
-        sparkMaxConfig.encoder.positionConversionFactor(gearRatio);
+        //sparkMaxConfig.absoluteEncoder.positionConversionFactor(gearRatio);
+        //sparkMaxConfig.encoder.positionConversionFactor(gearRatio);
         
         if (isBrakeMode) {
             sparkMaxConfig.idleMode(IdleMode.kBrake);

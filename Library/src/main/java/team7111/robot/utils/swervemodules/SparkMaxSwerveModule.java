@@ -34,6 +34,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     private SparkBaseConfig angleMotorConfig;
     private RelativeEncoder angleEncoder;
     private SparkClosedLoopController anglePID;
+    private double angleGearRatio;
 
     public SparkMaxSwerveModule(SwerveModuleConfig config){
         this.encoder = config.encoder;
@@ -50,6 +51,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
         angleMotor = new SparkMax(config.angleMotor.id, MotorType.kBrushless);
         angleEncoder = angleMotor.getEncoder();
         anglePID = angleMotor.getClosedLoopController(); 
+        angleGearRatio = config.angleMotor.gearRatio;
     }
 
     @Override
@@ -81,12 +83,12 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
 
     @Override
     public void setAngle(Rotation2d angle){
-        anglePID.setReference(angle.getRotations(), SparkMax.ControlType.kPosition);
+        anglePID.setReference(angle.getRotations() * angleGearRatio, SparkMax.ControlType.kPosition);
     }
 
     @Override
     public Rotation2d getAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getPosition());
+        return Rotation2d.fromRotations(angleEncoder.getPosition() / angleGearRatio);
     }
 
     @Override
@@ -100,12 +102,14 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     }
 
     public void configure(){
-        driveMotorConfig.encoder.positionConversionFactor(1);
-        driveMotorConfig.encoder.velocityConversionFactor(1);
-        driveMotorConfig.absoluteEncoder.positionConversionFactor(1);
-        driveMotorConfig.absoluteEncoder.velocityConversionFactor(1);
+        //driveMotorConfig.encoder.positionConversionFactor(1);
+        //driveMotorConfig.encoder.velocityConversionFactor(1);
+        //driveMotorConfig.absoluteEncoder.positionConversionFactor(1);
+        //driveMotorConfig.absoluteEncoder.velocityConversionFactor(1);
         angleMotorConfig.closedLoop.positionWrappingEnabled(true);
-        driveMotor.configure(driveMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-        angleMotor.configure(angleMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        //angleMotorConfig.closedLoop.outputRange(-0.5, 0.5);
+        angleMotorConfig.closedLoop.positionWrappingInputRange(-0.5 * angleGearRatio, 0.5 * angleGearRatio);
+        driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        angleMotor.configure(angleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 }
