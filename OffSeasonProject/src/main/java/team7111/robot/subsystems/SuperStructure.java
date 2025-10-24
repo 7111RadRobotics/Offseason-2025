@@ -2,14 +2,14 @@
 package team7111.robot.subsystems;
 
 import team7111.robot.subsystems.Intake.IntakeStates;
-import team7111.robot.subsystems.Shooter.ShooterStates;
+import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
 
 class SuperStructure {
 
 
     Vision vision;
     Intake intake;
-    Shooter shooter;
+    ShooterSubsystem shooter;
 
 
 
