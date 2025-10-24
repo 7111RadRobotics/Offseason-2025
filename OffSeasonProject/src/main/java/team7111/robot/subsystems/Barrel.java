@@ -23,35 +23,28 @@ public class Barrel {
         switch(state) {
             case intake:
                 intakeMethod();
-            break;
-
+                break;
             case adjust:
                 adjustMethod();
-            break;
-
+                break;
             case readjust:
                 readjustMethod();
-            break;
-
+                break;
             case shoot:
                 shootMethod();
-            break;
-
+                break;
             case reverse:
                 reverseMethod();
-            break;
-
+                break;
             case unload:
                 unloadMethod();
-            break;
-
+                break;
             case loaded:
                 loadedMethod();
-            break;
-
+                break;
             case defaultState:
                 defaultStateMethod();
-            break;
+                break;
         }
     }
 

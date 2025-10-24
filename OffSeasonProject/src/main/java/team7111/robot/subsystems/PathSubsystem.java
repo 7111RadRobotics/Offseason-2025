@@ -24,7 +24,7 @@ public class PathSubsystem {
     public void setCurrentPath(paths path) {
         switch (path) {
             case home:
-                
+
                 break;
             default:
                 currentPath = null;
