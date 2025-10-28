@@ -122,6 +122,47 @@ public class Path {
     }
 
     /**
+     * Flips the waypoint positions and rotations of all waypoints
+     */
+    public void flipPath()
+    {
+        //X and y from origins.
+        double length = mapLengthX;
+        double width = mapLengthY;
+        for(int i = 0; i < waypoints.length; i++) {
+            //Gets waypoint position
+            double waypointX = waypoints[i].getPose().getX();
+            double waypointY = waypoints[i].getPose().getY();
+            double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
+
+            double newWayX;
+            double newWayY;
+            double newWayRot;
+            //if true, then it needs to be blue alliance aligned again.
+            if(isflipped){
+                //Undoes flip
+                newWayX = -waypointX + length;
+                newWayY = -waypointY + width;
+                isflipped = false;
+            }else{
+                //Flips
+                newWayX = length - waypointX;
+                newWayY = width - waypointY;
+                isflipped = true;
+            }
+            //Rotation flipping
+            newWayRot = waypointRot + 180;
+            newWayRot = newWayRot % 360; //Sets angle to within 360.
+
+            Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, new Rotation2d()), 
+            waypoints[i].getTranslationConstraints(), waypoints[i].getRotationConstraints());
+
+            waypoints[i] = newWaypoint;
+        }
+
+    }
+    
+    /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.
      */

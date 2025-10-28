@@ -86,6 +86,13 @@ public class PathMaster {
         }
     }
 
+    /**
+     * Flips path waypoint's positions and rotations. Keeps origin.
+     */
+    public void flipField(Path path){
+        path.flipPath();
+    }
+    
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
