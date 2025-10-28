@@ -40,11 +40,15 @@ public class ShooterSubsystem implements Subsystem {
 
     ShooterStates state = ShooterStates.defaultState;
 
-    TalonFX shooterPivotMotor = new TalonFX(0);
+    private double visionAngle = 0;
 
-    SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
+    private double visionSpeed = 0;
 
-    SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
+    private TalonFX shooterPivotMotor = new TalonFX(0);
+
+    private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
+
+    private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
         .withIdleMode(MotorMode.BRAKE)
@@ -55,7 +59,7 @@ public class ShooterSubsystem implements Subsystem {
         .withTelemetry("shooterPivotMotors", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40));
 
-    SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
+    private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
         .withIdleMode(MotorMode.BRAKE)
@@ -67,23 +71,23 @@ public class ShooterSubsystem implements Subsystem {
         .withTelemetry("shooterWheelsMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40));
 
-    SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
+    private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
 
-    SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
+    private SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
 
-    PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
+    private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
         .withStartingPosition(Degrees.of(0))
         .withWrapping(Degree.of(0), Degree.of(360))
         .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Meters.of(0), Pounds.of(0));
 
-    ShooterConfig shooterFlyWheels = new ShooterConfig(shooterWheels)
+    private ShooterConfig flywheelConfig = new ShooterConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
         .withTelemetry("Shooter", TelemetryVerbosity.HIGH)
         .withUpperSoftLimit(RPM.of(1000));
 
-    private Shooter shooter = new Shooter(shooterFlyWheels);
+    private Shooter shooter = new Shooter(flywheelConfig);
 
     public enum ShooterStates {
         prepareShot,
@@ -140,15 +144,29 @@ public class ShooterSubsystem implements Subsystem {
         manageState();
     }
 
-    private void prepareShot() {}
+    private void prepareShot() {
+        shooter.setSpeed(RPM.of(160)).execute();
+        shooterPivot.setPosition(Degrees.of(90));
+    }
 
-    private void shoot() {}
+    private void shoot() {
+        shooter.setSpeed(RPM.of(160)).execute();
+    }
 
-    private void reverse() {}
+    private void reverse() {
+        shooter.setSpeed(RPM.of(-80)).execute();
+    }
 
-    private void prepareShotVision() {}
+    private void prepareShotVision() {
+        shooterPivot.setPosition(Degrees.of(visionAngle));
+        shooter.setSpeed(RPM.of(visionSpeed));
+    }
 
-    private void manual() {}
+    private void manual() {
 
-    private void idle() {}
+    }
+
+    private void idle() {
+
+    }
 }

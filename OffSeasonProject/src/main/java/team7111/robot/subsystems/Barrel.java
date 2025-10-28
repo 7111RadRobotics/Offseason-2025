@@ -1,8 +1,14 @@
 package team7111.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 public class Barrel {
 
     private BarrelStates state = BarrelStates.defaultState;
+
+    private DigitalInput beamBreak = new DigitalInput(1);
+
+    public boolean beamBrakeState = false;
 
     public enum BarrelStates {
         intake,
@@ -12,7 +18,7 @@ public class Barrel {
         reverse,
         unload,
         loaded,
-        defaultState
+        defaultState,
     };
 
     public void setState(BarrelStates state) {
@@ -49,29 +55,38 @@ public class Barrel {
     }
 
     public void periodic() {
+        this.beamBrakeState = beamBreak.get();
     }
 
     private void intakeMethod() {
+
     }
 
     private void adjustMethod() {
+
     }
 
     private void readjustMethod() {
+
     }
 
     private void shootMethod() {
+
     }
 
     private void reverseMethod() {
+
     }
 
     private void unloadMethod() {
+
     }
 
     private void loadedMethod() {
+
     }
 
     private void defaultStateMethod() {
+
     }
 }
