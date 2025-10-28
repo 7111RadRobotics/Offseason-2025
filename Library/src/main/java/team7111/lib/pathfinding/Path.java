@@ -3,10 +3,17 @@ package team7111.lib.pathfinding;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Path {
+
+    private double mapLengthX = 0;
+    private double mapLengthY = 0;
+
+    private boolean isflipped = false;
 
     //Robot position as a supplied Pose2d
     private Supplier<Pose2d> robotPose;
@@ -65,7 +72,14 @@ public class Path {
      */
     public double getRotationSpeed()
     {
-        return rotTransSpeed.getAsDouble();
+        double speed rotTransSpeed.getAsDouble()
+        if(speed > waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
@@ -73,7 +87,15 @@ public class Path {
      */
     public double getTranslationXSpeed()
     {
-        return xTransSpeed.getAsDouble();
+        double speed = xTransSpeed.getAsDouble();
+        
+        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
@@ -81,7 +103,15 @@ public class Path {
      */
     public double getTranslationYSpeed()
     {
-        return yTransSpeed.getAsDouble();
+        double speed = yTransSpeed.getAsDouble();
+
+        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
@@ -121,6 +151,47 @@ public class Path {
         isPathFinished = false;
     }
 
+    /**
+     * Flips the waypoint positions and rotations of all waypoints
+     */
+    public void flipPath()
+    {
+        //X and y from origins.
+        double length = mapLengthX;
+        double width = mapLengthY;
+        for(int i = 0; i < waypoints.length; i++) {
+            //Gets waypoint position
+            double waypointX = waypoints[i].getPose().getX();
+            double waypointY = waypoints[i].getPose().getY();
+            double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
+
+            double newWayX;
+            double newWayY;
+            double newWayRot;
+            //if true, then it needs to be blue alliance aligned again.
+            if(isflipped){
+                //Undoes flip
+                newWayX = -waypointX + length;
+                newWayY = -waypointY + width;
+                isflipped = false;
+            }else{
+                //Flips
+                newWayX = length - waypointX;
+                newWayY = width - waypointY;
+                isflipped = true;
+            }
+            //Rotation flipping
+            newWayRot = waypointRot + 180;
+            newWayRot = newWayRot % 360; //Sets angle to within 360.
+
+            Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, new Rotation2d()), 
+            waypoints[i].getTranslationConstraints(), waypoints[i].getRotationConstraints());
+
+            waypoints[i] = newWaypoint;
+        }
+
+    }
+    
     /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.
