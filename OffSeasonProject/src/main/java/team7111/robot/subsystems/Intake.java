@@ -116,11 +116,11 @@ public class Intake extends SubsystemBase{
     }
 
     private void store() {
-        
+        intake.setSpeed(DegreesPerSecond.of(0));
     }
 
     private void deploy() {
-
+        intake.setSpeed(DegreesPerSecond.of(50));
     }
 
     private void transition() {
@@ -128,7 +128,7 @@ public class Intake extends SubsystemBase{
     }
 
     private void eject() {
-
+        intake.setSpeed(DegreesPerSecond.of(-50));
     }
 
     private void manual() {
