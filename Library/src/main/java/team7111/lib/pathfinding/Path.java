@@ -3,10 +3,17 @@ package team7111.lib.pathfinding;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Path {
+
+    private double mapLengthX = 0;
+    private double mapLengthY = 0;
+
+    private boolean isflipped = false;
 
     //Robot position as a supplied Pose2d
     private Supplier<Pose2d> robotPose;
@@ -65,7 +72,14 @@ public class Path {
      */
     public double getRotationSpeed()
     {
-        return rotTransSpeed.getAsDouble();
+        double speed rotTransSpeed.getAsDouble()
+        if(speed > waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
@@ -73,7 +87,15 @@ public class Path {
      */
     public double getTranslationXSpeed()
     {
-        return xTransSpeed.getAsDouble();
+        double speed = xTransSpeed.getAsDouble();
+        
+        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
@@ -81,7 +103,15 @@ public class Path {
      */
     public double getTranslationYSpeed()
     {
-        return yTransSpeed.getAsDouble();
+        double speed = yTransSpeed.getAsDouble();
+
+        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        }
+        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
+            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        }
+        return speed;
     }
 
     /**
