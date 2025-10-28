@@ -42,17 +42,23 @@ import yams.mechanisms.velocity.Shooter;
 
 public class Intake extends SubsystemBase{
 
-    SparkMax IntakeMotor = new SparkMax(1, MotorType.kBrushless);
+    SparkMax intakeMotor = new SparkMax(1, MotorType.kBrushless);
 
-    private SmartMotorControllerConfig IntakeMotorConfig = new SmartMotorControllerConfig(this)
+    String[] gearBoxString = {"1","2"};
+
+    GearBox intakeGearBox = new GearBox(gearBoxString);
+
+    MechanismGearing intakeGearing = new MechanismGearing(intakeGearBox);
+
+    private SmartMotorControllerConfig intakeMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withSoftLimit(Degrees.of(0), Degrees.of(180))
-        .withGearing(SmartMechanism.gearing(SmartMechanism.gearbox(1,1)));
+        .withGearing(intakeGearing);
 
-    private SmartMotorController IntakeSparkController = new SparkWrapper(IntakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
+    private SmartMotorController intakeSparkController = new SparkWrapper(intakeMotor, DCMotor.getNEO(1), intakeMotorConfig);
 
-    private final ShooterConfig intakeConfig = new ShooterConfig(IntakeSparkController)
+    private final ShooterConfig intakeConfig = new ShooterConfig(intakeSparkController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(.5))
         .withUpperSoftLimit(RPM.of(1000))
@@ -109,14 +115,23 @@ public class Intake extends SubsystemBase{
       intake.simIterate();
     }
 
-    private void store() {}
-
-    private void deploy() {
+    private void store() {
+        
     }
 
-    private void transition() {}
+    private void deploy() {
 
-    private void eject() {}
+    }
 
-    private void manual() {}
+    private void transition() {
+
+    }
+
+    private void eject() {
+
+    }
+
+    private void manual() {
+
+    }
 }
