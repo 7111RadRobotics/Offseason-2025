@@ -37,12 +37,13 @@ public class RobotContainer {
         autoChooser = new SendableChooser<>();
 
         Waypoint[] waypoints = new Waypoint[]{
-            new Waypoint(new Pose2d(3, 1, Rotation2d.fromDegrees(0)), new WaypointConstraints(10, 4, 0.5), new WaypointConstraints(360, 0, 5)), 
+            new Waypoint(new Pose2d(3, 1, Rotation2d.fromDegrees(0)), new WaypointConstraints(10, 4, 0.5), new WaypointConstraints(360, 0, 360)), 
             new Waypoint(new Pose2d(7, 6, Rotation2d.fromDegrees(0)), new WaypointConstraints(10, 0, 0.1), new WaypointConstraints(360, 0, 5)),
         };
 
+        Path path = new Path(waypoints);
 
-        autoChooser.addOption("Path_TEST", swerve.setPath(new Path(waypoints)));
+        autoChooser.addOption("Path_TEST", swerve.setPath(path).andThen(swerve.setSwerveStateCommand(SwerveState.initializePath)));
 
         SmartDashboard.putData("autoChooser", autoChooser);
 
@@ -53,7 +54,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         Command auto = Commands.print("autochooser null");
         if(autoChooser != null)
-            auto = autoChooser.getSelected().andThen(swerve.setSwerveStateCommand(SwerveState.initializePath));
+            auto = autoChooser.getSelected();
         return auto;
     }
 

@@ -72,13 +72,22 @@ public class Path {
      */
     public double getRotationSpeed()
     {
-        double speed rotTransSpeed.getAsDouble()
-        if(speed > waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed()) {
-            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMaxSpeed();
+        double speed = rotTransSpeed.getAsDouble();
+        WaypointConstraints waypointConstraints = getCurrentWaypoint().getRotationConstraints();
+        if(speed > waypointConstraints.getMaxSpeed()) {
+            speed = waypointConstraints.getMaxSpeed();
         }
-        else if(speed < waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed()) {
-            speed = waypoints[currentWaypointIndex].getRotationConstraints().getMinSpeed();
+        if(speed < -waypointConstraints.getMaxSpeed()){
+            speed = -waypointConstraints.getMaxSpeed();
         }
+        if(Math.abs(speed) < waypointConstraints.getMinSpeed()){
+            if(speed > 0){
+                speed = waypointConstraints.getMinSpeed();
+            }else{
+                speed = -waypointConstraints.getMinSpeed();
+            }
+        }
+        //speed = rotTransSpeed.getAsDouble();
         return speed;
     }
 
@@ -88,13 +97,24 @@ public class Path {
     public double getTranslationXSpeed()
     {
         double speed = xTransSpeed.getAsDouble();
-        
-        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
-            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        WaypointConstraints waypointConstraints = getCurrentWaypoint().getTranslationConstraints();
+        if(speed > waypointConstraints.getMaxSpeed()) {
+            speed = waypointConstraints.getMaxSpeed();
         }
-        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
-            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        if(speed < -waypointConstraints.getMaxSpeed()){
+            speed = -waypointConstraints.getMaxSpeed();
         }
+        if(Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getX())
+         < Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getY())){
+            if(Math.abs(speed) < waypointConstraints.getMinSpeed()){
+                if(speed > 0){
+                    speed = waypointConstraints.getMinSpeed();
+                }else{
+                    speed = -waypointConstraints.getMinSpeed();
+                }
+            }
+        }
+        //speed = xTransSpeed.getAsDouble();
         return speed;
     }
 
@@ -104,12 +124,22 @@ public class Path {
     public double getTranslationYSpeed()
     {
         double speed = yTransSpeed.getAsDouble();
-
-        if(speed > waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed()) {
-            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMaxSpeed();
+        WaypointConstraints waypointConstraints = getCurrentWaypoint().getTranslationConstraints();
+        if(speed > waypointConstraints.getMaxSpeed()) {
+            speed = waypointConstraints.getMaxSpeed();
         }
-        else if(speed < waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed()) {
-            speed = waypoints[currentWaypointIndex].getTranslationConstraints().getMinSpeed();
+        if(speed < -waypointConstraints.getMaxSpeed()){
+            speed = -waypointConstraints.getMaxSpeed();
+        }
+        if(Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getX())
+         > Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getY())){
+            if(Math.abs(speed) < waypointConstraints.getMinSpeed()){
+                if(speed > 0){
+                    speed = waypointConstraints.getMinSpeed();
+                }else{
+                    speed = -waypointConstraints.getMinSpeed();
+                }
+            }
         }
         return speed;
     }
