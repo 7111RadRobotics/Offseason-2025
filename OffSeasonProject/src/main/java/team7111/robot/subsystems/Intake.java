@@ -119,8 +119,6 @@ public class Intake extends SubsystemBase{
 
     private void transition() {}
 
-    private void eject() {}
-
     private void eject() {
         intake.setSpeed(DegreesPerSecond.of(-50));
     }
