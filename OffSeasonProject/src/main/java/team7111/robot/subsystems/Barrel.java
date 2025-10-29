@@ -8,8 +8,6 @@ public class Barrel {
 
     private DigitalInput beamBreak = new DigitalInput(1);
 
-    public boolean beamBrakeState = false;
-
     public enum BarrelStates {
         intake,
         adjust,
@@ -23,6 +21,10 @@ public class Barrel {
 
     public void setState(BarrelStates state) {
         this.state = state;
+    }
+
+    public boolean getBeamBrake() {
+        return beamBreak.get();
     }
 
     private void manageState() {
@@ -55,7 +57,6 @@ public class Barrel {
     }
 
     public void periodic() {
-        this.beamBrakeState = beamBreak.get();
     }
 
     private void intakeMethod() {

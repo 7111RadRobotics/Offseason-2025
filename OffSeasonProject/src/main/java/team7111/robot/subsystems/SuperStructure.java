@@ -3,6 +3,8 @@ package team7111.robot.subsystems;
 
 import team7111.robot.subsystems.Intake.IntakeStates;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
+import team7111.robot.subsystems.Barrel.BarrelStates;
+import team7111.robot.subsystems.Barrel;
 
 class SuperStructure {
 
@@ -10,8 +12,9 @@ class SuperStructure {
     Vision vision;
     Intake intake;
     ShooterSubsystem shooter;
+    Barrel barrel;
 
-
+    private double shotTimer = 0;
 
     enum superStates {
         intake,
@@ -19,11 +22,20 @@ class SuperStructure {
         prepShot,
         prepshotVision,
         unloaded,
-        
+        loaded
     };
 
+    superStates superState = superStates.unloaded;
     controlState control = controlState.defaultState;
-    actualState actual;
+    SuperState actual;
+
+    private void setSuperState(SuperState state) {
+        actual = state;
+    }
+
+    private void setSuperStates(superStates state) {
+        superState = state;
+    }
 
     private enum controlState {
         aButton,
@@ -37,11 +49,14 @@ class SuperStructure {
         defaultState,
     }
 
-    private enum actualState {
+    private enum SuperState {
         intake,
-        shootClose,
+        secure,
+        shoot,
+        prepareShot,
+        prepareShotVision,
+        eject,
         shootVision,
-        prepShot,
         manual,
         defaultState,
     }
@@ -89,44 +104,66 @@ class SuperStructure {
             case intake:
                 intakeState();
                 break;
-            case shootClose:
-                shootClose();
+            case secure:
+                secure();
                 break;
             case shootVision:
                 shootVision();
                 break;
-            case prepShot:
-                prepShot();
+            case eject:
+                eject();
                 break;
             case manual:
                 manual();
                 break;
             case defaultState:
                 defaultState();
-                break;      
+                break;   
+            case shoot:
+                shoot();
+                break;
             default:
                 break;
         }
     }
-        
-
-
 
     private void intakeState() {
-        
+        intake.setState(IntakeStates.deploy);
+        barrel.setState(BarrelStates.intake);
+        if (barrel.getBeamBrake() == true) {
+            setSuperState(SuperState.secure);
+        }
     }
 
     private void shootVision() {
         shooter.setState(ShooterStates.shoot);
     }
     
-    private void shootClose() {
+    private void eject() {
         shooter.setState(ShooterStates.shoot);
     }
 
-    private void prepShot() {
+    private void shoot() {
+        shooter.setState(ShooterStates.shoot);
+        barrel.setState(BarrelStates.shoot);
+        if (barrel.getBeamBrake() == true) {
+            shotTimer += 1;
+        }
+        if (shotTimer >= 20) {
+            setSuperStates(superStates.unloaded);
+        }
+    }
+
+    private void secure() {
         shooter.setState(ShooterStates.prepareShot);
         intake.setState(IntakeStates.transition);
+        barrel.setState(BarrelStates.adjust);
+        if (barrel.getBeamBrake() == false) {
+            barrel.setState(BarrelStates.readjust);
+            if (barrel.getBeamBrake() == true) {
+                setSuperStates(superStates.loaded);
+            }
+        }
     }
 
     private void manual() {
@@ -140,5 +177,6 @@ class SuperStructure {
     }
 
     public void periodic() {
+        
     }
 }
