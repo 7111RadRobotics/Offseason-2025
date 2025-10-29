@@ -109,14 +109,23 @@ public class Intake extends SubsystemBase{
       intake.simIterate();
     }
 
-    private void store() {}
+    private void store() {
+        intake.setSpeed(DegreesPerSecond.of(0));
+    }
 
     private void deploy() {
+        intake.setSpeed(DegreesPerSecond.of(50));
     }
 
     private void transition() {}
 
     private void eject() {}
 
-    private void manual() {}
+    private void eject() {
+        intake.setSpeed(DegreesPerSecond.of(-50));
+    }
+
+    private void manual() {
+
+    }
 }
