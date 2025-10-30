@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import yams.mechanisms.config.PivotConfig;
-import yams.mechanisms.config.ShooterConfig;
-import yams.mechanisms.velocity.Shooter;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
@@ -81,13 +81,13 @@ public class ShooterSubsystem implements Subsystem {
         .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Meters.of(0), Pounds.of(0));
 
-    private ShooterConfig flywheelConfig = new ShooterConfig(shooterWheels)
+    private FlyWheelConfig flywheelConfig = new FlyWheelConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
         .withTelemetry("Shooter", TelemetryVerbosity.HIGH)
         .withUpperSoftLimit(RPM.of(1000));
 
-    private Shooter shooter = new Shooter(flywheelConfig);
+    private FlyWheel shooter = new FlyWheel(flywheelConfig);
 
     public enum ShooterStates {
         prepareShot,
