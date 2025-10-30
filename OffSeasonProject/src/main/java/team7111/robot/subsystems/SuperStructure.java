@@ -13,7 +13,6 @@ class SuperStructure {
     Intake intake;
     ShooterSubsystem shooter;
     Barrel barrel;
-    BarrelStates barrelStates;
 
     private double shotTimer = 0;
 
@@ -29,6 +28,7 @@ class SuperStructure {
     superStates superState = superStates.unloaded;
     controlState control = controlState.defaultState;
     SuperState actual;
+    BarrelStates barrelStates;
 
     private void setSuperState(SuperState state) {
         actual = state;
@@ -132,7 +132,7 @@ class SuperStructure {
         intake.setState(IntakeStates.deploy);
         barrel.setState(BarrelStates.intake);
         if (barrel.getBeamBrake() == true) {
-            setSuperState(SuperState.secure);
+            setSuperState(SuperState.shoot);
         }
     }
 
@@ -166,13 +166,13 @@ class SuperStructure {
         intake.setState(IntakeStates.transition);
         barrel.setState(BarrelStates.adjust);
         if (barrel.getBeamBrake() == false) {
-        }
-        if (barrel.getBeamBrake() == true) {
-            if (barrelStates == barrelStates.readjust) {
-
-            }
-            if (barrelStates != barrelStates.readjust) {
+            if (barrelStates == BarrelStates.readjust) {
+            } else {
                 barrel.setState(BarrelStates.readjust);
+            }
+        } else {
+            if (barrelStates == BarrelStates.readjust) {
+                setSuperStates(superStates.loaded);
             }
         }
     }
