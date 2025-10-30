@@ -14,8 +14,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import yams.mechanisms.config.ShooterConfig;
-import yams.mechanisms.velocity.Shooter;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
@@ -39,13 +39,13 @@ public class Barrel extends SubsystemBase {
 
     private SmartMotorController barrelSparkController = new SparkWrapper(barrelMotor, DCMotor.getNEO(1), barrelMotorConfig);
 
-    private final ShooterConfig barrelConfig = new ShooterConfig(barrelSparkController)
+    private final FlyWheelConfig barrelConfig = new FlyWheelConfig(barrelSparkController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(.5))
         .withUpperSoftLimit(RPM.of(1000))
         .withTelemetry("IntakeConfig", TelemetryVerbosity.HIGH);
 
-    private Shooter barrel = new Shooter(barrelConfig);
+    private FlyWheel barrel = new FlyWheel(barrelConfig);
 
     public enum BarrelStates {
         intake,

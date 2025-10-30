@@ -36,9 +36,9 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 import yams.mechanisms.config.PivotConfig;
-import yams.mechanisms.config.ShooterConfig;
-import yams.mechanisms.config.ShooterConfig;
-import yams.mechanisms.velocity.Shooter;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
 
 public class Intake extends SubsystemBase{
 
@@ -52,13 +52,13 @@ public class Intake extends SubsystemBase{
 
     private SmartMotorController IntakeSparkController = new SparkWrapper(IntakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
 
-    private final ShooterConfig intakeConfig = new ShooterConfig(IntakeSparkController)
+    private final FlyWheelConfig intakeConfig = new FlyWheelConfig(IntakeSparkController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(.5))
         .withUpperSoftLimit(RPM.of(1000))
         .withTelemetry("IntakeConfig", TelemetryVerbosity.HIGH);
 
-    private Shooter intake = new Shooter(intakeConfig);
+    private FlyWheel intake = new FlyWheel(intakeConfig);
 
     public Intake() {}
 
