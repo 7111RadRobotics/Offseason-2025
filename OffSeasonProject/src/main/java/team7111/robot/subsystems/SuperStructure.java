@@ -16,26 +16,12 @@ class SuperStructure {
 
     private double shotTimer = 0;
 
-    enum superStates {
-        intake,
-        shoot,
-        prepShot,
-        prepshotVision,
-        unloaded,
-        loaded
-    };
-
-    superStates superState = superStates.unloaded;
     controlState control = controlState.defaultState;
     SuperState actual;
     BarrelStates barrelStates;
 
     private void setSuperState(SuperState state) {
         actual = state;
-    }
-
-    private void setSuperStates(superStates state) {
-        superState = state;
     }
 
     private enum controlState {
@@ -59,6 +45,8 @@ class SuperStructure {
         eject,
         shootVision,
         manual,
+        unloaded,
+        loaded,
         defaultState,
     }
 
@@ -123,6 +111,9 @@ class SuperStructure {
             case shoot:
                 shoot();
                 break;
+            case unloaded:
+                unloaded();
+                break;
             default:
                 break;
         }
@@ -147,17 +138,17 @@ class SuperStructure {
     private void shoot() {
         shooter.setState(ShooterStates.shoot);
         barrel.setState(BarrelStates.shoot);
-        if (barrel.getBeamBrake() == false) {
+        if (barrel.getBeamBrake() == true) {
             shotTimer = 0;
         }
         if (shotTimer >= 20) {
             shotTimer = 0;
         }
-        if (barrel.getBeamBrake() == true) {
+        if (barrel.getBeamBrake() == false) {
             shotTimer += 1;
         }
         if (shotTimer >= 20) {
-            setSuperStates(superStates.unloaded);
+            setSuperState(SuperState.unloaded);
         }
     }
 
@@ -172,7 +163,7 @@ class SuperStructure {
             }
         } else {
             if (barrelStates == BarrelStates.readjust) {
-                setSuperStates(superStates.loaded);
+                setSuperState(SuperState.loaded);
             }
         }
     }
@@ -185,6 +176,12 @@ class SuperStructure {
     private void defaultState() {
         shooter.setState(ShooterStates.defaultState);
         intake.setState(IntakeStates.defualtState);
+    }
+
+    private void unloaded() {
+        intake.setState(IntakeStates.store);
+        barrel.setState(barrelStates.unload);
+        shooter.setState(ShooterStates.idle);
     }
 
     public void periodic() {
