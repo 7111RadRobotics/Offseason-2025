@@ -53,7 +53,7 @@ public class DrivebaseConfig {
         boolean angleInversion = true;
         boolean driveBrakeMode = true;
         boolean angleBrakeMode = false;
-        PIDController drivePID = new PIDController(0.0005, 0.0, 0.0);
+        PIDController drivePID = new PIDController(0.00051, 0.0, 0.1);
         PIDController anglePID = new PIDController(0.1, 0.0, 0.0);
         //drivePID.setP(1);
         //anglePID.setP(50);
@@ -64,39 +64,39 @@ public class DrivebaseConfig {
         SwerveMotorConfig angleMotorConfig = new SwerveMotorConfig(DCMotor.getNEO(1), angleInversion, angleBrakeMode, angleGearing, angleMOI, angleCurrentLimit, anglePID, angleFF);
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration().withMagnetSensor(new MagnetSensorConfigs().withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
+        double canCoder0Offset = isSim
+            ? 0
+            : 97.031;
         double canCoder1Offset = isSim
             ? 0
-            : 134.4;
+            : 120.762;
         double canCoder2Offset = isSim
             ? 0
-            : 91.4;
+            : 140.889;
         double canCoder3Offset = isSim
             ? 0
-            : 128.49;
-        double canCoder4Offset = isSim
-            ? 0
-            : 75.49;
+            : 76.289;
 
         SwerveModuleConfig[] moduleConstants = new SwerveModuleConfig[]{
             new SwerveModuleConfig(
                 new SwerveMotorConfig(3, driveMotorConfig), 
                 new SwerveMotorConfig(4, angleMotorConfig), 
-                new CTREEncoder(2, encoderConfig), canCoder2Offset),
+                new CTREEncoder(2, encoderConfig), canCoder0Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(5, driveMotorConfig), 
                 new SwerveMotorConfig(6, angleMotorConfig), 
-                new CTREEncoder(3, encoderConfig), canCoder3Offset),
+                new CTREEncoder(3, encoderConfig), canCoder1Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(1, driveMotorConfig), 
                 new SwerveMotorConfig(2, angleMotorConfig), 
-                new CTREEncoder(1, encoderConfig), canCoder1Offset),
+                new CTREEncoder(1, encoderConfig), canCoder2Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(7, driveMotorConfig), 
                 new SwerveMotorConfig(8, angleMotorConfig), 
-                new CTREEncoder(4, encoderConfig), canCoder4Offset),
+                new CTREEncoder(4, encoderConfig), canCoder3Offset),
         };
 
         GenericSwerveModule[] moduleTypes;
