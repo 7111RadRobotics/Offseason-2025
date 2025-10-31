@@ -1,6 +1,7 @@
 package team7111.robot.utils;
 
 import java.io.IOException;
+import java.security.PrivateKey;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -20,7 +21,9 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import java.util.Optional;
 import team7111.robot.Constants;
 import team7111.robot.subsystems.Vision;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 
 public class Camera extends PhotonCamera{
     private Transform3d cameraToRobotCenter;
@@ -40,6 +43,14 @@ public class Camera extends PhotonCamera{
             throw new RuntimeException(e);
         }
     }
+
+    //From 2025 on season code
+    private final Matrix<N3,N1> visionStandardDeviation = MatBuilder.fill(Nat.N3(), Nat.N1(),1,1,1 * Math.PI);
+    private final double noisyDistanceMeters = 2.5;
+    private final double distanceWeight = 7;
+    private final double tagPresenceWeight = 10;
+    private final double poseAmbiguityShifter = 0.2;
+    private final double poseAmbiguityMultiplier = 4;
 
     public Camera(PhotonCamera camera, Transform3d cameraToRobotCenter, EstimatedRobotPose estRobotPose, Vision vision) {
         super(camera.getName());
@@ -91,13 +102,13 @@ public class Camera extends PhotonCamera{
             }
             double poseAmbiguityFactor = estRobotPose.targetsUsed.size() != 1
                 ? 1
-                : Math.max(1, estRobotPose.targetsUsed.get(0).getPoseAmbiguity() + Constants.vision.POSE_AMBIGUITY_SHIFTER * Constants.vision.POSE_AMBIGUITY_MULTIPLIER);
+                : Math.max(1, estRobotPose.targetsUsed.get(0).getPoseAmbiguity() + poseAmbiguityShifter * poseAmbiguityMultiplier);
             confidenceMultiplier = Math.max(1,
-                (Math.max(1, Math.max(0, smallestDistance - Constants.vision.NOISY_DISTANCE_METERS) * Constants.vision.DISTANCE_WEIGHT) * poseAmbiguityFactor) 
-                / (1 + ((estRobotPose.targetsUsed.size() - 1) * Constants.vision.TAG_PRESENCE_WEIGHT)));
+                (Math.max(1, Math.max(0, smallestDistance - noisyDistanceMeters) * distanceWeight) * poseAmbiguityFactor) 
+                / (1 + ((estRobotPose.targetsUsed.size() - 1) * tagPresenceWeight)));
         }
         SmartDashboard.putNumber(super.getName(), confidenceMultiplier);
-        return Constants.vision.VISION_MEASUREMENT_STANDARD_DEVIATIONS.times(confidenceMultiplier);
+        return visionStandardDeviation.times(confidenceMultiplier);
     }
 
     public Transform3d getCameraToRobot(){
