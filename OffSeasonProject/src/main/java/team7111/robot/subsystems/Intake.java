@@ -23,6 +23,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.TimeUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +38,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 import yams.mechanisms.config.PivotConfig;
+import yams.mechanisms.positional.Pivot;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
@@ -45,13 +47,13 @@ public class Intake extends SubsystemBase{
 
     private SparkMax intakeMotor = new SparkMax(1, MotorType.kBrushless);
 
-    private String[] intakeGear = {"1","1"};
+    private String[] intakeGear = {"1.2","1"};
 
     private GearBox intakeGearBox = new GearBox(intakeGear);
 
     private MechanismGearing intakeGearing = new MechanismGearing(intakeGearBox);
 
-    private String[] pivotGear = {"1","1"};
+    private String[] pivotGear = {"18","1"};
 
     private GearBox pivotGearBox = new GearBox(pivotGear);
 
@@ -66,7 +68,7 @@ public class Intake extends SubsystemBase{
     private SmartMotorController intakeSparkController = new SparkWrapper(intakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
 
     private final FlyWheelConfig intakeConfig = new FlyWheelConfig(intakeSparkController)
-        .withDiameter(Inches.of(4))
+        .withDiameter(Inches.of(2.25))
         .withMass(Pounds.of(.5))
         .withUpperSoftLimit(RPM.of(1000))
         .withTelemetry("IntakeConfig", TelemetryVerbosity.HIGH);
@@ -93,7 +95,9 @@ public class Intake extends SubsystemBase{
         .withWrapping(Degrees.of(0), Degrees.of(360))
         .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
-        .withMOI(Meters.of(0.25), Pounds.of(4));
+        .withMOI(Inches.of(8.876), Pounds.of(7.015));
+
+    private Pivot IntakePivot = new Pivot(pivotConfig);
 
     public Intake() {}
 
