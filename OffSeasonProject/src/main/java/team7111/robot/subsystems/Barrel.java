@@ -14,6 +14,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
@@ -32,10 +34,17 @@ public class Barrel extends SubsystemBase {
 
     public boolean beamBrakeState = false;
 
+    private String[] barrelGear = {"1","1"};
+
+    private GearBox barrelGearBox = new GearBox(barrelGear);
+
+    private MechanismGearing barrelGearing = new MechanismGearing(barrelGearBox);
+
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopRampRate(Seconds.of(0.25))
-        .withSoftLimit(Degrees.of(0), Degrees.of(180));
+        .withSoftLimit(Degrees.of(0), Degrees.of(180))
+        .withGearing(barrelGearing);
 
     private SmartMotorController barrelSparkController = new SparkWrapper(barrelMotor, DCMotor.getNEO(1), barrelMotorConfig);
 

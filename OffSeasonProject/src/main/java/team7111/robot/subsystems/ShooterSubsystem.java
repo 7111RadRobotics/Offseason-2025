@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import yams.mechanisms.config.PivotConfig;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
@@ -48,6 +50,18 @@ public class ShooterSubsystem implements Subsystem {
 
     private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
 
+    private String[] wheelGear = {"1","1"};
+
+    private GearBox wheelGearBox = new GearBox(wheelGear);
+
+    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
+
+    private String[] pivotGear = {"1","1"};
+
+    private GearBox pivotGearBox = new GearBox(pivotGear);
+
+    private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
+
     private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
@@ -57,7 +71,8 @@ public class ShooterSubsystem implements Subsystem {
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withOpenLoopRampRate(Seconds.of(0.25))
         .withTelemetry("shooterPivotMotors", TelemetryVerbosity.HIGH)
-        .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(40))
+        .withGearing(pivotGearing);
 
     private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -69,7 +84,8 @@ public class ShooterSubsystem implements Subsystem {
         .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withTelemetry("shooterWheelsMotor", TelemetryVerbosity.HIGH)
-        .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(40))
+        .withGearing(wheelGearing);
 
     private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
 
