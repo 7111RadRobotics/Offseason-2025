@@ -45,17 +45,23 @@ public class Intake extends SubsystemBase{
 
     private SparkMax intakeMotor = new SparkMax(1, MotorType.kBrushless);
 
-    private String[] gear = {"1","1"};
+    private String[] intakeGear = {"1","1"};
 
-    private GearBox gearBox = new GearBox(gear);
+    private GearBox intakeGearBox = new GearBox(intakeGear);
 
-    private MechanismGearing gearing = new MechanismGearing(gearBox);
+    private MechanismGearing intakeGearing = new MechanismGearing(intakeGearBox);
+
+    private String[] pivotGear = {"1","1"};
+
+    private GearBox pivotGearBox = new GearBox(pivotGear);
+
+    private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
 
     private SmartMotorControllerConfig IntakeMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withSoftLimit(Degrees.of(0), Degrees.of(180))
-        .withGearing(gearing);
+        .withGearing(intakeGearing);
 
     private SmartMotorController intakeSparkController = new SparkWrapper(intakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
 
@@ -72,7 +78,7 @@ public class Intake extends SubsystemBase{
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
-        .withGearing(gearing(gearbox(3, 4)))
+        .withGearing(pivotGearing)
         .withIdleMode(MotorMode.BRAKE)
         .withMotorInverted(false)
         .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH)
