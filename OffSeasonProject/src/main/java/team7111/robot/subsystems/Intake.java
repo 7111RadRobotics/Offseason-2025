@@ -44,11 +44,17 @@ public class Intake extends SubsystemBase{
 
     SparkMax IntakeMotor = new SparkMax(1, MotorType.kBrushless);
 
+    private String[] gear = {"1","1"};
+
+    private GearBox gearBox = new GearBox(gear);
+
+    private MechanismGearing gearing = new MechanismGearing(gearBox);
+
     private SmartMotorControllerConfig IntakeMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withSoftLimit(Degrees.of(0), Degrees.of(180))
-        .withGearing(SmartMechanism.gearing(SmartMechanism.gearbox(1,1)));
+        .withGearing(gearing);
 
     private SmartMotorController IntakeSparkController = new SparkWrapper(IntakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
 
