@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Pounds;
@@ -42,7 +43,7 @@ import yams.mechanisms.velocity.FlyWheel;
 
 public class Intake extends SubsystemBase{
 
-    SparkMax IntakeMotor = new SparkMax(1, MotorType.kBrushless);
+    private SparkMax intakeMotor = new SparkMax(1, MotorType.kBrushless);
 
     private SmartMotorControllerConfig IntakeMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -50,15 +51,37 @@ public class Intake extends SubsystemBase{
         .withSoftLimit(Degrees.of(0), Degrees.of(180))
         .withGearing(SmartMechanism.gearing(SmartMechanism.gearbox(1,1)));
 
-    private SmartMotorController IntakeSparkController = new SparkWrapper(IntakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
+    private SmartMotorController intakeSparkController = new SparkWrapper(intakeMotor, DCMotor.getNEO(1), IntakeMotorConfig);
 
-    private final FlyWheelConfig intakeConfig = new FlyWheelConfig(IntakeSparkController)
+    private final FlyWheelConfig intakeConfig = new FlyWheelConfig(intakeSparkController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(.5))
         .withUpperSoftLimit(RPM.of(1000))
         .withTelemetry("IntakeConfig", TelemetryVerbosity.HIGH);
 
     private FlyWheel intake = new FlyWheel(intakeConfig);
+
+    private SparkMax pivotMotor = new SparkMax(2, MotorType.kBrushless);
+
+    private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
+        .withControlMode(ControlMode.CLOSED_LOOP)
+        .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
+        .withGearing(gearing(gearbox(3, 4)))
+        .withIdleMode(MotorMode.BRAKE)
+        .withMotorInverted(false)
+        .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH)
+        .withStatorCurrentLimit(Amps.of(40))
+        .withClosedLoopRampRate(Seconds.of(0.25))
+        .withOpenLoopRampRate(Seconds.of(0.25));
+    
+    private SmartMotorController pivot = new SparkWrapper(pivotMotor, DCMotor.getNEO(1), pivotMotorConfig);
+
+    private PivotConfig pivotConfig = new PivotConfig(pivot)
+        .withStartingPosition(Degrees.of(0))
+        .withWrapping(Degrees.of(0), Degrees.of(360))
+        .withHardLimit(Degrees.of(0), Degrees.of(720))
+        .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
+        .withMOI(Meters.of(0.25), Pounds.of(4));
 
     public Intake() {}
 
