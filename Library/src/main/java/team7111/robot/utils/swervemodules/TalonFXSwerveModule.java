@@ -53,14 +53,14 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
     @Override
     public void setClosedDriveState(SwerveModuleState state) {
         var speed = state.speedMetersPerSecond;
-        driveVelocity.Velocity = speed / SwerveConstants.driveRPMToMPS;
+        driveVelocity.Velocity = speed / SwerveConstants.driveRotationsToMeters;
         driveVelocity.FeedForward = driveFF.calculate(speed);
         driveMotor.setControl(driveVelocity);
     }
 
     @Override
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValueAsDouble() * SwerveConstants.driveRPMToMPS;
+        return driveMotor.getVelocity().getValueAsDouble() * SwerveConstants.driveRotationsToMeters;
     }
 
     @Override

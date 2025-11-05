@@ -36,6 +36,7 @@ public class DrivebaseConfig {
 
     /**
      * Hi simon :)
+     * Hey you can't do that:]
      */
     public static DrivebaseConfig getSoundWave(boolean isSim){
 
@@ -53,7 +54,7 @@ public class DrivebaseConfig {
         boolean angleInversion = true;
         boolean driveBrakeMode = true;
         boolean angleBrakeMode = false;
-        PIDController drivePID = new PIDController(0.00051, 0.0, 0.1);
+        PIDController drivePID = new PIDController(0.1, 0.0, 0.0);
         PIDController anglePID = new PIDController(0.1, 0.0, 0.0);
         //drivePID.setP(1);
         //anglePID.setP(50);
