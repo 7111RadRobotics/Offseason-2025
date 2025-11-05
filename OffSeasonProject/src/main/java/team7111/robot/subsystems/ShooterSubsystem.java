@@ -56,7 +56,7 @@ public class ShooterSubsystem implements Subsystem {
 
     private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
 
-    private String[] pivotGear = {"1","1"};
+    private String[] pivotGear = {"112","1"};
 
     private GearBox pivotGearBox = new GearBox(pivotGear);
 
@@ -95,13 +95,15 @@ public class ShooterSubsystem implements Subsystem {
         .withStartingPosition(Degrees.of(0))
         .withWrapping(Degree.of(0), Degree.of(360))
         .withHardLimit(Degrees.of(0), Degrees.of(720))
-        .withMOI(Meters.of(0), Pounds.of(0));
+        .withMOI(Meters.of(0), Pounds.of(3.953))
+        .withHardLimit(Degrees.of(0), Degrees.of(30));
 
     private FlyWheelConfig flywheelConfig = new FlyWheelConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
         .withTelemetry("Shooter", TelemetryVerbosity.HIGH)
-        .withUpperSoftLimit(RPM.of(1000));
+        .withUpperSoftLimit(RPM.of(1000))
+        .withDiameter(Inches.of(4));
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
 
