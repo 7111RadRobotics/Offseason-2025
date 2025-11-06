@@ -1,7 +1,7 @@
 
 package team7111.robot.subsystems;
 
-import team7111.robot.subsystems.Intake.IntakeStates;
+import team7111.robot.subsystems.Intake.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
 import team7111.robot.subsystems.Barrel.BarrelStates;
 import team7111.robot.subsystems.Barrel;
@@ -120,7 +120,7 @@ class SuperStructure {
     }
 
     private void intakeState() {
-        intake.setState(IntakeStates.deploy);
+        intake.setState(IntakeState.deploy);
         barrel.setState(BarrelStates.intake);
         if (barrel.getBeamBrake() == true) {
             setSuperState(SuperState.shoot);
@@ -154,7 +154,7 @@ class SuperStructure {
 
     private void secure() {
         shooter.setState(ShooterStates.prepareShot);
-        intake.setState(IntakeStates.transition);
+        intake.setState(IntakeState.transition);
         barrel.setState(BarrelStates.adjust);
         if (barrel.getBeamBrake() == false) {
             if (barrelStates == BarrelStates.readjust) {
@@ -170,17 +170,17 @@ class SuperStructure {
 
     private void manual() {
         shooter.setState(ShooterStates.manual);
-        intake.setState(IntakeStates.manual);
+        intake.setState(IntakeState.manual);
     }
 
     private void defaultState() {
         shooter.setState(ShooterStates.defaultState);
-        intake.setState(IntakeStates.defualtState);
+        intake.setState(IntakeState.defualtState);
     }
 
     private void unloaded() {
-        intake.setState(IntakeStates.store);
-        barrel.setState(barrelStates.unload);
+        intake.setState(IntakeState.store);
+        barrel.setState(BarrelStates.unload);
         shooter.setState(ShooterStates.idle);
     }
 
