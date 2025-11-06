@@ -6,7 +6,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import team7111.lib.pathfinding.Waypoint;
+<<<<<<< Updated upstream
 import team7111.lib.pathfinding.WaypointConstraints;
+=======
+>>>>>>> Stashed changes
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -38,6 +41,7 @@ public class RobotContainer {
     public RobotContainer() {
         swerve = new SwerveSubsystem();
 
+<<<<<<< Updated upstream
         autoChooser = new SendableChooser<>();
 
         Waypoint[] waypoints = new Waypoint[]{
@@ -47,6 +51,17 @@ public class RobotContainer {
 
 
         autoChooser.addOption("Path_TEST", swerve.setPath(new Path(waypoints)));
+=======
+        autoChooser = new SendableChooser();
+
+        Waypoint[] waypoints = new Waypoint[]{
+            new Waypoint(new Pose2d(5, 5, Rotation2d.fromDegrees(90)), 0.1, 1, 1, 1), 
+            new Waypoint(new Pose2d(7, 6, Rotation2d.fromDegrees(90)), 0.1, 1, 1, 1),
+        };
+
+
+        autoChooser.addOption("Path_TEST", swerve.runPath(new Path(waypoints)));
+>>>>>>> Stashed changes
 
         SmartDashboard.putData("autoChooser", autoChooser);
 

@@ -17,7 +17,11 @@ public class Waypoint {
      * @param maxTranslationSpeed The maximum speed in meters per second to approach this waypoint.
      * @param maxRotationSpeed The maximum rotational speed in degrees per second when turning toward this waypoint.
      */
+<<<<<<< Updated upstream
     public Waypoint(Pose2d pose, WaypointConstraints translationTolerances, WaypointConstraints rotationTolerances){
+=======
+    public Waypoint(Pose2d pose,double translationTolerance,double rotationTolerance,double maxTranslationSpeed,double maxRotationSpeed){
+>>>>>>> Stashed changes
         this.pose = pose;
         this.transConstraints = translationTolerances;
         this.rotConstraints = rotationTolerances;
