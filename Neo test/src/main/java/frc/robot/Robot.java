@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
+  private PIDController pid = new PIDController(0.02, 0, 0.0);
+
   private SparkMax spark1 = new SparkMax(3, MotorType.kBrushless);
   private SparkMax spark2 = new SparkMax(5, MotorType.kBrushless);
   private SparkMax spark3 = new SparkMax(1, MotorType.kBrushless);
@@ -42,11 +44,10 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+    //var spark1PIDConfig = new ClosedLoopConfig().pid(0.005, 0.000000001, 0.005);
+    var spark1EncConfig = new EncoderConfig();
     
-    var spark1PIDConfig = new ClosedLoopConfig().pid(0.005, 0.000000001, 0.005);
-    var spark1EncConfig = new EncoderConfig().positionConversionFactor(1/6.75).velocityConversionFactor(1/6.75);
-    
-    spark1.configure(new SparkMaxConfig().apply(spark1PIDConfig).apply(spark1EncConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    spark1.configure(new SparkMaxConfig().apply(spark1EncConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     spark1PID = spark1.getClosedLoopController();
     spark2PID = spark2.getClosedLoopController();
     spark3PID = spark3.getClosedLoopController();
@@ -62,8 +63,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("velocity", spark1.getEncoder().getVelocity());
-    SmartDashboard.putNumber("position", spark1.getEncoder().getPosition());
+    SmartDashboard.putNumber("velocity", spark4.getEncoder().getVelocity());
+    SmartDashboard.putNumber("position", spark4.getEncoder().getPosition() * (6.75/1));
+    SmartDashboard.putNumber("Error", pid.getError());
   }
 
   /**
@@ -94,7 +96,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    spark1PID.setReference(-60, ControlType.kVelocity);
+    spark4.setVoltage(pid.calculate(spark4.getEncoder().getVelocity() / 6.75, 700));
     //spark1PID.setReference(0.25, ControlType.kDutyCycle);
   }
 
