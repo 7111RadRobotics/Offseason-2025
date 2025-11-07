@@ -1,28 +1,18 @@
 
 package team7111.robot.subsystems;
 
-import team7111.robot.subsystems.Intake.IntakeStates;
+import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
-import team7111.robot.subsystems.Barrel.BarrelStates;
-import team7111.robot.subsystems.Barrel;
+import team7111.robot.subsystems.BarrelSubsytem.BarrelStates;
+import team7111.robot.subsystems.BarrelSubsytem;
 
 class SuperStructure {
 
 
-    Vision vision;
-    Intake intake;
+    VisionSubsystem vision;
+    IntakeSubsystem intake;
     ShooterSubsystem shooter;
-    Barrel barrel;
-
-    private double shotTimer = 0;
-
-    controlState control = controlState.defaultState;
-    SuperState actual;
-    BarrelStates barrelStates;
-
-    private void setSuperState(SuperState state) {
-        actual = state;
-    }
+    BarrelSubsytem barrel;
 
     private enum controlState {
         aButton,
@@ -49,6 +39,16 @@ class SuperStructure {
         loaded,
         defaultState,
     }
+
+    controlState control = controlState.defaultState;
+    SuperState actual;
+    BarrelStates barrelStates;
+
+    private void setSuperState(SuperState state) {
+        actual = state;
+    }
+
+    private double shotTimer = 0;
 
 
     private void manageControl() {
@@ -120,7 +120,8 @@ class SuperStructure {
     }
 
     private void intakeState() {
-        intake.setState(IntakeStates.deploy);
+        // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to shoot
+        intake.setState(IntakeState.deploy);
         barrel.setState(BarrelStates.intake);
         if (barrel.getBeamBrake() == true) {
             setSuperState(SuperState.shoot);
@@ -128,20 +129,20 @@ class SuperStructure {
     }
 
     private void shootVision() {
+        // sets the shooter state to shoot. Will aim using vision
         shooter.setState(ShooterStates.shoot);
     }
     
     private void eject() {
+        // Sets the shooter state to shoot, to eject the game piece
         shooter.setState(ShooterStates.shoot);
     }
 
     private void shoot() {
+        // Sets chooter, and barrel to shoot. Starts the shot timer. When shot timer ends, loops, and set Super state to unloaded
         shooter.setState(ShooterStates.shoot);
         barrel.setState(BarrelStates.shoot);
-        if (barrel.getBeamBrake() == true) {
-            shotTimer = 0;
-        }
-        if (shotTimer >= 20) {
+        if (barrel.getBeamBrake() == true || shotTimer >= 20) {
             shotTimer = 0;
         }
         if (barrel.getBeamBrake() == false) {
@@ -153,8 +154,9 @@ class SuperStructure {
     }
 
     private void secure() {
+        // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
         shooter.setState(ShooterStates.prepareShot);
-        intake.setState(IntakeStates.transition);
+        intake.setState(IntakeState.transition);
         barrel.setState(BarrelStates.adjust);
         if (barrel.getBeamBrake() == false) {
             if (barrelStates == BarrelStates.readjust) {
@@ -169,18 +171,21 @@ class SuperStructure {
     }
 
     private void manual() {
+        // Sets shooter, and inatke to manual for manual control
         shooter.setState(ShooterStates.manual);
-        intake.setState(IntakeStates.manual);
+        intake.setState(IntakeState.manual);
     }
 
     private void defaultState() {
+        // Sets shooter, and intake to their default state, making them inactive
         shooter.setState(ShooterStates.defaultState);
-        intake.setState(IntakeStates.defualtState);
+        intake.setState(IntakeState.defualtState);
     }
 
     private void unloaded() {
-        intake.setState(IntakeStates.store);
-        barrel.setState(barrelStates.unload);
+        // Sets intake to store, barrel to unload, and shooter to idle.
+        intake.setState(IntakeState.store);
+        barrel.setState(BarrelStates.unload);
         shooter.setState(ShooterStates.idle);
     }
 

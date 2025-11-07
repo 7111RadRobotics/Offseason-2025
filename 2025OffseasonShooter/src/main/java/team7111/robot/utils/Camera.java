@@ -20,14 +20,14 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import java.util.Optional;
 import team7111.robot.Constants;
-import team7111.robot.subsystems.Vision;
+import team7111.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 
 public class Camera extends PhotonCamera{
     private Transform3d cameraToRobotCenter;
-    private Vision vision;
+    private VisionSubsystem vision;
     private PhotonPoseEstimator photonPoseEstimator;
     private PhotonPipelineResult latestResult;
     private PhotonTrackedTarget bestTarget;
@@ -52,8 +52,8 @@ public class Camera extends PhotonCamera{
     private final double poseAmbiguityShifter = 0.2;
     private final double poseAmbiguityMultiplier = 4;
 
-    public Camera(PhotonCamera camera, Transform3d cameraToRobotCenter, EstimatedRobotPose estRobotPose, Vision vision) {
-        super(camera.getName());
+    public Camera(String cameraName, Transform3d cameraToRobotCenter, EstimatedRobotPose estRobotPose, VisionSubsystem vision) {
+        super(cameraName);
         this.cameraToRobotCenter = cameraToRobotCenter;
         this.vision = vision;
         this.estRobotPose = estRobotPose;
@@ -62,7 +62,7 @@ public class Camera extends PhotonCamera{
     
     public void periodic(){
         //Gets the latest result of the unread results.
-        latestResult = super.getAllUnreadResults().get(super.getAllUnreadResults().size() -1);
+        latestResult = getAllUnreadResults().get(getAllUnreadResults().size() -1);
         
         if(latestResult.hasTargets()){
             bestTarget = latestResult.getBestTarget();
@@ -79,7 +79,7 @@ public class Camera extends PhotonCamera{
     }
 
     public boolean updatePose(){
-        return super.getLatestResult().hasTargets();
+        return getLatestResult().hasTargets();
     }
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
@@ -107,7 +107,7 @@ public class Camera extends PhotonCamera{
                 (Math.max(1, Math.max(0, smallestDistance - noisyDistanceMeters) * distanceWeight) * poseAmbiguityFactor) 
                 / (1 + ((estRobotPose.targetsUsed.size() - 1) * tagPresenceWeight)));
         }
-        SmartDashboard.putNumber(super.getName(), confidenceMultiplier);
+        SmartDashboard.putNumber(getName(), confidenceMultiplier);
         return visionStandardDeviation.times(confidenceMultiplier);
     }
 

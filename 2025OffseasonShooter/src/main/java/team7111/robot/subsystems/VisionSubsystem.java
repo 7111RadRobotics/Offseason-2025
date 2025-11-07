@@ -13,7 +13,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import team7111.robot.Constants;
 import team7111.robot.utils.Camera;
 
-public class Vision extends SubsystemBase{
+public class VisionSubsystem extends SubsystemBase{
     //we on longer have a limelight on the robot, however we may one day need to put it back on again. Therefore, I have left this code inside of the program, although it may make it less readable, it could be useful one day. Thank you for taking the time to read this wonderful message and I hope you have a great day :D
     //private PhotonCamera camera1 = new PhotonCamera("photonvision1");
     
@@ -32,19 +32,19 @@ public class Vision extends SubsystemBase{
 
     // TODO: change variable names on actual robot
     /*public final Camera limelight = new Camera(
-        new PhotonCamera("photonvision"), 
+        "photonvision", 
         Constants.vision.cameraToRobotCenter1, 
         new EstimatedRobotPose(estPose3d, 0.0, null, PoseStrategy.AVERAGE_BEST_TARGETS), 
         this
         );*/
     public final Camera orangepi1 = new Camera(
-        new PhotonCamera("OV9281_1"), 
+        "OV9281_1", 
         cameraPositionsToCenter[1], 
         new EstimatedRobotPose(estPose3d, 0.0, null, PoseStrategy.AVERAGE_BEST_TARGETS), 
         this
         );
     public final Camera orangepi2 = new Camera(
-        new PhotonCamera("OV9281_2"), 
+        "OV9281_2", 
         cameraPositionsToCenter[1], 
         new EstimatedRobotPose(estPose3d, 0.0, null, PoseStrategy.AVERAGE_BEST_TARGETS), 
         this
@@ -55,7 +55,7 @@ public class Vision extends SubsystemBase{
         orangepi2,
     };
 
-    public Vision(){
+    public VisionSubsystem(){
 
     }
 
