@@ -50,6 +50,8 @@ public class ShooterSubsystem implements Subsystem {
         idle,
     };
 
+    public ShooterStates state = ShooterStates.defaultState;
+
     //Potentially use array for shooter wheels
     //private SparkMax[] shooterWheels;
 
@@ -57,36 +59,17 @@ public class ShooterSubsystem implements Subsystem {
 
     private double visionSpeed = 0;
 
+    private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
+    private SparkMax shooterFollowerMotor = new SparkMax(1, MotorType.kBrushless);
     private boolean pairBoolean = true;
-
-    public ShooterStates state = ShooterStates.defaultState;
-
+    private Pair<Object, Boolean> followerMotorPair = new Pair<>(shooterFollowerMotor, pairBoolean);
+    private SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
+    private static PersistMode followerMotorConfigPersistMode = PersistMode.kPersistParameters;
     private static ResetMode followerMotorConfigResetMode = ResetMode.kResetSafeParameters;
 
-    private static PersistMode followerMotorConfigPersistMode = PersistMode.kPersistParameters;
-
-    private SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
-
-    private TalonFX shooterPivotMotor = new TalonFX(0);
-
-    private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
-
-    private SparkMax shooterFollowerMotor = new SparkMax(1, MotorType.kBrushless);
-
-    private Pair<Object, Boolean> followerMotorPair = new Pair<>(shooterFollowerMotor, pairBoolean);
-
-    private String[] wheelGear = {"1","1"};
-
     private String[] pivotGear = {"112","1"};
-
-    private GearBox wheelGearBox = new GearBox(wheelGear);
-
     private GearBox pivotGearBox = new GearBox(pivotGear);
-
-    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
-
     private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
-
     private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
@@ -99,6 +82,18 @@ public class ShooterSubsystem implements Subsystem {
         .withStatorCurrentLimit(Amps.of(40))
         .withGearing(pivotGearing);
 
+    private TalonFX shooterPivotMotor = new TalonFX(0);
+    private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
+    private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
+        .withStartingPosition(Degrees.of(0))
+        .withWrapping(Degree.of(0), Degree.of(360))
+        .withHardLimit(Degrees.of(0), Degrees.of(720))
+        .withMOI(Meters.of(0), Pounds.of(3.953))
+        .withHardLimit(Degrees.of(0), Degrees.of(30));
+        
+    private String[] wheelGear = {"1","1"};
+    private GearBox wheelGearBox = new GearBox(wheelGear);
+    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
     private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
@@ -113,17 +108,7 @@ public class ShooterSubsystem implements Subsystem {
         .withGearing(wheelGearing)
         .withFollowers(followerMotorPair);
 
-    private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
-
     private SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
-
-    private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
-        .withStartingPosition(Degrees.of(0))
-        .withWrapping(Degree.of(0), Degree.of(360))
-        .withHardLimit(Degrees.of(0), Degrees.of(720))
-        .withMOI(Meters.of(0), Pounds.of(3.953))
-        .withHardLimit(Degrees.of(0), Degrees.of(30));
-
     private FlyWheelConfig flywheelConfig = new FlyWheelConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
@@ -132,7 +117,7 @@ public class ShooterSubsystem implements Subsystem {
         .withDiameter(Inches.of(4));
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
-        
+
     public ShooterSubsystem() {
         configureFollowerMotor();
     }
