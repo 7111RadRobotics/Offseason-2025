@@ -24,7 +24,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Barrel extends SubsystemBase {
+public class BarrelSubsytem extends SubsystemBase {
 
     SparkMax barrelMotor = new SparkMax(1, MotorType.kBrushless);
 

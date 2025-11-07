@@ -29,7 +29,7 @@ import yams.mechanisms.positional.Pivot;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
 
-public class Intake extends SubsystemBase{
+public class IntakeSubsystem extends SubsystemBase{
 
     public enum IntakeState {  
         store,
@@ -85,7 +85,7 @@ public class Intake extends SubsystemBase{
 
     private IntakeState state = IntakeState.defualtState;
 
-    public Intake() {}
+    public IntakeSubsystem() {}
 
 
     public void setState(IntakeState state){

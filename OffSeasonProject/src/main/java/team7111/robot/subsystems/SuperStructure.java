@@ -1,18 +1,18 @@
 
 package team7111.robot.subsystems;
 
-import team7111.robot.subsystems.Intake.IntakeState;
+import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
-import team7111.robot.subsystems.Barrel.BarrelStates;
-import team7111.robot.subsystems.Barrel;
+import team7111.robot.subsystems.BarrelSubsytem.BarrelStates;
+import team7111.robot.subsystems.BarrelSubsytem;
 
 class SuperStructure {
 
 
-    Vision vision;
-    Intake intake;
+    VisionSubsytem vision;
+    IntakeSubsystem intake;
     ShooterSubsystem shooter;
-    Barrel barrel;
+    BarrelSubsytem barrel;
 
     private enum controlState {
         aButton,
