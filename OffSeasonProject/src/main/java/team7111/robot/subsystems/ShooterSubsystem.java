@@ -12,13 +12,18 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import yams.mechanisms.config.PivotConfig;
 import yams.gearing.GearBox;
@@ -35,30 +40,50 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class ShooterSubsystem implements Subsystem {
     
-    public ShooterSubsystem() {}
+    public enum ShooterStates {
+        prepareShot,
+        shoot,
+        reverse,
+        prepareShotVision,
+        defaultState,
+        manual,
+        idle,
+    };
 
     //Potentially use array for shooter wheels
     //private SparkMax[] shooterWheels;
-
-    ShooterStates state = ShooterStates.defaultState;
 
     private double visionAngle = 0;
 
     private double visionSpeed = 0;
 
+    private boolean pairBoolean = true;
+
+    public ShooterStates state = ShooterStates.defaultState;
+
+    private static ResetMode followerMotorConfigResetMode = ResetMode.kResetSafeParameters;
+
+    private static PersistMode followerMotorConfigPersistMode = PersistMode.kPersistParameters;
+
+    private SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
+
     private TalonFX shooterPivotMotor = new TalonFX(0);
 
     private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
 
+    private SparkMax shooterFollowerMotor = new SparkMax(1, MotorType.kBrushless);
+
+    private Pair<Object, Boolean> followerMotorPair = new Pair<>(shooterFollowerMotor, pairBoolean);
+
     private String[] wheelGear = {"1","1"};
-
-    private GearBox wheelGearBox = new GearBox(wheelGear);
-
-    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
 
     private String[] pivotGear = {"112","1"};
 
+    private GearBox wheelGearBox = new GearBox(wheelGear);
+
     private GearBox pivotGearBox = new GearBox(pivotGear);
+
+    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
 
     private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
 
@@ -85,7 +110,8 @@ public class ShooterSubsystem implements Subsystem {
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withTelemetry("shooterWheelsMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
-        .withGearing(wheelGearing);
+        .withGearing(wheelGearing)
+        .withFollowers(followerMotorPair);
 
     private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
 
@@ -106,28 +132,9 @@ public class ShooterSubsystem implements Subsystem {
         .withDiameter(Inches.of(4));
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
-
-    public enum ShooterStates {
-        prepareShot,
-        shoot,
-        reverse,
-        prepareShotVision,
-        defaultState,
-        manual,
-        idle,
-    };
-
-    public void setState(ShooterStates state) {
-        this.state = state;
-    }
-
-    /**
-     * Sets the shooter angle from minimum to maximum shooter angle.
-     * Minimum angle is 
-     */
-    public void setAngle(double angle)
-    {
         
+    public ShooterSubsystem() {
+        configureFollowerMotor();
     }
 
     private void manageState() {
@@ -153,6 +160,18 @@ public class ShooterSubsystem implements Subsystem {
         }
     }
 
+    public void setState(ShooterStates state) {
+        this.state = state;
+    }
+
+    /**
+     * Sets the shooter angle from minimum to maximum shooter angle.
+     * Minimum angle is 
+     */
+    public void setAngle(double angle){
+        
+    }
+
     /**
      * Sets motor positions based off of state.
      * <p>
@@ -163,22 +182,32 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     private void prepareShot() {
+        // placeholder values. pivot will be extended and wheels will rev-up
         shooter.setSpeed(RPM.of(160)).execute();
         shooterPivot.setPosition(Degrees.of(90));
     }
 
     private void shoot() {
+        // placeholder values. wheels will be shooting
         shooter.setSpeed(RPM.of(160)).execute();
     }
 
     private void reverse() {
+        // placeholder values. wheels will be reversed
         shooter.setSpeed(RPM.of(-80)).execute();
     }
 
     private void prepareShotVision() {
+        // set shooterPivot to visionAngle and shooter to visionSpeed
         shooterPivot.setPosition(Degrees.of(visionAngle));
         shooter.setSpeed(RPM.of(visionSpeed));
     }
+
+    private void configureFollowerMotor() {
+        // configure followerMotorConfig to be a follower and inverted
+        followerMotorConfig.inverted(true);
+        shooterFollowerMotor.configure(followerMotorConfig, followerMotorConfigResetMode, followerMotorConfigPersistMode);
+    } 
 
     private void manual() {
 
