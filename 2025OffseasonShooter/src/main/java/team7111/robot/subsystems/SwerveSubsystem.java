@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import team7111.lib.pathfinding.*;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
@@ -78,8 +79,8 @@ public class SwerveSubsystem extends SubsystemBase {
         zeroGyro();
 
         pathMaster = new PathMaster(this::getPose, () -> getYaw());
-        pathMaster.setTranslationPID(5.0, 0.0, 0.0);
-        pathMaster.setRotationPID(5.0, 0, 0);
+        pathMaster.setTranslationPID(10.0, 0.0, 0.0);
+        pathMaster.setRotationPID(4.0, 0, 0);
         pathMaster.setInversions(false, false, true, false);
 
         swerveOdometry = new SwerveDriveOdometry(SwerveConstants.kinematics, getYaw(), getPositions());
@@ -258,6 +259,10 @@ public class SwerveSubsystem extends SubsystemBase {
         manageSwerveState();
 
         SmartDashboard.putString("swerveState", currentSwerveState.name());
+
+        if(DriverStation.getAlliance().isPresent()){
+            pathMaster.useAllianceFlipping(DriverStation.getAlliance().get() == Alliance.Red, true);
+        }
     }
 
     public void simulationPeriodic(){

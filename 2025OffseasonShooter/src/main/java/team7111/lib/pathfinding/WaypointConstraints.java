@@ -12,11 +12,12 @@ public class WaypointConstraints
     private double tolerance;
 
     /**
-     * Constructs the waypoint parameter object. Sets just translation values.
-     * <p> Defaults rotation parameters to: Rotation tolerance is 360 (full circle), and max rotation speed is 1rpm.
-     * @param maxSpeed -Maximum translation speed in meters per second.
-     * @param minSpeed -Minimum translation speed the robot must be going during both travel and end of waypoint.
-     * @param tolerance -Translation tolerance to the waypoint the robot must be to be considered done.
+     * Constructs the waypoint parameter object.
+     * <p> If used for translation, units are meters 
+     * <p> If used for rotation, units are degrees
+     * @param maxSpeed -Maximum speed in units per second.
+     * @param minSpeed -Minimum speed in units per second the robot must be going during both travel and end of waypoint.
+     * @param tolerance -Allowed distance from the waypoint the robot must be to be considered 
      */
     public WaypointConstraints(double maxSpeed, double minSpeed, double tolerance)
     {
@@ -26,7 +27,9 @@ public class WaypointConstraints
     }
 
     /**
-     * Returns the rotation tolerance the robot needs to be to the waypoint in digrees.
+     * Returns the tolerance the robot needs to be to the waypoint in units. <p>
+     * Translation units: Meters. <p>
+     * Rotation units: Degrees.
      */
     public double getTolerance()
     {
@@ -35,7 +38,7 @@ public class WaypointConstraints
 
 
     /**
-     * Returns maximum allowed translation speed in meters per second.
+     * Returns maximum allowed speed in units per second.
      */
     public double getMaxSpeed()
     {
@@ -43,7 +46,7 @@ public class WaypointConstraints
     }
 
     /**
-     * Returns minimum allowed translation speed in meters per second.
+     * Returns minimum allowed speed in units per second.
      */
     public double getMinSpeed()
     {

@@ -4,14 +4,13 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Path {
 
-    private double mapLengthX = 0;
-    private double mapLengthY = 0;
+    private double mapLengthX = 17.55; // width of field in meters
+    private double mapLengthY = 8.05; // length of field in meters
 
     private boolean isflipped = false;
 
@@ -21,7 +20,7 @@ public class Path {
     //Translation speed of the robot in each axis, and rotation.
     private DoubleSupplier xTransSpeed = () -> 0.0;
     private DoubleSupplier yTransSpeed = () -> 0.0;
-    private DoubleSupplier rotTransSpeed = () -> 0.0;
+    private DoubleSupplier rotSpeed = () -> 0.0;
 
     private int currentWaypointIndex = 0;
     
@@ -33,8 +32,7 @@ public class Path {
      * @param waypoints -An array of waypoint objects.
      * @param robotPose -A supplier to be assigned to the local variable, letting path know robot pose.
      */
-    public Path(Waypoint[] waypoints)
-    {
+    public Path(Waypoint[] waypoints){
         this.waypoints = waypoints;
 
         var field = new Field2d();
@@ -50,16 +48,14 @@ public class Path {
      * Returns the current waypoint the robot is pathing to.
      * <p>Note current waypoint index is one ahead of array for waypoint.
      */
-    public int getCurrentWaypointIndex()
-    {
+    public int getCurrentWaypointIndex(){
         return currentWaypointIndex;
     }
 
     /**
      * Returns the current waypoint object that the robot is pathing to.
      */
-    public Waypoint getCurrentWaypoint()
-    {
+    public Waypoint getCurrentWaypoint(){
         return waypoints[currentWaypointIndex];
     }
 
@@ -68,11 +64,10 @@ public class Path {
     }
     
     /**
-     * Returns in digrees per second, positive clockwise.
+     * Returns in degrees per second, positive clockwise.
      */
-    public double getRotationSpeed()
-    {
-        double speed = rotTransSpeed.getAsDouble();
+    public double getRotationSpeed(){
+        double speed = rotSpeed.getAsDouble();
         WaypointConstraints waypointConstraints = getCurrentWaypoint().getRotationConstraints();
         if(speed > waypointConstraints.getMaxSpeed()) {
             speed = waypointConstraints.getMaxSpeed();
@@ -87,31 +82,32 @@ public class Path {
                 speed = -waypointConstraints.getMinSpeed();
             }
         }
-        //speed = rotTransSpeed.getAsDouble();
+        //speed = rotSpeed.getAsDouble();
         return speed;
     }
 
     /**
      * Returns in meters per second.
      */
-    public double getTranslationXSpeed()
-    {
+    public double getTranslationXSpeed(){
+        double combinedSpeed = Math.hypot(xTransSpeed.getAsDouble(), yTransSpeed.getAsDouble());
+        double angle = Math.atan2(yTransSpeed.getAsDouble(), xTransSpeed.getAsDouble());
         double speed = xTransSpeed.getAsDouble();
         WaypointConstraints waypointConstraints = getCurrentWaypoint().getTranslationConstraints();
-        if(speed > waypointConstraints.getMaxSpeed()) {
-            speed = waypointConstraints.getMaxSpeed();
+
+        if(Math.abs(combinedSpeed) > waypointConstraints.getMaxSpeed()){
+            if(combinedSpeed > waypointConstraints.getMaxSpeed()){
+                speed = Math.cos(angle) * waypointConstraints.getMaxSpeed();
+            }else {
+                speed = Math.cos(angle) * -waypointConstraints.getMaxSpeed();
+            }
         }
-        if(speed < -waypointConstraints.getMaxSpeed()){
-            speed = -waypointConstraints.getMaxSpeed();
-        }
-        if(Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getX())
-         < Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getY())){
-            if(Math.abs(speed) < waypointConstraints.getMinSpeed()){
-                if(speed > 0){
-                    speed = waypointConstraints.getMinSpeed();
-                }else{
-                    speed = -waypointConstraints.getMinSpeed();
-                }
+        
+        if(Math.abs(combinedSpeed) < waypointConstraints.getMinSpeed()){
+            if(combinedSpeed > 0){
+                speed = Math.cos(angle) * waypointConstraints.getMinSpeed();
+            }else{
+                speed = Math.cos(angle) * -waypointConstraints.getMinSpeed();
             }
         }
 
@@ -121,26 +117,28 @@ public class Path {
     /**
      * Returns in meters per second.
      */
-    public double getTranslationYSpeed()
-    {
+    public double getTranslationYSpeed(){
+        double combinedSpeed = Math.hypot(xTransSpeed.getAsDouble(), yTransSpeed.getAsDouble());
+        double angle = Math.atan2(yTransSpeed.getAsDouble(), xTransSpeed.getAsDouble());
         double speed = yTransSpeed.getAsDouble();
         WaypointConstraints waypointConstraints = getCurrentWaypoint().getTranslationConstraints();
-        if(speed > waypointConstraints.getMaxSpeed()) {
-            speed = waypointConstraints.getMaxSpeed();
-        }
-        if(speed < -waypointConstraints.getMaxSpeed()){
-            speed = -waypointConstraints.getMaxSpeed();
-        }
-        if(Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getX())
-         > Math.abs(getCurrentWaypoint().getPose().minus(robotPose.get()).getY())){
-            if(Math.abs(speed) < waypointConstraints.getMinSpeed()){
-                if(speed > 0){
-                    speed = waypointConstraints.getMinSpeed();
-                }else{
-                    speed = -waypointConstraints.getMinSpeed();
-                }
+        
+        if(Math.abs(combinedSpeed) > waypointConstraints.getMaxSpeed()){
+            if(combinedSpeed > waypointConstraints.getMaxSpeed()){
+                speed = Math.sin(angle) * waypointConstraints.getMaxSpeed();
+            }else {
+                speed = Math.sin(angle) * -waypointConstraints.getMaxSpeed();
             }
         }
+        
+        if(Math.abs(combinedSpeed) < waypointConstraints.getMinSpeed()){
+            if(combinedSpeed > 0){
+                speed = Math.sin(angle) * waypointConstraints.getMinSpeed();
+            }else{
+                speed = Math.sin(angle) * -waypointConstraints.getMinSpeed();
+            }
+        }
+
         return speed;
     }
 
@@ -150,11 +148,10 @@ public class Path {
      * @param ySpeed -Y axis speed in meters per second.
      * @param rotSpeed -Rotation speed in digrees per second.
      */
-    public void setSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed)
-    {
+    public void setSpeedSuppliers(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotSpeed){
         xTransSpeed = xSpeed;
         yTransSpeed = ySpeed;
-        rotTransSpeed = rotSpeed;
+        this.rotSpeed = rotSpeed;
     }
 
     /**
@@ -167,16 +164,14 @@ public class Path {
     /**
      * Returns if the path is finished or not
      */
-    public boolean isPathFinished()
-    {
+    public boolean isPathFinished(){
         return isPathFinished;
     }
 
     /**
      * Resets key variables
      */
-    public void initialize()
-    {
+    public void initialize(){
         currentWaypointIndex = 0;
         isPathFinished = false;
     }
@@ -184,50 +179,56 @@ public class Path {
     /**
      * Flips the waypoint positions and rotations of all waypoints
      */
-    public void flipPath()
-    {
+    public void flipPath(boolean isRedAlliance, boolean isMirrored){
+        
         //X and y from origins.
         double length = mapLengthX;
         double width = mapLengthY;
-        for(int i = 0; i < waypoints.length; i++) {
-            //Gets waypoint position
-            double waypointX = waypoints[i].getPose().getX();
-            double waypointY = waypoints[i].getPose().getY();
-            double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
+        if(isflipped != isRedAlliance){
+            for(int i = 0; i < waypoints.length; i++) {
+                //Gets waypoint position
+                double waypointX = waypoints[i].getPose().getX();
+                double waypointY = waypoints[i].getPose().getY();
+                double waypointRot = waypoints[i].getPose().getRotation().getDegrees();
 
-            double newWayX;
-            double newWayY;
-            double newWayRot;
-            //if true, then it needs to be blue alliance aligned again.
-            if(isflipped){
-                //Undoes flip
+                double newWayX;
+                double newWayY;
+                double newWayRot;
+                
+                //flips
                 newWayX = -waypointX + length;
-                newWayY = -waypointY + width;
-                isflipped = false;
-            }else{
-                //Flips
-                newWayX = length - waypointX;
-                newWayY = width - waypointY;
-                isflipped = true;
+                newWayY = waypointY;
+            
+                //Rotation flipping
+                
+                newWayRot = (waypointRot + 180) * -1;
+                newWayRot = newWayRot % 180; //Sets angle to within 360.
+
+                if(!isMirrored){
+                    newWayY = -waypointY + width;
+                    newWayRot = (waypointRot + 180) % 180;
+
+                    if(!isRedAlliance){
+                        newWayRot -= 180;
+                    }
+                }
+
+                Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, Rotation2d.fromDegrees(newWayRot)), 
+                    waypoints[i].getTranslationConstraints(), waypoints[i].getRotationConstraints());
+
+                waypoints[i] = newWaypoint;
+                System.out.println("waypoint flipped");
+                
             }
-            //Rotation flipping
-            newWayRot = waypointRot + 180;
-            newWayRot = newWayRot % 360; //Sets angle to within 360.
-
-            Waypoint newWaypoint = new Waypoint(new Pose2d(newWayX, newWayY, new Rotation2d()), 
-            waypoints[i].getTranslationConstraints(), waypoints[i].getRotationConstraints());
-
-            waypoints[i] = newWaypoint;
+            isflipped = isRedAlliance;
         }
-
     }
     
     /**
      * indexes waypoint to path to if there. 
      * If path is finished, sets path to finished and will not path to new waypoint.
      */
-    public void periodic()
-    {
+    public void periodic(){
         if(robotPose == null){
             System.out.println("RobotPose null");
             return;

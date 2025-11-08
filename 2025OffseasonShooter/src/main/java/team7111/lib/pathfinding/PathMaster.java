@@ -27,7 +27,8 @@ public class PathMaster {
     //Houses pointers to field elements
     private FieldElement fieldElements[];
 
-    private boolean fieldFlipped = false;
+    private boolean shouldFlipPath = false;
+    private boolean isPathMirrored = false;
     private boolean fieldRelative = false;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
@@ -38,12 +39,12 @@ public class PathMaster {
         this.rotPID = new PIDController(1, 0, 0);
         rotPID.enableContinuousInput(-180, 180);
         this.suppliedPose = suppliedPose;
-        this.gyroYaw = () -> Rotation2d.fromDegrees(gyroYaw.get().getDegrees() * invertedGyro);
-        //this.gyroYaw = gyroYaw;
+        this.gyroYaw = gyroYaw;
     }
     
-    public void useAllianceFlipping(boolean flipField){
-        fieldFlipped = flipField;
+    public void useAllianceFlipping(boolean flipField, boolean isMirrored){
+        shouldFlipPath = flipField;
+        isPathMirrored = isMirrored;
     }
     
     public void useFieldRelative(boolean isFieldRelative){
@@ -85,17 +86,11 @@ public class PathMaster {
             invertedGyro = -1.0;
         }
     }
-
-    /**
-     * Flips path waypoint's positions and rotations. Keeps origin.
-     */
-    public void flipField(Path path){
-        path.flipPath();
-    }
     
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
+        path.flipPath(shouldFlipPath, isPathMirrored);
         path.initialize();
     }
 
@@ -103,14 +98,16 @@ public class PathMaster {
         path.periodic();
         xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
         yCalculation = yPID.calculate(suppliedPose.get().getY(), path.getCurrentWaypoint().getPose().getY()) * invertedY;
-        rotCalculation = rotPID.calculate(suppliedPose.get().getRotation().getDegrees(), path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
+        rotCalculation = rotPID.calculate(
+                            suppliedPose.get().getRotation().getDegrees(), 
+                            path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
 
     }
 
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
         
         ChassisSpeeds chassisSpeeds = fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed(), gyroYaw.get())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed(), gyroYaw.get().times(invertedGyro))
             : new ChassisSpeeds(path.getTranslationXSpeed(), path.getTranslationYSpeed(), path.getRotationSpeed());
 
         return chassisSpeeds;
