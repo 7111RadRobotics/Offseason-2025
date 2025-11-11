@@ -38,7 +38,7 @@ public class BarrelSubsytem extends SubsystemBase {
     };
 
     private DigitalInput beamBreak = new DigitalInput(1);
-    private  boolean beamBrakeState = false;
+    private boolean beamBrakeState = false;
     public boolean getBeamBrake() {
         return beamBreak.get();
     }

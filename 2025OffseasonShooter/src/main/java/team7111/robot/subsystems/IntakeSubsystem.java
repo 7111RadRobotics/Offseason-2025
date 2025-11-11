@@ -27,6 +27,7 @@ import yams.mechanisms.velocity.FlyWheel;
 
 public class IntakeSubsystem extends SubsystemBase{
     // enums defined above variables
+    // naming should be name of subsystem (without "Subsystem") followed by "State"
     public enum IntakeState {  
         store,
         defualtState,
