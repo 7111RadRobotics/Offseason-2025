@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
     //var spark1PIDConfig = new ClosedLoopConfig().pid(0.005, 0.000000001, 0.005);
     var spark1EncConfig = new EncoderConfig();
     
-    spark1.configure(new SparkMaxConfig().apply(spark1EncConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    spark4.configure(new SparkMaxConfig().apply(spark1EncConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     spark1PID = spark1.getClosedLoopController();
     spark2PID = spark2.getClosedLoopController();
     spark3PID = spark3.getClosedLoopController();
