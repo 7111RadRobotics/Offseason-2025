@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  private PIDController pid = new PIDController(0.02, 0, 0.0);
+  private PIDController pid = new PIDController(0.01, 0.00000000, 0.0008);
 
   private SparkMax spark1 = new SparkMax(3, MotorType.kBrushless);
   private SparkMax spark2 = new SparkMax(5, MotorType.kBrushless);
@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    spark4.setVoltage(pid.calculate(spark4.getEncoder().getVelocity() / 6.75, 700));
+    spark4.setVoltage(pid.calculate(spark4.getEncoder().getVelocity() / 6.75, 1000));
     //spark1PID.setReference(0.25, ControlType.kDutyCycle);
   }
 
