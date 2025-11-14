@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -29,6 +30,7 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
     private SparkClosedLoopController drivePID;
     private SimpleMotorFeedforward driveFeedforward;
     private double driveGearRatio;
+    private PIDController altDrivePID;
 
     private SparkMax angleMotor;
     private SparkBaseConfig angleMotorConfig;
@@ -47,6 +49,8 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
         driveFeedforward = config.driveMotor.ff;//new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
         drivePID = driveMotor.getClosedLoopController();
         driveGearRatio = config.driveMotor.gearRatio;
+        altDrivePID = config.driveMotor.pid;
+        altDrivePID = new PIDController(altDrivePID.getP(), altDrivePID.getI(), altDrivePID.getD());
 
         angleMotor = new SparkMax(config.angleMotor.id, MotorType.kBrushless);
         angleEncoder = angleMotor.getEncoder();
@@ -66,7 +70,8 @@ public class SparkMaxSwerveModule implements GenericSwerveModule {
         SmartDashboard.putNumber("converted velocity", speedRPM);
         SmartDashboard.putNumber("received state", state.speedMetersPerSecond);
         SmartDashboard.putNumber("reconverted state", speedRPM * SwerveConstants.wheelCircumference / (60.0 * driveGearRatio));
-        drivePID.setReference(speedRPM, SparkMax.ControlType.kVelocity, ClosedLoopSlot.kSlot0, driveFeedforward.calculate(speedRPM));
+        driveMotor.setVoltage(altDrivePID.calculate(getDriveVelocity(), speedRPM/2));
+        //drivePID.setReference(speedRPM, SparkMax.ControlType.kVelocity, ClosedLoopSlot.kSlot0, driveFeedforward.calculate(speedRPM));
     }
 
     @Override

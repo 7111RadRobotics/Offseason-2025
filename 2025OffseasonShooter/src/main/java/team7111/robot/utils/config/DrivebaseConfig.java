@@ -53,8 +53,8 @@ public class DrivebaseConfig {
         boolean angleInversion = true;
         boolean driveBrakeMode = true;
         boolean angleBrakeMode = false;
-        PIDController drivePID = new PIDController(0.00051, 0.0, 0.1);
-        PIDController anglePID = new PIDController(0.1, 0.0, 0.0);
+        PIDController drivePID = new PIDController(0.01, 0.0, 0.0008);
+        PIDController anglePID = new PIDController(0.2, 0.0, 0.0);
         //drivePID.setP(1);
         //anglePID.setP(50);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
@@ -66,32 +66,32 @@ public class DrivebaseConfig {
 
         double canCoder0Offset = isSim
             ? 0
-            : 97.031;
+            : 90.439;
         double canCoder1Offset = isSim
             ? 0
-            : 120.762;
+            : 127.705;
         double canCoder2Offset = isSim
             ? 0
-            : 140.889;
+            : 134.561;
         double canCoder3Offset = isSim
             ? 0
-            : 76.289;
+            : 77.256;
 
         SwerveModuleConfig[] moduleConstants = new SwerveModuleConfig[]{
             new SwerveModuleConfig(
                 new SwerveMotorConfig(3, driveMotorConfig), 
                 new SwerveMotorConfig(4, angleMotorConfig), 
-                new CTREEncoder(2, encoderConfig), canCoder0Offset),
+                new CTREEncoder(2, encoderConfig), canCoder1Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(5, driveMotorConfig), 
                 new SwerveMotorConfig(6, angleMotorConfig), 
-                new CTREEncoder(3, encoderConfig), canCoder1Offset),
+                new CTREEncoder(3, encoderConfig), canCoder2Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(1, driveMotorConfig), 
                 new SwerveMotorConfig(2, angleMotorConfig), 
-                new CTREEncoder(1, encoderConfig), canCoder2Offset),
+                new CTREEncoder(1, encoderConfig), canCoder0Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(7, driveMotorConfig), 
