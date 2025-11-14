@@ -6,7 +6,7 @@ import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
 import team7111.robot.subsystems.BarrelSubsytem.BarrelStates;
 import team7111.robot.subsystems.BarrelSubsytem;
 
-class SuperStructure {
+public class SuperStructure {
 
 
     VisionSubsystem vision;
@@ -14,7 +14,7 @@ class SuperStructure {
     ShooterSubsystem shooter;
     BarrelSubsytem barrel;
 
-    private enum controlState {
+    public enum controlState {
         aButton,
         bButton,
         xButton,
@@ -48,22 +48,42 @@ class SuperStructure {
         actual = state;
     }
 
-    private double shotTimer = 0;
+    public void setControlState(controlState state) {
+        control = state;
+    }
 
+    private double shotTimer = 0;
+    private double ejectTimer = 0;
 
     private void manageControl() {
         switch (control) {
             case aButton:
-                
+            //TODO change this button to the proper one
+            // If the a button is held down, and superstate is unloaded, sets superstate to intake
+                if (actual == SuperState.unloaded) {
+                    setSuperState(SuperState.intake);
+                }
                 break;
             case bButton:
-                
+            //TODO change this button to the proper one
+            // if the b Button is held, and superstate is equal to loaded, sets superstate to eject
+                if (actual == SuperState.loaded) {
+                    setSuperState(SuperState.eject);
+                }
                 break;
             case xButton:
-                
+            //TODO change this button to the proper one
+            // if x button is pressed, and superstate is equal to loaded, set superstate to prepareShot
+                if (actual == SuperState.loaded) {
+                    setSuperState(SuperState.prepareShot);
+                }
                 break;
             case yButton:
-                
+            //TODO change this button to the proper one
+            // if y button is pressed, and superstate is equal to prepareShot, set superstate to shoot
+                if (actual == SuperState.prepareShot) {
+                    setSuperState(SuperState.shoot);
+                }
                 break;
             case rightBumper:
                 
@@ -114,17 +134,26 @@ class SuperStructure {
             case unloaded:
                 unloaded();
                 break;
+            case prepareShot:
+                prepareShot();
+                break;
+            case prepareShotVision:
+                prepareShotVision();
+                break;
             default:
                 break;
         }
     }
 
     private void intakeState() {
-        // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to shoot
+        // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelStates.intake);
         if (barrel.getBeamBrake() == true) {
-            setSuperState(SuperState.shoot);
+            setSuperState(SuperState.secure);
+        }
+        if (control != controlState.aButton) {
+            setSuperState(SuperState.unloaded);
         }
     }
 
@@ -134,12 +163,25 @@ class SuperStructure {
     }
     
     private void eject() {
-        // Sets the shooter state to shoot, to eject the game piece
-        shooter.setState(ShooterStates.shoot);
+        // Sets the shooter state to shoot, to eject the game piece from intake and set superstate to unloaded
+        if (barrel.getBeamBrake() == false) {
+            ejectTimer += 1;
+        }
+        if (ejectTimer == 500) {
+            setSuperState(SuperState.unloaded);
+        }
+        if (control != controlState.bButton) {
+            setSuperState(SuperState.secure);
+        }
+    }
+
+    private void prepareShot() {
+        shooter.setState(ShooterStates.prepareShot);
+
     }
 
     private void shoot() {
-        // Sets chooter, and barrel to shoot. Starts the shot timer. When shot timer ends, loops, and set Super state to unloaded
+        // Sets shooter, and barrel to shoot. Starts the shot timer. When shot timer ends, loops, and set Super state to unloaded
         shooter.setState(ShooterStates.shoot);
         barrel.setState(BarrelStates.shoot);
         if (barrel.getBeamBrake() == true || shotTimer >= 20) {
@@ -151,6 +193,10 @@ class SuperStructure {
         if (shotTimer >= 20) {
             setSuperState(SuperState.unloaded);
         }
+    }
+
+    private void prepareShotVision() {
+
     }
 
     private void secure() {
