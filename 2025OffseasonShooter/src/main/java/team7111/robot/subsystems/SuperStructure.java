@@ -149,7 +149,7 @@ public class SuperStructure {
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelStates.intake);
-        if (barrel.getBeamBrake() == true) {
+        if (barrel.getBeamBrake()) {
             setSuperState(SuperState.secure);
         }
         if (control != controlState.aButton) {
@@ -164,13 +164,17 @@ public class SuperStructure {
     
     private void eject() {
         // Sets the shooter state to shoot, to eject the game piece from intake and set superstate to unloaded
-        if (barrel.getBeamBrake() == false) {
+        if (!barrel.getBeamBrake()) {
+            intake.setState(IntakeState.eject);
             ejectTimer += 1;
         }
         if (ejectTimer == 500) {
+            intake.setState(IntakeState.store);
             setSuperState(SuperState.unloaded);
+            ejectTimer = 0;
         }
         if (control != controlState.bButton) {
+            intake.setState(IntakeState.store);
             setSuperState(SuperState.secure);
         }
     }
@@ -184,10 +188,10 @@ public class SuperStructure {
         // Sets shooter, and barrel to shoot. Starts the shot timer. When shot timer ends, loops, and set Super state to unloaded
         shooter.setState(ShooterStates.shoot);
         barrel.setState(BarrelStates.shoot);
-        if (barrel.getBeamBrake() == true || shotTimer >= 20) {
+        if (barrel.getBeamBrake() || shotTimer >= 20) {
             shotTimer = 0;
         }
-        if (barrel.getBeamBrake() == false) {
+        if (!barrel.getBeamBrake()) {
             shotTimer += 1;
         }
         if (shotTimer >= 20) {
@@ -204,7 +208,7 @@ public class SuperStructure {
         shooter.setState(ShooterStates.prepareShot);
         intake.setState(IntakeState.transition);
         barrel.setState(BarrelStates.adjust);
-        if (barrel.getBeamBrake() == false) {
+        if (!barrel.getBeamBrake()) {
             if (barrelStates == BarrelStates.readjust) {
             } else {
                 barrel.setState(BarrelStates.readjust);

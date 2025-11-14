@@ -67,8 +67,7 @@ public class ShooterSubsystem implements Subsystem {
     private static PersistMode followerMotorConfigPersistMode = PersistMode.kPersistParameters;
     private static ResetMode followerMotorConfigResetMode = ResetMode.kResetSafeParameters;
 
-    private String[] pivotGear = {"112","1"};
-    private GearBox pivotGearBox = new GearBox(pivotGear);
+    private GearBox pivotGearBox = GearBox.fromReductionStages(112, 1);
     private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
     private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -91,8 +90,7 @@ public class ShooterSubsystem implements Subsystem {
         .withMOI(Meters.of(0), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30));
         
-    private String[] wheelGear = {"1","1"};
-    private GearBox wheelGearBox = new GearBox(wheelGear);
+    private GearBox wheelGearBox = GearBox.fromReductionStages(1,1);
     private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
     private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
