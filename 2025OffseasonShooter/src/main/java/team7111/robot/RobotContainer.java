@@ -22,6 +22,7 @@ import team7111.robot.subsystems.ShooterSubsystem;
 import team7111.robot.subsystems.SuperStructure;
 import team7111.robot.subsystems.SwerveSubsystem;
 import team7111.robot.subsystems.VisionSubsystem;
+import team7111.robot.subsystems.SuperStructure.ControlState;
 import team7111.robot.subsystems.SwerveSubsystem.SwerveState;
 
 /**
@@ -96,6 +97,21 @@ public class RobotContainer {
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
 
-        
+        driverController.a().onTrue(superStructure.setControlStateCommand(ControlState.aButton, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.aButton, false));
+        driverController.b().onTrue(superStructure.setControlStateCommand(ControlState.bButton, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.bButton, false));
+        driverController.x().onTrue(superStructure.setControlStateCommand(ControlState.xButton, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.xButton, false));
+        driverController.y().onTrue(superStructure.setControlStateCommand(ControlState.yButton, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.yButton, false));
+        driverController.rightBumper().onTrue(superStructure.setControlStateCommand(ControlState.rightBumper, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.rightBumper, false));
+        driverController.rightTrigger().onTrue(superStructure.setControlStateCommand(ControlState.rightTrigger, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.rightTrigger, false));
+        driverController.leftBumper().onTrue(superStructure.setControlStateCommand(ControlState.leftBumper, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.leftBumper, false));
+        driverController.leftTrigger().onTrue(superStructure.setControlStateCommand(ControlState.leftTrigger, true))
+                            .onFalse(superStructure.setControlStateCommand(ControlState.leftTrigger, false));
     }
 }
