@@ -27,6 +27,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import yams.mechanisms.config.PivotConfig;
+import yams.mechanisms.positional.Pivot;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -84,13 +85,15 @@ public class ShooterSubsystem implements Subsystem {
 
     private TalonFX shooterPivotMotor = new TalonFX(0);
     private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
+    
     private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
         .withStartingPosition(Degrees.of(0))
         .withWrapping(Degree.of(0), Degree.of(360))
         .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Meters.of(0), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30));
-        
+    private Pivot pivot = new Pivot(shooterPivotConfig);
+
     private GearBox wheelGearBox = GearBox.fromReductionStages(1,1);
     private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
     private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
@@ -178,7 +181,7 @@ public class ShooterSubsystem implements Subsystem {
     private void prepareShot() {
         // placeholder values. pivot will be extended and wheels will rev-up
         shooter.setSpeed(RPM.of(160)).execute();
-        shooterPivot.setPosition(Degrees.of(90));
+        pivot.setAngle(Degrees.of(90)).execute();;
     }
 
     private void shoot() {
@@ -193,8 +196,8 @@ public class ShooterSubsystem implements Subsystem {
 
     private void prepareShotVision() {
         // set shooterPivot to visionAngle and shooter to visionSpeed
-        shooterPivot.setPosition(Degrees.of(visionAngle));
-        shooter.setSpeed(RPM.of(visionSpeed));
+        pivot.setAngle(Degrees.of(visionAngle)).execute();
+        shooter.setSpeed(RPM.of(visionSpeed)).execute();
     }
 
     private void defaultState() {}
