@@ -1,3 +1,4 @@
+//Fix
 package team7111.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -38,15 +39,10 @@ public class BarrelSubsytem extends SubsystemBase {
     };
 
     private DigitalInput beamBreak = new DigitalInput(1);
-    private boolean beamBrakeState = false;
-    public boolean getBeamBrake() {
-        return beamBreak.get();
-    }
     
+    private MechanismGearing barrelGearing = new MechanismGearing(GearBox.fromReductionStages(1, 1));
+
     private SparkMax barrelMotor = new SparkMax(1, MotorType.kBrushless);
-    private String[] barrelGear = {"1","1"};
-    private GearBox barrelGearBox = new GearBox(barrelGear);
-    private MechanismGearing barrelGearing = new MechanismGearing(barrelGearBox);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopRampRate(Seconds.of(0.25))
@@ -62,11 +58,21 @@ public class BarrelSubsytem extends SubsystemBase {
 
     private FlyWheel barrel = new FlyWheel(barrelConfig);
 
-    
     private BarrelStates state = BarrelStates.defaultState;
 
-    public void setState(BarrelStates state) {
-        this.state = state;
+
+    //Constructor for class
+    public BarrelSubsytem() {}
+
+    @Override
+    public void periodic() {
+        manageState();
+        barrel.updateTelemetry();
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        barrel.simIterate();
     }
 
     private void manageState() {
@@ -98,15 +104,16 @@ public class BarrelSubsytem extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-        manageState();
-        barrel.updateTelemetry();
+    public BarrelStates getState() {
+        return state;
     }
 
-    @Override
-    public void simulationPeriodic() {
-        barrel.simIterate();
+    public void setState(BarrelStates state) {
+        this.state = state;
+    }
+
+    public boolean getBeamBrake() {
+        return beamBreak.get();
     }
 
     private void intake() {

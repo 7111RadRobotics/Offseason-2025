@@ -1,0 +1,29 @@
+Names:
+    Enums
+        -Capitalize all words
+    Methods
+        -Camelcase (thisIsCamelCase)
+    Classes
+        -Capitalize all words    
+
+CLASSES
+
+Order:
+    ENUMS
+    VARIABLES
+    METHODS
+        -Periodic methods go just below constructor
+        -State related methods
+        -Set and get methods
+        -Other methods
+
+Similar things go together.
+
+    Variable examples:
+        shooterstate
+        actualstate
+
+    Method examples:
+        setState()
+        getState()
+

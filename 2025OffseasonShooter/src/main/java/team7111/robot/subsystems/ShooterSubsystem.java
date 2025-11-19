@@ -1,3 +1,4 @@
+//Fix
 package team7111.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -52,15 +53,15 @@ public class ShooterSubsystem implements Subsystem {
 
     public ShooterStates state = ShooterStates.defaultState;
 
-    //Potentially use array for shooter wheels
-    //private SparkMax[] shooterWheels;
-
     private double visionAngle = 0;
-
     private double visionSpeed = 0;
 
-    private SparkMax shooterWheelsMotor = new SparkMax(0, MotorType.kBrushless);
-    private SparkMax shooterFollowerMotor = new SparkMax(1, MotorType.kBrushless);
+    private int mainMotorID;
+    private int followerMotorID;
+
+    private SparkMax shooterWheelsMotor = new SparkMax(mainMotorID, MotorType.kBrushless);
+    private SparkMax shooterFollowerMotor = new SparkMax(followerMotorID, MotorType.kBrushless);
+
     private boolean pairBoolean = true;
     private Pair<Object, Boolean> followerMotorPair = new Pair<>(shooterFollowerMotor, pairBoolean);
     private SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
@@ -107,17 +108,29 @@ public class ShooterSubsystem implements Subsystem {
         .withFollowers(followerMotorPair);
 
     private SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
-    private FlyWheelConfig flywheelConfig = new FlyWheelConfig(shooterWheels)
+    private FlyWheelConfig shooterConfig = new FlyWheelConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
         .withTelemetry("Shooter", TelemetryVerbosity.HIGH)
         .withUpperSoftLimit(RPM.of(1000))
         .withDiameter(Inches.of(4));
 
-    private FlyWheel shooter = new FlyWheel(flywheelConfig);
+    private FlyWheel shooter = new FlyWheel(shooterConfig);
 
-    public ShooterSubsystem() {
+    public ShooterSubsystem(int mainMotorID, int followerMotorID) {
+        this.mainMotorID = mainMotorID;
+        this.followerMotorID = followerMotorID;
+
         configureFollowerMotor();
+    }
+
+    /**
+     * Sets motor positions based off of state.
+     * <p>
+     * Returns false if an error has occurred.
+     */
+    public void periodic() {
+        manageState();
     }
 
     private void manageState() {
@@ -140,11 +153,18 @@ public class ShooterSubsystem implements Subsystem {
             case idle:
             idle();
                 break;
+            case defaultState:
+            defaultState();
+                break;
         }
     }
 
     public void setState(ShooterStates state) {
         this.state = state;
+    }
+
+    public ShooterStates getState() {
+        return state;
     }
 
     /**
@@ -153,15 +173,6 @@ public class ShooterSubsystem implements Subsystem {
      */
     public void setAngle(double angle){
         
-    }
-
-    /**
-     * Sets motor positions based off of state.
-     * <p>
-     * Returns false if an error has occurred.
-     */
-    public void periodic() {
-        manageState();
     }
 
     private void prepareShot() {
@@ -185,6 +196,8 @@ public class ShooterSubsystem implements Subsystem {
         shooterPivot.setPosition(Degrees.of(visionAngle));
         shooter.setSpeed(RPM.of(visionSpeed));
     }
+
+    private void defaultState() {}
 
     private void configureFollowerMotor() {
         // configure followerMotorConfig to be a follower and inverted
