@@ -4,6 +4,7 @@ package team7111.robot.subsystems;
 import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
 import team7111.robot.subsystems.BarrelSubsystem.BarrelStates;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team7111.robot.subsystems.BarrelSubsystem;
 
@@ -102,7 +103,7 @@ public class SuperStructure extends SubsystemBase{
                 break;
         }
     }
-    public void setControlState(ControlState button, boolean state) {
+    private void setControlState(ControlState button, boolean state) {
         switch (button) {
             case aButton:
                 aButton = state;
@@ -129,6 +130,10 @@ public class SuperStructure extends SubsystemBase{
                 leftTrigger = state;
                 break;
         }
+    }
+
+    public Command setControlStateCommand(ControlState button, boolean state){
+        return runOnce(() -> setControlState(button, state));
     }
 
     public void setSuperState(SuperState state) {
