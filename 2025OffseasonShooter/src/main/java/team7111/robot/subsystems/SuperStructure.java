@@ -42,14 +42,14 @@ public class SuperStructure extends SubsystemBase{
     private SwerveSubsystem swerve;
     private PathSubsystem paths;
 
-    private boolean aButton;
-    private boolean bButton;
-    private boolean xButton;
-    private boolean yButton;
-    private boolean rightBumper;
-    private boolean rightTrigger;
-    private boolean leftBumper;
-    private boolean leftTerigger;
+    private boolean aButton = false;
+    private boolean bButton = false;
+    private boolean xButton = false;
+    private boolean yButton = false;
+    private boolean rightBumper = false;
+    private boolean rightTrigger = false;
+    private boolean leftBumper = false;
+    private boolean leftTrigger = false;
 
     private ControlState controlState = ControlState.defaultState;
     private SuperState superState;
@@ -96,6 +96,34 @@ public class SuperStructure extends SubsystemBase{
                 prepareShotVision();
                 break;
             default:
+                break;
+        }
+    }
+    public void setControlState(ControlState button, boolean state) {
+        switch (button) {
+            case aButton:
+                aButton = state;
+                break;
+            case bButton:
+                bButton = state;
+                break;
+            case xButton:
+                xButton = state;
+                break;
+            case yButton:
+                yButton = state;
+                break;
+            case rightTrigger:
+                rightTrigger = state;
+                break;
+            case rightBumper:
+                rightBumper = state;
+                break;
+            case leftBumper:
+                leftBumper = state;
+                break;
+            case leftTrigger:
+                leftTrigger = state;
                 break;
         }
     }
