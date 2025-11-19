@@ -39,6 +39,17 @@ public class SuperStructure extends SubsystemBase{
     private IntakeSubsystem intake;
     private ShooterSubsystem shooter;
     private BarrelSubsytem barrel;
+    private SwerveSubsystem swerve;
+    private PathSubsystem paths;
+
+    private boolean aButton;
+    private boolean bButton;
+    private boolean xButton;
+    private boolean yButton;
+    private boolean rightBumper;
+    private boolean rightTrigger;
+    private boolean leftBumper;
+    private boolean leftTerigger;
 
     private ControlState controlState = ControlState.defaultState;
     private SuperState superState;
@@ -49,7 +60,7 @@ public class SuperStructure extends SubsystemBase{
     public SuperStructure(){}
 
     public void periodic() {
-        
+        manageSuperState();
     }
 
     private void manageSuperState() {
