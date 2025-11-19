@@ -25,7 +25,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class BarrelSubsytem extends SubsystemBase {
+public class BarrelSubsystem extends SubsystemBase {
 
     public enum BarrelStates {
         intake,
@@ -62,7 +62,7 @@ public class BarrelSubsytem extends SubsystemBase {
 
 
     //Constructor for class
-    public BarrelSubsytem() {}
+    public BarrelSubsystem() {}
 
     @Override
     public void periodic() {

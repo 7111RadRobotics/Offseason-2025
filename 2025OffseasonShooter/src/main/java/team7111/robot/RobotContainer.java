@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
-import team7111.robot.subsystems.BarrelSubsytem;
+import team7111.robot.subsystems.BarrelSubsystem;
 import team7111.robot.subsystems.IntakeSubsystem;
 import team7111.robot.subsystems.PathSubsystem;
 import team7111.robot.subsystems.ShooterSubsystem;
@@ -37,7 +37,7 @@ public class RobotContainer {
     public final VisionSubsystem vision;
     public final PathSubsystem paths;
     public final IntakeSubsystem intake;
-    public final BarrelSubsytem barrel;
+    public final BarrelSubsystem barrel;
     public final ShooterSubsystem shooter;
     public final SuperStructure superStructure;
     public SendableChooser<Command> autoChooser;
@@ -49,9 +49,9 @@ public class RobotContainer {
         swerve = new SwerveSubsystem();
         paths = new PathSubsystem();
         intake = new IntakeSubsystem();
-        barrel = new BarrelSubsytem();
+        barrel = new BarrelSubsystem();
         shooter = new ShooterSubsystem(0, 1);
-        superStructure = new SuperStructure();
+        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);
 
         autoChooser = new SendableChooser<>();
 
@@ -95,5 +95,7 @@ public class RobotContainer {
         swerve.setDriveFieldRelative(true);
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
+
+        
     }
 }

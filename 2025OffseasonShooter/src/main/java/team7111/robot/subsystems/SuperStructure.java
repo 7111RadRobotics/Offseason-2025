@@ -3,9 +3,9 @@ package team7111.robot.subsystems;
 
 import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
-import team7111.robot.subsystems.BarrelSubsytem.BarrelStates;
+import team7111.robot.subsystems.BarrelSubsystem.BarrelStates;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team7111.robot.subsystems.BarrelSubsytem;
+import team7111.robot.subsystems.BarrelSubsystem;
 
 public class SuperStructure extends SubsystemBase{
 
@@ -38,7 +38,7 @@ public class SuperStructure extends SubsystemBase{
     private VisionSubsystem vision;
     private IntakeSubsystem intake;
     private ShooterSubsystem shooter;
-    private BarrelSubsytem barrel;
+    private BarrelSubsystem barrel;
     private SwerveSubsystem swerve;
     private PathSubsystem paths;
 
@@ -57,7 +57,10 @@ public class SuperStructure extends SubsystemBase{
     private double shotTimer = 0;
     private double ejectTimer = 0;
 
-    public SuperStructure(){}
+    public SuperStructure(VisionSubsystem vision, SwerveSubsystem swerve, PathSubsystem paths, IntakeSubsystem intake, BarrelSubsystem barrel, ShooterSubsystem shooter){
+        this.vision=vision;
+
+    }
 
     public void periodic() {
         manageSuperState();
