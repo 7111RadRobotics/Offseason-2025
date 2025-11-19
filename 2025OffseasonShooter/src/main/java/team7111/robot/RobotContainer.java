@@ -15,11 +15,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import team7111.lib.pathfinding.Path;
 import team7111.robot.Constants.ControllerConstants;
 import team7111.robot.Constants.SwerveConstants;
+import team7111.robot.subsystems.BarrelSubsytem;
+import team7111.robot.subsystems.IntakeSubsystem;
+import team7111.robot.subsystems.PathSubsystem;
+import team7111.robot.subsystems.ShooterSubsystem;
 import team7111.robot.subsystems.SuperStructure;
 import team7111.robot.subsystems.SwerveSubsystem;
+import team7111.robot.subsystems.VisionSubsystem;
 import team7111.robot.subsystems.SwerveSubsystem.SwerveState;
-import team7111.robot.subsystems.SuperStructure.controlState;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,12 +34,24 @@ public class RobotContainer {
     public final CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final SwerveSubsystem swerve;
+    public final VisionSubsystem vision;
+    public final PathSubsystem paths;
+    public final IntakeSubsystem intake;
+    public final BarrelSubsytem barrel;
+    public final ShooterSubsystem shooter;
+    public final SuperStructure superStructure;
     public SendableChooser<Command> autoChooser;
-    SuperStructure superStructure;
 
     public RobotContainer() {
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        vision = new VisionSubsystem();
         swerve = new SwerveSubsystem();
+        paths = new PathSubsystem();
+        intake = new IntakeSubsystem();
+        barrel = new BarrelSubsytem();
+        shooter = new ShooterSubsystem();
+        superStructure = new SuperStructure();
 
         autoChooser = new SendableChooser<>();
 
@@ -72,7 +87,6 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-
         swerve.setJoysickInputs(
             () -> -ControllerConstants.xDriveLimiter.calculate((Math.pow(driverController.getLeftX(), 3) / SwerveConstants.sensitivity)), 
             () -> -ControllerConstants.yDriveLimiter.calculate((Math.pow(driverController.getLeftY(), 3) / SwerveConstants.sensitivity)),  
@@ -81,14 +95,5 @@ public class RobotContainer {
         swerve.setDriveFieldRelative(true);
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
-
-        driverController.a().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.aButton)));
-        driverController.b().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.bButton)));
-        driverController.x().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.xButton)));
-        driverController.y().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.yButton)));
-        driverController.rightBumper().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.rightBumper)));
-        driverController.rightTrigger().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.rightTrigger)));
-        driverController.leftBumper().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.leftBumper)));
-        driverController.leftTrigger().onTrue(Commands.runOnce(() -> superStructure.setControlState(controlState.rightTrigger)));
     }
 }

@@ -4,17 +4,12 @@ package team7111.robot.subsystems;
 import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterStates;
 import team7111.robot.subsystems.BarrelSubsytem.BarrelStates;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team7111.robot.subsystems.BarrelSubsytem;
 
-public class SuperStructure {
+public class SuperStructure extends SubsystemBase{
 
-
-    VisionSubsystem vision;
-    IntakeSubsystem intake;
-    ShooterSubsystem shooter;
-    BarrelSubsytem barrel;
-
-    public enum controlState {
+    public enum ControlState {
         aButton,
         bButton,
         xButton,
@@ -40,78 +35,27 @@ public class SuperStructure {
         defaultState,
     }
 
-    controlState control = controlState.defaultState;
-    SuperState actual;
-    BarrelStates barrelStates;
+    private VisionSubsystem vision;
+    private IntakeSubsystem intake;
+    private ShooterSubsystem shooter;
+    private BarrelSubsytem barrel;
 
-    private void setSuperState(SuperState state) {
-        actual = state;
-    }
-
-    public void setControlState(controlState state) {
-        control = state;
-    }
+    private ControlState controlState = ControlState.defaultState;
+    private SuperState superState;
 
     private double shotTimer = 0;
     private double ejectTimer = 0;
 
-    private void manageControl() {
-        switch (control) {
-            case aButton:
-            //TODO change this button to the proper one
-            // If the a button is held down, and superstate is unloaded, sets superstate to intake
-                if (actual == SuperState.unloaded) {
-                    setSuperState(SuperState.intake);
-                }
-                break;
-            case bButton:
-            //TODO change this button to the proper one
-            // if the b Button is held, and superstate is equal to loaded, sets superstate to eject
-                if (actual == SuperState.loaded) {
-                    setSuperState(SuperState.eject);
-                }
-                break;
-            case xButton:
-            //TODO change this button to the proper one
-            // if x button is pressed, and superstate is equal to loaded, set superstate to prepareShot
-                if (actual == SuperState.loaded) {
-                    setSuperState(SuperState.prepareShot);
-                }
-                break;
-            case yButton:
-            //TODO change this button to the proper one
-            // if y button is pressed, and superstate is equal to prepareShot, set superstate to shoot
-                if (actual == SuperState.prepareShot) {
-                    setSuperState(SuperState.shoot);
-                }
-                break;
-            case rightBumper:
-                
-                break;
-            case rightTrigger:
-                
-                break;
-            case leftBumper:
-                
-                break;
-            case leftTrigger:
-                
-                break;  
-            case defaultState:
-            
-                break;
-            default:
-                break;
-        }
+    public SuperStructure(){}
 
-        manageActual();
-    
+    public void periodic() {
+        
     }
 
-    private void manageActual() {
-        switch (actual) {
+    private void manageSuperState() {
+        switch (superState) {
             case intake:
-                intakeState();
+                intake();
                 break;
             case secure:
                 secure();
@@ -145,14 +89,18 @@ public class SuperStructure {
         }
     }
 
-    private void intakeState() {
+    public void setSuperState(SuperState state) {
+        superState = state;
+    }
+
+    private void intake() {
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelStates.intake);
         if (barrel.getBeamBrake()) {
             setSuperState(SuperState.secure);
         }
-        if (control != controlState.aButton) {
+        if (controlState != ControlState.aButton) {
             setSuperState(SuperState.unloaded);
         }
     }
@@ -173,7 +121,7 @@ public class SuperStructure {
             setSuperState(SuperState.unloaded);
             ejectTimer = 0;
         }
-        if (control != controlState.bButton) {
+        if (controlState != ControlState.bButton) {
             intake.setState(IntakeState.store);
             setSuperState(SuperState.secure);
         }
@@ -209,19 +157,19 @@ public class SuperStructure {
         intake.setState(IntakeState.transition);
         barrel.setState(BarrelStates.adjust);
         if (!barrel.getBeamBrake()) {
-            if (barrelStates == BarrelStates.readjust) {
+            if (barrel.getState() == BarrelStates.readjust) {
             } else {
                 barrel.setState(BarrelStates.readjust);
             }
         } else {
-            if (barrelStates == BarrelStates.readjust) {
+            if (barrel.getState() == BarrelStates.readjust) {
                 setSuperState(SuperState.loaded);
             }
         }
     }
 
     private void manual() {
-        // Sets shooter, and inatke to manual for manual control
+        // Sets shooter, and inatke to manual for manual controlState
         shooter.setState(ShooterStates.manual);
         intake.setState(IntakeState.manual);
     }
@@ -237,9 +185,5 @@ public class SuperStructure {
         intake.setState(IntakeState.store);
         barrel.setState(BarrelStates.unload);
         shooter.setState(ShooterStates.idle);
-    }
-
-    public void periodic() {
-        
     }
 }
