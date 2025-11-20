@@ -10,6 +10,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -40,16 +42,18 @@ public class IntakeSubsystem extends SubsystemBase{
     // variables defined above methods
 
     // variables relating to intake flywheels
-    private SparkMax flywheelMotor = new SparkMax(1, MotorType.kBrushless);
-    private MechanismGearing flywheelGearing = new MechanismGearing(GearBox.fromReductionStages(1.2, 1));
+    private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
     private SmartMotorControllerConfig flywheelMotorConfig = new SmartMotorControllerConfig(this)
-        .withControlMode(ControlMode.OPEN_LOOP)
-        .withGearing(flywheelGearing)
+        .withClosedLoopControlPeriod(Seconds.of(0.25))
+        .withClosedLoopController(new PIDController(0, 0, 0))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1.2, 1)))
         .withIdleMode(MotorMode.COAST)
-        .withMotorInverted(false)
-        .withTelemetry(TelemetryVerbosity.HIGH)
+        .withTelemetry("IntakeWheelMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
-        .withOpenLoopRampRate(Seconds.of(0.25));
+        .withMotorInverted(false)
+        .withClosedLoopRampRate(Seconds.of(0.25))
+        .withOpenLoopRampRate(Seconds.of(0.25))
+        .withFeedforward(new ArmFeedforward(0, 0, 0, 0));
 
     private SmartMotorController flywheelController = new SparkWrapper(flywheelMotor, DCMotor.getNEO(1), flywheelMotorConfig);
     private FlyWheelConfig intakeConfig = new FlyWheelConfig(flywheelController)
@@ -61,9 +65,10 @@ public class IntakeSubsystem extends SubsystemBase{
     private FlyWheel flywheels = new FlyWheel(intakeConfig);
 
     // variables relating to intake pivot
-    private SparkMax pivotMotor = new SparkMax(2, MotorType.kBrushless);
+    private SparkMax pivotMotor = new SparkMax(11, MotorType.kBrushless);
     private MechanismGearing pivotGearing = new MechanismGearing(GearBox.fromReductionStages(18, 1));
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
+        .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0)
         .withGearing(pivotGearing)

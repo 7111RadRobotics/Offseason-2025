@@ -1,6 +1,7 @@
 //Fix
 package team7111.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -11,6 +12,9 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -22,12 +26,13 @@ import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class BarrelSubsystem extends SubsystemBase {
 
-    public enum BarrelStates {
+    public enum BarrelState {
         intake,
         adjust,
         readjust,
@@ -39,27 +44,31 @@ public class BarrelSubsystem extends SubsystemBase {
     };
 
     private DigitalInput beamBreak = new DigitalInput(1);
-    
-    private MechanismGearing barrelGearing = new MechanismGearing(GearBox.fromReductionStages(1, 1));
 
-    private SparkMax barrelMotor = new SparkMax(1, MotorType.kBrushless);
+    private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
-        .withControlMode(ControlMode.CLOSED_LOOP)
+        .withClosedLoopControlPeriod(Seconds.of(0.25))
+        .withClosedLoopController(new PIDController(0.1, 0, 0))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
+        .withIdleMode(MotorMode.BRAKE)
+        .withTelemetry("BarrelMotor", TelemetryVerbosity.HIGH)
+        .withStatorCurrentLimit(Amps.of(40))
+        .withMotorInverted(false)
         .withClosedLoopRampRate(Seconds.of(0.25))
-        .withSoftLimit(Degrees.of(0), Degrees.of(180))
-        .withGearing(barrelGearing);
+        .withOpenLoopRampRate(Seconds.of(0.25))
+        .withFeedforward(new SimpleMotorFeedforward(0, 0))
+        .withControlMode(ControlMode.OPEN_LOOP);
     
-    private SmartMotorController barrelSparkController = new SparkWrapper(barrelMotor, DCMotor.getNEO(1), barrelMotorConfig);
-    private final FlyWheelConfig barrelConfig = new FlyWheelConfig(barrelSparkController)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(.5))
+    private SmartMotorController barrelController = new SparkWrapper(barrelMotor, DCMotor.getNEO(1), barrelMotorConfig);
+    private FlyWheelConfig barrelConfig = new FlyWheelConfig(barrelController)
+        .withDiameter(Inches.of(1))
+        .withMass(Pounds.of(0.5))
         .withUpperSoftLimit(RPM.of(1000))
-        .withTelemetry("IntakeConfig", TelemetryVerbosity.HIGH);
+        .withTelemetry("Barrel", TelemetryVerbosity.HIGH);
 
     private FlyWheel barrel = new FlyWheel(barrelConfig);
 
-    private BarrelStates state = BarrelStates.defaultState;
-
+    private BarrelState state = BarrelState.defaultState;
 
     //Constructor for class
     public BarrelSubsystem() {}
@@ -93,7 +102,7 @@ public class BarrelSubsystem extends SubsystemBase {
                 reverse();
                 break;
             case unload:
-                unload();
+                unloaded();
                 break;
             case loaded:
                 loaded();
@@ -104,11 +113,11 @@ public class BarrelSubsystem extends SubsystemBase {
         }
     }
 
-    public BarrelStates getState() {
+    public BarrelState getState() {
         return state;
     }
 
-    public void setState(BarrelStates state) {
+    public void setState(BarrelState state) {
         this.state = state;
     }
 
@@ -118,31 +127,30 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private void intake() {
         // Placeholder values. Wheels active
-        barrel.setSpeed(DegreesPerSecond.of(60));
+        barrel.setSpeed(DegreesPerSecond.of(60)).execute();;
     }
 
     private void adjust() {
         //  Placeholder values. Moves wheels backward slowly
-        barrel.setSpeed(DegreesPerSecond.of(-40));
+        barrel.setSpeed(DegreesPerSecond.of(-40)).execute();
     }
 
     private void readjust() {
         //  Placeholder values. Moves wheels forward
-        barrel.setSpeed(DegreesPerSecond.of(-80));
+        barrel.setSpeed(DegreesPerSecond.of(-80)).execute();
     }
 
     private void shoot() {
         // Placeholder values. Wheels will be active at full speed
-        barrel.setSpeed(DegreesPerSecond.of(180));
+        barrel.setSpeed(DegreesPerSecond.of(180)).execute();
     }
 
     private void reverse() {
         // Placeholder values. Sets wheels reversing slowly
-        barrel.setSpeed(DegreesPerSecond.of(-60));
+        barrel.setSpeed(DegreesPerSecond.of(-60)).execute();
     }
 
-    private void unload() {
-        //  unloads the game piece, wheels active at low speeds
+    private void unloaded() {
 
     }
 

@@ -39,13 +39,13 @@ public class VisionSubsystem extends SubsystemBase{
         );*/
     public final Camera orangepi1 = new Camera(
         "OV9281_1", 
-        cameraPositionsToCenter[1], 
+        cameraPositionsToCenter[0], 
         new EstimatedRobotPose(estPose3d, 0.0, null, PoseStrategy.AVERAGE_BEST_TARGETS), 
         this
         );
     public final Camera orangepi2 = new Camera(
         "OV9281_2", 
-        cameraPositionsToCenter[1], 
+        cameraPositionsToCenter[0], 
         new EstimatedRobotPose(estPose3d, 0.0, null, PoseStrategy.AVERAGE_BEST_TARGETS), 
         this
         );

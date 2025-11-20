@@ -55,8 +55,6 @@ public class DrivebaseConfig {
         boolean angleBrakeMode = false;
         PIDController drivePID = new PIDController(0.01, 0.0, 0.0008);
         PIDController anglePID = new PIDController(0.2, 0.0, 0.0);
-        //drivePID.setP(1);
-        //anglePID.setP(50);
         SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
         SimpleMotorFeedforward angleFF = new SimpleMotorFeedforward(0, 0 /*0.001, 0.0*/);
 
@@ -101,6 +99,8 @@ public class DrivebaseConfig {
 
         GenericSwerveModule[] moduleTypes;
         if(isSim){
+            drivePID.setPID(1, 0, 0);
+            anglePID.setPID(50, 0, 0);
             moduleTypes = new GenericSwerveModule[]{
                 new SimSwerveModule(moduleConstants[0]),
                 new SimSwerveModule(moduleConstants[1]),

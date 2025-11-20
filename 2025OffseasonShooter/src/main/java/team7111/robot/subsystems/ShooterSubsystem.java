@@ -42,7 +42,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class ShooterSubsystem implements Subsystem {
     
-    public enum ShooterStates {
+    public enum ShooterState {
         prepareShot,
         shoot,
         reverse,
@@ -52,25 +52,14 @@ public class ShooterSubsystem implements Subsystem {
         idle,
     };
 
-    public ShooterStates state = ShooterStates.defaultState;
+    public ShooterState state = ShooterState.defaultState;
 
     private double visionAngle = 0;
     private double visionSpeed = 0;
 
-    private int mainMotorID;
-    private int followerMotorID;
+    private SparkMax shooterWheelsMotor = new SparkMax(13, MotorType.kBrushless);
+    private SparkMax shooterFollowerMotor = new SparkMax(14, MotorType.kBrushless);
 
-    private SparkMax shooterWheelsMotor = new SparkMax(mainMotorID, MotorType.kBrushless);
-    private SparkMax shooterFollowerMotor = new SparkMax(followerMotorID, MotorType.kBrushless);
-
-    private boolean pairBoolean = true;
-    private Pair<Object, Boolean> followerMotorPair = new Pair<>(shooterFollowerMotor, pairBoolean);
-    private SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
-    private static PersistMode followerMotorConfigPersistMode = PersistMode.kPersistParameters;
-    private static ResetMode followerMotorConfigResetMode = ResetMode.kResetSafeParameters;
-
-    private GearBox pivotGearBox = GearBox.fromReductionStages(112, 1);
-    private MechanismGearing pivotGearing = new MechanismGearing(pivotGearBox);
     private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
@@ -81,10 +70,10 @@ public class ShooterSubsystem implements Subsystem {
         .withOpenLoopRampRate(Seconds.of(0.25))
         .withTelemetry("shooterPivotMotors", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
-        .withGearing(pivotGearing);
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(112, 1)));
 
-    private TalonFX shooterPivotMotor = new TalonFX(0);
-    private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getNEO(1), talonConfig);
+    private TalonFX shooterPivotMotor = new TalonFX(15);
+    private SmartMotorController shooterPivot = new TalonFXWrapper(shooterPivotMotor, DCMotor.getKrakenX60(1), talonConfig);
     
     private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
         .withStartingPosition(Degrees.of(0))
@@ -92,10 +81,9 @@ public class ShooterSubsystem implements Subsystem {
         .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Meters.of(0), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30));
+
     private Pivot pivot = new Pivot(shooterPivotConfig);
 
-    private GearBox wheelGearBox = GearBox.fromReductionStages(1,1);
-    private MechanismGearing wheelGearing = new MechanismGearing(wheelGearBox);
     private SmartMotorControllerConfig sparkConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
@@ -107,10 +95,11 @@ public class ShooterSubsystem implements Subsystem {
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withTelemetry("shooterWheelsMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
-        .withGearing(wheelGearing)
-        .withFollowers(followerMotorPair);
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
+        .withFollowers(new Pair<>(shooterFollowerMotor, true));
 
     private SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
+
     private FlyWheelConfig shooterConfig = new FlyWheelConfig(shooterWheels)
         .withDiameter(Inches.of(0))
         .withMass(Pounds.of(0))
@@ -120,10 +109,7 @@ public class ShooterSubsystem implements Subsystem {
 
     private FlyWheel shooter = new FlyWheel(shooterConfig);
 
-    public ShooterSubsystem(int mainMotorID, int followerMotorID) {
-        this.mainMotorID = mainMotorID;
-        this.followerMotorID = followerMotorID;
-
+    public ShooterSubsystem() {
         configureFollowerMotor();
     }
 
@@ -133,7 +119,14 @@ public class ShooterSubsystem implements Subsystem {
      * Returns false if an error has occurred.
      */
     public void periodic() {
+        pivot.updateTelemetry();
+        shooter.updateTelemetry();
         manageState();
+    }
+
+    public void simulationPeriodic(){
+        pivot.simIterate();
+        shooter.simIterate();
     }
 
     private void manageState() {
@@ -162,11 +155,11 @@ public class ShooterSubsystem implements Subsystem {
         }
     }
 
-    public void setState(ShooterStates state) {
+    public void setState(ShooterState state) {
         this.state = state;
     }
 
-    public ShooterStates getState() {
+    public ShooterState getState() {
         return state;
     }
 
@@ -204,8 +197,9 @@ public class ShooterSubsystem implements Subsystem {
 
     private void configureFollowerMotor() {
         // configure followerMotorConfig to be a follower and inverted
-        followerMotorConfig.inverted(true);
-        shooterFollowerMotor.configure(followerMotorConfig, followerMotorConfigResetMode, followerMotorConfigPersistMode);
+        shooterFollowerMotor.configure(
+            new SparkMaxConfig().follow(shooterWheelsMotor, true), 
+            ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     } 
 
     private void manual() {

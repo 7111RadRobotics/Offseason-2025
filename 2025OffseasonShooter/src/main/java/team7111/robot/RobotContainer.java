@@ -51,7 +51,7 @@ public class RobotContainer {
         paths = new PathSubsystem();
         intake = new IntakeSubsystem();
         barrel = new BarrelSubsystem();
-        shooter = new ShooterSubsystem(0, 1);
+        shooter = new ShooterSubsystem();
         superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);
 
         autoChooser = new SendableChooser<>();
