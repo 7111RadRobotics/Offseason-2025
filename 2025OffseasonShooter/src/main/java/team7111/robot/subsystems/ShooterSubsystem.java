@@ -77,9 +77,8 @@ public class ShooterSubsystem implements Subsystem {
     
     private PivotConfig shooterPivotConfig = new PivotConfig(shooterPivot)
         .withStartingPosition(Degrees.of(0))
-        .withWrapping(Degree.of(0), Degree.of(360))
         .withHardLimit(Degrees.of(0), Degrees.of(720))
-        .withMOI(Meters.of(0), Pounds.of(3.953))
+        .withMOI(Inches.of(15.5), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30));
 
     private Pivot pivot = new Pivot(shooterPivotConfig);
@@ -101,8 +100,8 @@ public class ShooterSubsystem implements Subsystem {
     private SmartMotorController shooterWheels = new SparkWrapper(shooterWheelsMotor, DCMotor.getNEO(1), sparkConfig);
 
     private FlyWheelConfig shooterConfig = new FlyWheelConfig(shooterWheels)
-        .withDiameter(Inches.of(0))
-        .withMass(Pounds.of(0))
+        .withDiameter(Inches.of(2))
+        .withMass(Pounds.of(1))
         .withTelemetry("Shooter", TelemetryVerbosity.HIGH)
         .withUpperSoftLimit(RPM.of(1000))
         .withDiameter(Inches.of(4));
