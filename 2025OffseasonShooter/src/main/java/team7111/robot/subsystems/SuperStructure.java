@@ -11,14 +11,14 @@ import team7111.robot.subsystems.BarrelSubsystem;
 public class SuperStructure extends SubsystemBase{
 
     public enum ControlState {
-        aButton,
-        bButton,
-        xButton,
+        unloadedButton,
+        loadedButton,
+        prepareButton,
         yButton,
         rightBumper,
         rightTrigger,
         leftBumper,
-        leftTrigger,
+        intakeTrigger,
     }
 
     private enum SuperState {
@@ -42,14 +42,14 @@ public class SuperStructure extends SubsystemBase{
     private SwerveSubsystem swerve;
     private PathSubsystem paths;
 
-    private boolean aButton = false;
-    private boolean bButton = false;
-    private boolean xButton = false;
-    private boolean yButton = false;
+    private boolean unloadedButton = false;
+    private boolean loadedButton = false;
+    private boolean prepareButton = false;
+    private boolean ejectButton = false;
     private boolean rightBumper = false;
     private boolean rightTrigger = false;
     private boolean leftBumper = false;
-    private boolean leftTrigger = false;
+    private boolean intakeTrigger = false;
 
     private SuperState superState = SuperState.unloaded;
 
@@ -113,17 +113,17 @@ public class SuperStructure extends SubsystemBase{
     }
     private void setControlState(ControlState button, boolean state) {
         switch (button) {
-            case aButton:
-                aButton = state;
+            case unloadedButton:
+                unloadedButton = state;
                 break;
-            case bButton:
-                bButton = state;
+            case loadedButton:
+                loadedButton = state;
                 break;
-            case xButton:
-                xButton = state;
+            case prepareButton:
+                prepareButton = state;
                 break;
             case yButton:
-                yButton = state;
+                ejectButton = state;
                 break;
             case rightTrigger:
                 rightTrigger = state;
@@ -134,8 +134,8 @@ public class SuperStructure extends SubsystemBase{
             case leftBumper:
                 leftBumper = state;
                 break;
-            case leftTrigger:
-                leftTrigger = state;
+            case intakeTrigger:
+                intakeTrigger = state;
                 break;
             default:
                 break;
@@ -157,16 +157,16 @@ public class SuperStructure extends SubsystemBase{
         if (barrel.getBeamBrake()) {
             setSuperState(SuperState.secure);
         }
-        if (!aButton) {
+        if (!intakeTrigger) {
             setSuperState(SuperState.unloaded);
         }
     }
 
     private void loaded() {
-        if (xButton) {
+        if (ejectButton) {
             setSuperState(SuperState.eject);
         }
-        if (yButton) {
+        if (loadedButton) {
             setSuperState(SuperState.prepareShot);
         }
     }
@@ -187,14 +187,14 @@ public class SuperStructure extends SubsystemBase{
             setSuperState(SuperState.unloaded);
             ejectTimer = 0;
         }
-        if (!bButton) {
+        if (!ejectButton) {
             setSuperState(SuperState.secure);
         }
     }
 
     private void prepareShot() {
         shooter.setState(ShooterState.prepareShot);
-        if (aButton) {
+        if (prepareButton) {
             setSuperState(SuperState.shoot);
         }
     }
@@ -252,5 +252,8 @@ public class SuperStructure extends SubsystemBase{
         intake.setState(IntakeState.store);
         barrel.setState(BarrelState.unload);
         shooter.setState(ShooterState.idle);
+        if (intakeTrigger) {
+            setSuperState(SuperState.intake);
+        }
     }
 }
