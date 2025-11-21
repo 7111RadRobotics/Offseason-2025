@@ -100,6 +100,9 @@ public class SuperStructure extends SubsystemBase{
             case prepareShotVision:
                 prepareShotVision();
                 break;
+            case loaded:
+                loaded();
+                break;
             default:
                 break;
         }
@@ -155,6 +158,15 @@ public class SuperStructure extends SubsystemBase{
         }
     }
 
+    private void loaded() {
+        if (xButton) {
+            setSuperState(SuperState.eject);
+        }
+        if (yButton) {
+            setSuperState(SuperState.prepareShot);
+        }
+    }
+
     private void shootVision() {
         // sets the shooter state to shoot. Will aim using vision
         shooter.setState(ShooterState.shoot);
@@ -178,7 +190,9 @@ public class SuperStructure extends SubsystemBase{
 
     private void prepareShot() {
         shooter.setState(ShooterState.prepareShot);
-
+        if (aButton) {
+            setSuperState(SuperState.shoot);
+        }
     }
 
     private void shoot() {
