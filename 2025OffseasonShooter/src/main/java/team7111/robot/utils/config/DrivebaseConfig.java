@@ -142,26 +142,39 @@ public class DrivebaseConfig {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration().withMagnetSensor(
             new MagnetSensorConfigs().withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
+        double canCoder0Offset = isSim
+            ? 0
+            : 11.52;
+        double canCoder1Offset = isSim
+            ? 0
+            : -133.56;
+        double canCoder2Offset = isSim
+            ? 0
+            : 174.96;
+        double canCoder3Offset = isSim
+            ? 0
+            : -44.28;
+
         SwerveModuleConfig[] moduleConstants = new SwerveModuleConfig[]{
             new SwerveModuleConfig(
                 new SwerveMotorConfig(1, driveMotorConfig),
                 new SwerveMotorConfig(2, angleMotorConfig),
-                new CTREEncoder(1, encoderConfig), 0),
+                new CTREEncoder(0, encoderConfig), canCoder0Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(3, driveMotorConfig), 
                 new SwerveMotorConfig(4, angleMotorConfig), 
-                new CTREEncoder(2, encoderConfig), 0),
+                new CTREEncoder(3, encoderConfig), canCoder3Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(5, driveMotorConfig), 
                 new SwerveMotorConfig(6, angleMotorConfig), 
-                new CTREEncoder(3, encoderConfig), 0),
+                new CTREEncoder(2, encoderConfig), canCoder2Offset),
 
             new SwerveModuleConfig(
                 new SwerveMotorConfig(7, driveMotorConfig), 
                 new SwerveMotorConfig(8, angleMotorConfig), 
-                new CTREEncoder(4, encoderConfig), 0),
+                new CTREEncoder(1, encoderConfig), canCoder1Offset),
         };
 
         GenericSwerveModule[] moduleTypes;

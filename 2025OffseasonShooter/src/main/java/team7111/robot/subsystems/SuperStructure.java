@@ -51,7 +51,7 @@ public class SuperStructure extends SubsystemBase{
     private boolean leftBumper = false;
     private boolean leftTrigger = false;
 
-    private SuperState superState;
+    private SuperState superState = SuperState.unloaded;
 
     private double shotTimer = 0;
     private double ejectTimer = 0;
@@ -60,8 +60,12 @@ public class SuperStructure extends SubsystemBase{
         VisionSubsystem vision, SwerveSubsystem swerve, PathSubsystem paths, 
         IntakeSubsystem intake, BarrelSubsystem barrel, ShooterSubsystem shooter
     ){
-        this.vision=vision;
-
+        this.vision = vision;
+        this.swerve = swerve;
+        this.paths = paths;
+        this.intake = intake;
+        this.barrel = barrel;
+        this.shooter = shooter;
     }
 
     public void periodic() {

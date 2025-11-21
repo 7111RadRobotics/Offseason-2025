@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import java.util.List;
 import java.util.Optional;
 import team7111.robot.Constants;
 import team7111.robot.subsystems.VisionSubsystem;
@@ -29,7 +31,7 @@ public class Camera extends PhotonCamera{
     private Transform3d cameraToRobotCenter;
     private VisionSubsystem vision;
     private PhotonPoseEstimator photonPoseEstimator;
-    private PhotonPipelineResult latestResult;
+    private PhotonPipelineResult latestResult = new PhotonPipelineResult();
     private PhotonTrackedTarget bestTarget;
     private Transform3d bestCameraToTarget;
     public EstimatedRobotPose estRobotPose;
@@ -62,7 +64,10 @@ public class Camera extends PhotonCamera{
     
     public void periodic(){
         //Gets the latest result of the unread results.
-        latestResult = getAllUnreadResults().get(getAllUnreadResults().size() -1);
+        List<PhotonPipelineResult> unreadResults = getAllUnreadResults();
+        for (PhotonPipelineResult result : unreadResults){
+            latestResult = result;
+        }
         
         if(latestResult.hasTargets()){
             bestTarget = latestResult.getBestTarget();
@@ -113,6 +118,12 @@ public class Camera extends PhotonCamera{
 
     public Transform3d getCameraToRobot(){
         return cameraToRobotCenter;
+    }
+
+    public PhotonPipelineResult getLatestResult(){
+        if(latestResult != null)
+            return latestResult;
+        return new PhotonPipelineResult();
     }
 }
 
