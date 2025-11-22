@@ -35,33 +35,29 @@ public class RobotContainer {
     public final CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final SwerveSubsystem swerve;
-    public final VisionSubsystem vision;
+    /*public final VisionSubsystem vision;
     public final PathSubsystem paths;
     public final IntakeSubsystem intake;
     public final BarrelSubsystem barrel;
     public final ShooterSubsystem shooter;
-    public final SuperStructure superStructure;
+    public final SuperStructure superStructure;*/
     public SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
         DriverStation.silenceJoystickConnectionWarning(true);
-
-        vision = new VisionSubsystem();
+        swerve = new SwerveSubsystem();
+        /*vision = new VisionSubsystem();
         swerve = new SwerveSubsystem();
         paths = new PathSubsystem();
         intake = new IntakeSubsystem();
         barrel = new BarrelSubsystem();
         shooter = new ShooterSubsystem();
-        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);
+        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);*/
 
         autoChooser = new SendableChooser<>();
 
         Waypoint[] waypoints = new Waypoint[]{
             new Waypoint(new Pose2d(7.217, 4.199, Rotation2d.fromDegrees(180.0)), new WaypointConstraints(10, 0, 0.25), new WaypointConstraints(360, 0, 10)),
-            new Waypoint(new Pose2d(5.886, 4.199, Rotation2d.fromDegrees(180.0)), new WaypointConstraints(10, 0, 0.25), new WaypointConstraints(360, 0, 10)), 
-            new Waypoint(new Pose2d(5.886, 5.601, Rotation2d.fromDegrees(180.0)), new WaypointConstraints(10, 3, 0.4), new WaypointConstraints(360, 0, 360)),
-            new Waypoint(new Pose2d(1.486, 7.184, Rotation2d.fromDegrees(-53.7)), new WaypointConstraints(10, 0, 0.25), new WaypointConstraints(360, 0, 10)),
-            new Waypoint(new Pose2d(3.644, 5.146, Rotation2d.fromDegrees(-60.1)), new WaypointConstraints(10, 0, 0.25), new WaypointConstraints(360, 0, 10)),
         };
 
         Path path = new Path(waypoints);
@@ -89,15 +85,15 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         swerve.setJoysickInputs(
-            () -> -ControllerConstants.xDriveLimiter.calculate((Math.pow(driverController.getLeftX(), 3) / SwerveConstants.sensitivity)), 
-            () -> -ControllerConstants.yDriveLimiter.calculate((Math.pow(driverController.getLeftY(), 3) / SwerveConstants.sensitivity)),  
+            () -> -ControllerConstants.xDriveLimiter.calculate((Math.pow(driverController.getLeftX(), 1) / SwerveConstants.sensitivity)), 
+            () -> -ControllerConstants.yDriveLimiter.calculate((Math.pow(driverController.getLeftY(), 1) / SwerveConstants.sensitivity)),  
             () -> ControllerConstants.rotationLimiter.calculate((Math.pow(driverController.getRightX(), 3) / SwerveConstants.sensitivity)));
 
         swerve.setDriveFieldRelative(true);
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
 
-        driverController.a().onTrue(superStructure.setControlStateCommand(ControlState.aButton, true))
+        /*driverController.a().onTrue(superStructure.setControlStateCommand(ControlState.aButton, true))
                             .onFalse(superStructure.setControlStateCommand(ControlState.aButton, false));
         driverController.b().onTrue(superStructure.setControlStateCommand(ControlState.bButton, true))
                             .onFalse(superStructure.setControlStateCommand(ControlState.bButton, false));
@@ -112,6 +108,6 @@ public class RobotContainer {
         driverController.leftBumper().onTrue(superStructure.setControlStateCommand(ControlState.leftBumper, true))
                             .onFalse(superStructure.setControlStateCommand(ControlState.leftBumper, false));
         driverController.leftTrigger().onTrue(superStructure.setControlStateCommand(ControlState.leftTrigger, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.leftTrigger, false));
+                            .onFalse(superStructure.setControlStateCommand(ControlState.leftTrigger, false));*/
     }
 }

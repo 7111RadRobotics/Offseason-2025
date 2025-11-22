@@ -34,7 +34,7 @@ public class Constants {
     /** All swerve constants. */
     public static class SwerveConstants {
         /** Contains robot-specific drivebase constants */
-        public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getSoundWave(RobotBase.isSimulation());
+        public static final DrivebaseConfig drivebaseConfig = DrivebaseConfig.getStormSurge(RobotBase.isSimulation());
         
         /** Constants that apply to the whole drive train. */
         public static final double wheelBaseWidth = drivebaseConfig.width; // Width of the drivetrain measured from the middle of the wheels.
@@ -58,14 +58,9 @@ public class Constants {
         /** Speed ramp. */
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
-
-        /** Drive motor characterization. */
-        public static final double driveKS = 0.11937;
-        public static final double driveKV = 2.6335;
-        public static final double driveKA = 0.46034;
         
         /** Swerve constraints. */
-        public static final double maxDriveVelocity = 1;
+        public static final double maxDriveVelocity = 10;
         public static final double maxAngularVelocity = 2;
         public static final double sensitivity = 1;
 

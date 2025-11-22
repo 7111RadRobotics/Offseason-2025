@@ -26,19 +26,28 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
 
     private DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
     private VelocityVoltage driveVelocity = new VelocityVoltage(0);
-    private SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
+    private SimpleMotorFeedforward driveFF;
 
     private PositionVoltage anglePosition = new PositionVoltage(0);
 
     private double encoderOffsetDegrees;
+    private double driveGearRatio;
+    private double angleGearRatio;
+    private double wheelCircumference;
+    private double driveRotationsToMeters;
 
     public TalonFXSwerveModule(SwerveModuleConfig config){
         driveMotor = new TalonFX(config.driveMotor.id, Constants.canbus);
         angleMotor = new TalonFX(config.angleMotor.id, Constants.canbus);
         encoder = config.encoder;
 
+        driveFF = new SimpleMotorFeedforward(config.driveMotor.ff.getKs(), config.driveMotor.ff.getKv(), config.driveMotor.ff.getKa());
         driveConfig = config.driveMotor.getTalonFXConfiguration();
         angleConfig = config.angleMotor.getTalonFXConfiguration();
+        driveGearRatio = config.driveMotor.gearRatio;
+        angleGearRatio = config.angleMotor.gearRatio;
+        wheelCircumference = SwerveConstants.wheelCircumference;
+        driveRotationsToMeters = wheelCircumference/driveGearRatio;
 
         encoderOffsetDegrees = config.canCoderOffsetDegrees;
     }
@@ -53,19 +62,19 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
     @Override
     public void setClosedDriveState(SwerveModuleState state) {
         var speed = state.speedMetersPerSecond;
-        driveVelocity.Velocity = speed / SwerveConstants.driveRPMToMPS;
+        driveVelocity.Velocity = speed / driveRotationsToMeters;
         driveVelocity.FeedForward = driveFF.calculate(speed);
         driveMotor.setControl(driveVelocity);
     }
 
     @Override
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValueAsDouble() * SwerveConstants.driveRPMToMPS;
+        return driveMotor.getVelocity().getValueAsDouble() * driveRotationsToMeters;
     }
 
     @Override
     public double getDrivePosition() {
-        return driveMotor.getPosition().getValueAsDouble() * SwerveConstants.driveRotationsToMeters;
+        return driveMotor.getPosition().getValueAsDouble() * driveRotationsToMeters;
     }
 
     @Override
@@ -91,6 +100,8 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
 
     @Override
     public void configure() {
+        angleConfig.Feedback.SensorToMechanismRatio = angleGearRatio;
+        angleConfig.ClosedLoopGeneral.ContinuousWrap = true;
         driveMotor.getConfigurator().apply(driveConfig);
         angleMotor.getConfigurator().apply(angleConfig);
     }    

@@ -65,7 +65,7 @@ public class SimSwerveModule implements GenericSwerveModule{
         //SmartDashboard.putNumber("setMPS", state.speedMetersPerSecond);
         SmartDashboard.putBoolean("isAtSetpoint", drivePID.atSetpoint());
         double ffCalc = driveFeedforward.calculate(state.speedMetersPerSecond);
-        double input = drivePID.calculate(getDriveVelocity() / SwerveConstants.wheelCircumference, state.speedMetersPerSecond * driveGearRatio / SwerveConstants.wheelCircumference);
+        double input = drivePID.calculate(driveMotorSim.getAngularVelocityRPM() / 60, state.speedMetersPerSecond / SwerveConstants.wheelCircumference);
         //input = drivePID.calculate(getDriveVelocity(), 100 * SwerveConstants.wheelCircumference);
 
         driveMotorSim.setInputVoltage(input);
@@ -75,7 +75,7 @@ public class SimSwerveModule implements GenericSwerveModule{
     public double getDriveVelocity() {
         //SmartDashboard.putNumber("driveVel", ((driveMotorSim.getAngularVelocityRadPerSec() / (2*Math.PI)) * SwerveConstants.wheelCircumference));
         SmartDashboard.putNumber("driveVoltage", driveMotorSim.getInputVoltage());
-        return ((driveMotorSim.getAngularVelocityRadPerSec() / (2*Math.PI)) * SwerveConstants.wheelCircumference);
+        return ((driveMotorSim.getAngularVelocityRPM() / 60) * SwerveConstants.wheelCircumference);
     }
 
     @Override

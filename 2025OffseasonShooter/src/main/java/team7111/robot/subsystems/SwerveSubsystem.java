@@ -131,6 +131,12 @@ public class SwerveSubsystem extends SubsystemBase {
         leftRight = Math.abs(leftRight) < ControllerConstants.axisDeadzone ? 0 : leftRight;
         rotation = Math.abs(rotation) < ControllerConstants.axisDeadzone ? 0 : rotation;
 
+        double hypot = Math.hypot(leftRight, forwardBack);
+        hypot = Math.pow(hypot, 3);
+        double theta = Math.atan2(forwardBack, leftRight);
+
+        forwardBack = hypot * Math.sin(theta);
+        leftRight = hypot * Math.cos(theta);
         // Converting to m/s
         forwardBack *= SwerveConstants.maxDriveVelocity;
         leftRight *= SwerveConstants.maxDriveVelocity;
