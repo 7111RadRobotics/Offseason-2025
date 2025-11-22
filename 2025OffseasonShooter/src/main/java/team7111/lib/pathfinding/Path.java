@@ -223,6 +223,19 @@ public class Path {
             isflipped = isRedAlliance;
         }
     }
+
+    /**
+     * Routs around any objects in the path
+     */
+    public void avoidFieldElements(boolean avoidFieldElements, FieldElement[] fieldElements){
+        if(!avoidFieldElements){
+            return;
+        }
+
+
+        //Figure out pathfinding algorithm.
+        //https://en.wikipedia.org/wiki/Pathfinding
+    }
     
     /**
      * indexes waypoint to path to if there. 

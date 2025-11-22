@@ -24,12 +24,14 @@ public class PathMaster {
     private double invertedRot = 1.0;
     private double invertedGyro = 1.0;
 
-    //Houses pointers to field elements
+    //Houses field elements
     private FieldElement fieldElements[];
 
     private boolean shouldFlipPath = false;
     private boolean isPathMirrored = false;
     private boolean fieldRelative = false;
+
+    private boolean avoidFieldElements = false;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -42,6 +44,11 @@ public class PathMaster {
         this.gyroYaw = gyroYaw;
     }
     
+    /**
+     * Determines if the path should be flipped or not.
+     * @param flipField -Which team it is on. False = alliance 1, true = alliance 2
+     * @param isMirrored -Determines if the path should be flipped. If false, it will not flip.
+     */
     public void useAllianceFlipping(boolean flipField, boolean isMirrored){
         shouldFlipPath = flipField;
         isPathMirrored = isMirrored;
@@ -51,19 +58,31 @@ public class PathMaster {
         fieldRelative = isFieldRelative;
     }
 
+    /**
+     * Sets the translation pid for the path
+     */
     public void setTranslationPID(double P, double I, double D){
         xPID.setPID(P, I, D);
         yPID.setPID(P, I, D);
     }
 
+    /**
+     * Sets the rotation pid for the path
+     */
     public void setRotationPID(double P, double I, double D){
         rotPID.setPID(P, I, D);
     }
 
+    /**
+     * Sets the field element map to set where the objects are
+     */
     public void setFieldElementMap(FieldElement[] fieldElementArray){
         fieldElements = fieldElementArray;
     }
 
+    /**
+     * Sets the inversions for the robot
+     */
     public void setInversions(boolean invertX, boolean invertY, boolean invertRot, boolean invertGyro){
         invertedX = 1.0;
         invertedY = 1.0;
@@ -86,14 +105,27 @@ public class PathMaster {
             invertedGyro = -1.0;
         }
     }
+
     
+    void useBrokenPathFinding(boolean avoidFieldElements){
+        this.avoidFieldElements = avoidFieldElements;
+    }
+
+    
+    /**
+     * Equivelant to a "Reset" command, it applies all setup methods and initilizes the path
+     */
     public void initializePath(Path path){
         path.setPoseSupplier(suppliedPose);
         path.setSpeedSuppliers(()-> xCalculation, ()-> yCalculation, ()-> rotCalculation);
         path.flipPath(shouldFlipPath, isPathMirrored);
+        path.avoidFieldElements(avoidFieldElements, fieldElements);
         path.initialize();
     }
 
+    /**
+     * Runs the path's periodic and calculates the speed suppliers for x, y, and rotation.
+     */
     public void periodic(Path path){
         path.periodic();
         xCalculation = xPID.calculate(suppliedPose.get().getX(), path.getCurrentWaypoint().getPose().getX()) * invertedX;
@@ -104,6 +136,9 @@ public class PathMaster {
 
     }
 
+    /**
+     * Returns a ChassisSpeeds object for handing to the swerve subsystem
+     */
     public ChassisSpeeds getPathSpeeds(Path path, boolean avoidFieldElements, boolean fieldRelative){
         
         ChassisSpeeds chassisSpeeds = fieldRelative
