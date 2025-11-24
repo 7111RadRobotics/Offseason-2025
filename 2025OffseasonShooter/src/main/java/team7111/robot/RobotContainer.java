@@ -35,24 +35,23 @@ public class RobotContainer {
     public final CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.driverControllerID);
     public final SwerveSubsystem swerve;
-    /*public final VisionSubsystem vision;
+    public final VisionSubsystem vision;
     public final PathSubsystem paths;
     public final IntakeSubsystem intake;
     public final BarrelSubsystem barrel;
     public final ShooterSubsystem shooter;
-    public final SuperStructure superStructure;*/
+    public final SuperStructure superStructure;
     public SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
         DriverStation.silenceJoystickConnectionWarning(true);
         swerve = new SwerveSubsystem();
-        /*vision = new VisionSubsystem();
-        swerve = new SwerveSubsystem();
+        vision = new VisionSubsystem();
         paths = new PathSubsystem();
         intake = new IntakeSubsystem();
         barrel = new BarrelSubsystem();
         shooter = new ShooterSubsystem();
-        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);*/
+        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);
 
         autoChooser = new SendableChooser<>();
 
@@ -93,21 +92,11 @@ public class RobotContainer {
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
 
-        /*driverController.a().onTrue(superStructure.setControlStateCommand(ControlState.aButton, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.aButton, false));
-        driverController.b().onTrue(superStructure.setControlStateCommand(ControlState.bButton, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.bButton, false));
-        driverController.x().onTrue(superStructure.setControlStateCommand(ControlState.xButton, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.xButton, false));
-        driverController.y().onTrue(superStructure.setControlStateCommand(ControlState.yButton, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.yButton, false));
-        driverController.rightBumper().onTrue(superStructure.setControlStateCommand(ControlState.rightBumper, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.rightBumper, false));
-        driverController.rightTrigger().onTrue(superStructure.setControlStateCommand(ControlState.rightTrigger, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.rightTrigger, false));
-        driverController.leftBumper().onTrue(superStructure.setControlStateCommand(ControlState.leftBumper, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.leftBumper, false));
-        driverController.leftTrigger().onTrue(superStructure.setControlStateCommand(ControlState.leftTrigger, true))
-                            .onFalse(superStructure.setControlStateCommand(ControlState.leftTrigger, false));*/
+        driverController.rightTrigger()
+            .onTrue(superStructure.setControlStateCommand(ControlState.shootTrigger, true))
+            .onFalse(superStructure.setControlStateCommand(ControlState.shootTrigger, false));
+        driverController.leftTrigger()
+            .onTrue(superStructure.setControlStateCommand(ControlState.intakeTrigger, true))
+            .onFalse(superStructure.setControlStateCommand(ControlState.intakeTrigger, false));
     }
 }

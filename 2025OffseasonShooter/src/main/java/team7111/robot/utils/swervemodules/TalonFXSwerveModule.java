@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team7111.robot.Constants;
 import team7111.robot.Constants.SwerveConstants;
 import team7111.robot.utils.config.SwerveModuleConfig;
@@ -46,7 +47,7 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
         angleConfig = config.angleMotor.getTalonFXConfiguration();
         driveGearRatio = config.driveMotor.gearRatio;
         angleGearRatio = config.angleMotor.gearRatio;
-        wheelCircumference = SwerveConstants.wheelCircumference;
+        wheelCircumference = config.wheelCircumference;
         driveRotationsToMeters = wheelCircumference/driveGearRatio;
 
         encoderOffsetDegrees = config.canCoderOffsetDegrees;
@@ -69,6 +70,8 @@ public class TalonFXSwerveModule implements GenericSwerveModule{
 
     @Override
     public double getDriveVelocity() {
+        SmartDashboard.putNumber("driveVelocity", driveMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("driveRotationsToMeters", driveRotationsToMeters);
         return driveMotor.getVelocity().getValueAsDouble() * driveRotationsToMeters;
     }
 

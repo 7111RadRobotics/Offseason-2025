@@ -132,6 +132,9 @@ public class SwerveSubsystem extends SubsystemBase {
         rotation = Math.abs(rotation) < ControllerConstants.axisDeadzone ? 0 : rotation;
 
         double hypot = Math.hypot(leftRight, forwardBack);
+        if(Math.abs(hypot) > 1){
+            hypot = 1;
+        }
         hypot = Math.pow(hypot, 3);
         double theta = Math.atan2(forwardBack, leftRight);
 
