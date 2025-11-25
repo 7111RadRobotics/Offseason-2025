@@ -4,6 +4,7 @@ package team7111.robot.subsystems;
 import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterState;
 import team7111.robot.subsystems.BarrelSubsystem.BarrelState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team7111.robot.subsystems.BarrelSubsystem;
@@ -62,6 +63,7 @@ public class SuperStructure extends SubsystemBase{
 
     public void periodic() {
         manageSuperState();
+        SmartDashboard.putString("SuperState", superState.name());
     }
 
     private void manageSuperState() {
@@ -169,6 +171,9 @@ public class SuperStructure extends SubsystemBase{
     }
 
     private void loaded() {
+        intake.setState(IntakeState.store);
+        barrel.setState(BarrelState.loaded);
+        shooter.setState(ShooterState.idle);
         if (ejectTrigger) {
             setSuperState(SuperState.eject);
         }
@@ -195,6 +200,8 @@ public class SuperStructure extends SubsystemBase{
 
     private void prepareShot() {
         shooter.setState(ShooterState.prepareShot);
+        intake.setState(IntakeState.store);
+        barrel.setState(BarrelState.loaded);
         if (shootTrigger) {
             setSuperState(SuperState.shoot);
         }
@@ -208,13 +215,14 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter, and barrel to shoot. Starts the shot timer. When shot timer ends, loops, and set Super state to unloaded
         shooter.setState(ShooterState.shoot);
         barrel.setState(BarrelState.shoot);
-        if (barrel.getBeamBrake() || shotTimer >= 20) {
+        intake.setState(IntakeState.store);
+        if (barrel.getBeamBrake() || shotTimer >= 50) {
             shotTimer = 0;
         }
         if (!barrel.getBeamBrake()) {
             shotTimer += 1;
         }
-        if (shotTimer >= 20) {
+        if (shotTimer >= 50) {
             setSuperState(SuperState.unloaded);
         }
     }

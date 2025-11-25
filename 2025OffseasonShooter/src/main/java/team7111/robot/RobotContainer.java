@@ -98,5 +98,8 @@ public class RobotContainer {
         driverController.leftTrigger()
             .onTrue(superStructure.setControlStateCommand(ControlState.intakeTrigger, true))
             .onFalse(superStructure.setControlStateCommand(ControlState.intakeTrigger, false));
+        driverController.leftBumper()
+            .onTrue(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, true))
+            .onFalse(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, false));
     }
 }

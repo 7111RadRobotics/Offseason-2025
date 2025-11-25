@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.RPM;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -44,25 +45,25 @@ public class IntakeSubsystem extends SubsystemBase{
     // variables relating to intake flywheels
     private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
     private SmartMotorControllerConfig flywheelMotorConfig = new SmartMotorControllerConfig(this)
-        .withClosedLoopControlPeriod(Seconds.of(0.25))
-        .withClosedLoopController(new PIDController(0, 0, 0))
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1.2, 1)))
+        .withControlMode(ControlMode.OPEN_LOOP)
+        .withClosedLoopController(new PIDController(0.1, 0, 0))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1.2)))
         .withIdleMode(MotorMode.COAST)
         .withTelemetry("IntakeWheelMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
         .withMotorInverted(false)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withOpenLoopRampRate(Seconds.of(0.25))
-        .withFeedforward(new ArmFeedforward(0, 0, 0, 0));
+        .withFeedforward(new SimpleMotorFeedforward(0, 0));
 
     private SmartMotorController flywheelController = new SparkWrapper(flywheelMotor, DCMotor.getNEO(1), flywheelMotorConfig);
-    private FlyWheelConfig intakeConfig = new FlyWheelConfig(flywheelController)
-        .withDiameter(Inches.of(2.25))
-        .withMass(Pounds.of(0.5))
+    private FlyWheelConfig flywheelConfig = new FlyWheelConfig(flywheelController)
+        .withDiameter(Inches.of(1))
+        .withMass(Pounds.of(0.1))
         .withUpperSoftLimit(RPM.of(4000))
         .withTelemetry("IntakeFlywheels", TelemetryVerbosity.HIGH);
 
-    private FlyWheel flywheels = new FlyWheel(intakeConfig);
+    private FlyWheel flywheels = new FlyWheel(flywheelConfig);
 
     // variables relating to intake pivot
     private SparkMax pivotMotor = new SparkMax(11, MotorType.kBrushless);
@@ -76,7 +77,8 @@ public class IntakeSubsystem extends SubsystemBase{
         .withMotorInverted(false)
         .withStatorCurrentLimit(Amps.of(40))
         .withClosedLoopRampRate(Seconds.of(0.25))
-        .withOpenLoopRampRate(Seconds.of(0.25));
+        .withOpenLoopRampRate(Seconds.of(0.25))
+        ;//.withMomentOfInertia(Inches.of(8.876), Pounds.of(7.015));
     
     private SmartMotorController pivotController = new SparkWrapper(pivotMotor, DCMotor.getNEO(1), pivotMotorConfig);
     private PivotConfig pivotConfig = new PivotConfig(pivotController)

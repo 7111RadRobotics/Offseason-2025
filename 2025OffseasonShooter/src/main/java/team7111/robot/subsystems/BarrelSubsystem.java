@@ -47,9 +47,8 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
-        .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withClosedLoopController(new PIDController(0.1, 0, 0))
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(2.5, 1)))
         .withIdleMode(MotorMode.BRAKE)
         .withTelemetry("BarrelMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
