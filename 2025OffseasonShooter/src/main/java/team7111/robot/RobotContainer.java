@@ -61,7 +61,7 @@ public class RobotContainer {
 
         Path path = new Path(waypoints);
 
-        autoChooser.addOption("Path_TEST", swerve.setPath(path).andThen(swerve.setSwerveStateCommand(SwerveState.initializePath)));
+        autoChooser.addOption("Path_TEST", swerve.setPathCommand(path).andThen(swerve.setSwerveStateCommand(SwerveState.initializePath)));
 
         SmartDashboard.putData("autoChooser", autoChooser);
 

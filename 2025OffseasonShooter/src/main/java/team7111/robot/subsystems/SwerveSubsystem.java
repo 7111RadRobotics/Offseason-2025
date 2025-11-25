@@ -87,6 +87,42 @@ public class SwerveSubsystem extends SubsystemBase {
         
     }
 
+    @Override 
+    public void periodic() {
+        gyro.update();
+        swerveOdometry.update(getYaw(), getPositions());
+        commandedStatePublisher.set(states);
+
+        for(SwerveModule mod : modules){
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getEncoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Meters", mod.getPosition().distanceMeters);
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Rotations", mod.getPosition().distanceMeters / SwerveConstants.wheelCircumference);
+        }
+        SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
+
+        field.setRobotPose(getPose());
+        SmartDashboard.putData(field);
+        robotPosePublisher.set(getPose());
+
+        actualStatePublisher.set(getStates());
+
+        manageSwerveState();
+
+        SmartDashboard.putString("swerveState", currentSwerveState.name());
+
+        if(DriverStation.getAlliance().isPresent()){
+            pathMaster.useAllianceFlipping(DriverStation.getAlliance().get() == Alliance.Red, true);
+        }
+    }
+
+    public void simulationPeriodic(){
+        for (SwerveModule mod : modules) {
+            mod.module.update();
+        }
+    }
+
     public void manageSwerveState(){
         switch(currentSwerveState){
             case initializePath:
@@ -155,16 +191,16 @@ public class SwerveSubsystem extends SubsystemBase {
         setModuleStates(states, isOpenLoop);
     }
 
-    public Command setSwerveStateCommand(SwerveState swerveState){
-        return runOnce(()-> currentSwerveState = swerveState);
-    }
-
     public void setSwerveState(SwerveState swerveState){
         currentSwerveState = swerveState;
     }
 
     public SwerveState getSwerveState(){
         return currentSwerveState;
+    }
+
+    public Command setSwerveStateCommand(SwerveState swerveState){
+        return runOnce(()-> currentSwerveState = swerveState);
     }
 
     /** To be used by auto. Use the drive method during teleop. */
@@ -202,32 +238,12 @@ public class SwerveSubsystem extends SubsystemBase {
         return gyro.getRotation(); //Rotation2d.fromDegrees(gyro.getYaw());
     }
 
-    public Command zeroGyroCommand() {
-        return runOnce(this::zeroGyro).withName("ZeroGyroCommand");
-    }
-
-    private void zeroGyro() {
-        gyro.setRotation(Rotation2d.kZero);
-    }
-
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
-    }
-
-    public ChassisSpeeds getRelSpeeds() {
-        ChassisSpeeds relSpeed = SwerveConstants.kinematics.toChassisSpeeds(getStates());
-        return relSpeed;
-    }
-
-    public void setRelSpeeds(ChassisSpeeds speeds){
-        speeds.omegaRadiansPerSecond = -speeds.omegaRadiansPerSecond;
-        speeds = ChassisSpeeds.discretize(speeds, 0.02);
-        SwerveModuleState[] states = SwerveConstants.kinematics.toSwerveModuleStates(speeds);
-        setModuleStates(states);
     }
 
     public void setJoysickInputs(DoubleSupplier joystickYTranslation, DoubleSupplier joystickXTranslation, DoubleSupplier joystickYaw){
@@ -240,44 +256,20 @@ public class SwerveSubsystem extends SubsystemBase {
         isDriveFieldRelative = isFieldRelative;
     }
 
-    public Command setPath(Path path){
-        return runOnce(() -> this.path = path);
+    private void zeroGyro() {
+        gyro.setRotation(Rotation2d.kZero);
     }
 
-    @Override 
-    public void periodic() {
-        gyro.update();
-        swerveOdometry.update(getYaw(), getPositions());
-        commandedStatePublisher.set(states);
-
-        for(SwerveModule mod : modules){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getEncoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Meters", mod.getPosition().distanceMeters);
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Rotations", mod.getPosition().distanceMeters / SwerveConstants.wheelCircumference);
-        }
-        SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
-
-        field.setRobotPose(getPose());
-        SmartDashboard.putData(field);
-        robotPosePublisher.set(getPose());
-
-        actualStatePublisher.set(getStates());
-
-        manageSwerveState();
-
-        SmartDashboard.putString("swerveState", currentSwerveState.name());
-
-        if(DriverStation.getAlliance().isPresent()){
-            pathMaster.useAllianceFlipping(DriverStation.getAlliance().get() == Alliance.Red, true);
-        }
+    public Command zeroGyroCommand() {
+        return runOnce(this::zeroGyro).withName("ZeroGyroCommand");
     }
 
-    public void simulationPeriodic(){
-        for (SwerveModule mod : modules) {
-            mod.module.update();
-        }
+    public void setPath(Path path){
+        this.path = path;
+    }
+
+    public Command setPathCommand(Path path){
+        return runOnce(() -> setPath(path));
     }
 
     @Override
