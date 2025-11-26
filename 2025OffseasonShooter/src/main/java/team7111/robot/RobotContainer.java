@@ -101,5 +101,7 @@ public class RobotContainer {
         driverController.leftBumper()
             .onTrue(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, true))
             .onFalse(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, false));
+
+            
     }
 }

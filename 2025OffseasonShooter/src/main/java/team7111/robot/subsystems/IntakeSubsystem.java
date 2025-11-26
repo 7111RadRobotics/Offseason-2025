@@ -100,6 +100,9 @@ public class IntakeSubsystem extends SubsystemBase{
     private double currentPivotSetpoint = 0;
     private double currentFlywheelSpeed = 0;
 
+    private double manualFlywheelSpeed = 0;
+    private double manualPivotSetpoint = 0;
+
     // methods defined at bottom
     // class constructor above all other methods
     public IntakeSubsystem() {}
@@ -113,12 +116,25 @@ public class IntakeSubsystem extends SubsystemBase{
         currentFlywheelSpeed = flywheels.getSpeed().in(RPM);
         flywheels.updateTelemetry();
         pivot.updateTelemetry();
+        if(pivot.getMechanismSetpoint().isPresent())
+            manualPivotSetpoint = pivot.getMechanismSetpoint().get().in(Degrees);
     }
 
     @Override
     public void simulationPeriodic() {
         flywheels.simIterate();
         pivot.simIterate();
+    }
+    /**
+     * sets the manual speed for the intake
+     * @param speed -the speed to set it to in dutycycle
+     */
+    public void setManualSpeed(double speed){
+
+    }
+
+    public void addManualAngle(double angleIncrement){
+        
     }
 
     // all subsytems that contain a state enum must contain a getState, setState, manageState, and methods for each state
@@ -178,16 +194,7 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     private void manual() {
-        
-    }
-
-    // other methods at the bottom
-
-    public void setManual(double pivotIncrement, double flywheelSpeed){
-        state = IntakeState.manual;
-        currentFlywheelSpeed = flywheelSpeed;
-        currentPivotSetpoint += pivotIncrement;
-        flywheels.set(flywheelSpeed).execute();
-        pivot.setAngle(Degrees.of(currentPivotSetpoint)).execute();
+        flywheels.set(manualFlywheelSpeed);
+        pivot.setAngle(Degrees.of(manualPivotSetpoint));
     }
 }
