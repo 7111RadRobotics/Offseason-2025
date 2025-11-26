@@ -120,7 +120,7 @@ public class BarrelSubsystem extends SubsystemBase {
         this.state = state;
     }
 
-    public boolean getBeamBrake() {
+    public boolean getBeamBreak() {
         return beamBreak.get();
     }
 

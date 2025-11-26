@@ -16,6 +16,12 @@ public class SuperStructure extends SubsystemBase{
         ejectTrigger,
         prepareShotTrigger,
         shootTrigger,
+        manualToggle,
+        manualIntakeWheels,
+        manualIntakePivot,
+        manualBarrelWheels,
+        manualShooterWheels,
+        manualShooterPivot,
     }
 
     private enum SuperState {
@@ -43,6 +49,12 @@ public class SuperStructure extends SubsystemBase{
     private boolean ejectTrigger = false;
     private boolean prepareShotTrigger = false;
     private boolean shootTrigger = false;
+    private boolean manualToggle = false;
+    private boolean manualIntakeWheels = false;
+    private boolean manualIntakePivot = false;
+    private boolean manualBarrelWheels = false;
+    private boolean manualShooterWheels = false;
+    private boolean manualShooterPivot = false;
 
     private SuperState superState = SuperState.unloaded;
 
@@ -64,6 +76,9 @@ public class SuperStructure extends SubsystemBase{
     public void periodic() {
         manageSuperState();
         SmartDashboard.putString("SuperState", superState.name());
+        SmartDashboard.putBoolean("ManualToggle", manualToggle);
+        if (manualToggle)
+            setSuperState(superState.manual);
     }
 
     private void manageSuperState() {
@@ -118,6 +133,10 @@ public class SuperStructure extends SubsystemBase{
                 break;
             case shootTrigger:
                 shootTrigger = state;
+                break;
+            case manualToggle:
+                manualToggle = state;
+                break;
             default:
                 break;
         }
@@ -131,6 +150,15 @@ public class SuperStructure extends SubsystemBase{
         superState = state;
     }
 
+    private void flipManual() {
+        manualToggle = !manualToggle;
+        
+    }
+
+    public Command flipManualCommand() {
+        return runOnce(() -> flipManual());
+    }
+
     private void unloaded() {
         // Sets intake to store, barrel to unload, and shooter to idle.
         intake.setState(IntakeState.store);
@@ -139,13 +167,18 @@ public class SuperStructure extends SubsystemBase{
         if (intakeTrigger) {
             setSuperState(SuperState.intake);
         }
+        if (superState != superState.manual && manualToggle == true)
+            setSuperState(superState.manual);
+        
+
+
     }
 
     private void intake() {
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelState.intake);
-        if (barrel.getBeamBrake()) {
+        if (barrel.getBeamBreak()) {
             setSuperState(SuperState.secure);
         }
         if (!intakeTrigger) {
@@ -158,7 +191,7 @@ public class SuperStructure extends SubsystemBase{
         shooter.setState(ShooterState.prepareShot);
         intake.setState(IntakeState.transition);
         barrel.setState(BarrelState.adjust);
-        if (!barrel.getBeamBrake()) {
+        if (!barrel.getBeamBreak()) {
             if (barrel.getState() == BarrelState.readjust) {
             } else {
                 barrel.setState(BarrelState.readjust);
@@ -186,7 +219,7 @@ public class SuperStructure extends SubsystemBase{
         // Sets the shooter state to shoot, to eject the game piece from intake and set superstate to unloaded
         intake.setState(IntakeState.eject);
         barrel.setState(BarrelState.reverse);
-        if (!barrel.getBeamBrake()) {
+        if (!barrel.getBeamBreak()) {
             ejectTimer += 1;
         }
         if (ejectTimer >= 500) {
@@ -216,10 +249,10 @@ public class SuperStructure extends SubsystemBase{
         shooter.setState(ShooterState.shoot);
         barrel.setState(BarrelState.shoot);
         intake.setState(IntakeState.store);
-        if (barrel.getBeamBrake() || shotTimer >= 50) {
+        if (barrel.getBeamBreak() || shotTimer >= 50) {
             shotTimer = 0;
         }
-        if (!barrel.getBeamBrake()) {
+        if (!barrel.getBeamBreak()) {
             shotTimer += 1;
         }
         if (shotTimer >= 50) {
@@ -236,6 +269,8 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter, and inatke to manual for manual controlState
         shooter.setState(ShooterState.manual);
         intake.setState(IntakeState.manual);
+        if (!manualToggle)
+            setSuperState(superState.unloaded);
     }
 
     private void defaultState() {
