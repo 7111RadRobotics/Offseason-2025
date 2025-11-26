@@ -42,6 +42,11 @@ public class IntakeSubsystem extends SubsystemBase{
 
     // variables defined above methods
 
+    //
+    private final double stopped = 0;
+    private final double intakeDutycycle = 1;
+    private final double transitionDutycycle = 1;
+    private final double ejectDutycycle = -1;
     // variables relating to intake flywheels
     private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
     private SmartMotorControllerConfig flywheelMotorConfig = new SmartMotorControllerConfig(this)
@@ -150,25 +155,25 @@ public class IntakeSubsystem extends SubsystemBase{
 
     private void store() {
         // pivot will be inside and wheels stopped
-        flywheels.setSpeed(RPM.of(0)).execute(); // execute must be called if the method is a command
+        flywheels.set(stopped).execute(); // execute must be called if the method is a command
         pivot.setAngle(Degrees.of(0)).execute();
     }
 
     private void deploy() {
         // placeholder values. pivot will be extended and wheels intaking
-        flywheels.setSpeed(RPM.of(1000)).execute();
+        flywheels.set(intakeDutycycle).execute();
         pivot.setAngle(Degrees.of(48)).execute();
     }
 
     private void transition() {
         // placeholder values. pivot will be inside and wheels intaking
-        flywheels.setSpeed(RPM.of(1000)).execute();
+        flywheels.set(transitionDutycycle).execute();
         pivot.setAngle(Degrees.of(0)).execute();
     }
 
     private void eject() {
         // placeholder values. pivot will be extended and wheels reversing
-        flywheels.setSpeed(RPM.of(-1000)).execute();
+        flywheels.set(ejectDutycycle).execute();
         pivot.setAngle(Degrees.of(48)).execute();
     }
 
