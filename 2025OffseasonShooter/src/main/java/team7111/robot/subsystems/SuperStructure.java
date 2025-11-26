@@ -50,6 +50,7 @@ public class SuperStructure extends SubsystemBase{
     private boolean prepareShotTrigger = false;
     private boolean shootTrigger = false;
     private boolean manualToggle = false;
+    //TODO Add manual Logic in manual method
     private boolean manualIntakeWheels = false;
     private boolean manualIntakePivot = false;
     private boolean manualBarrelWheels = false;
