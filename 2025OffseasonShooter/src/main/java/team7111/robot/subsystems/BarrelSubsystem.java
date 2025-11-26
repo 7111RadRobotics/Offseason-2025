@@ -43,6 +43,14 @@ public class BarrelSubsystem extends SubsystemBase {
         defaultState
     };
 
+    //Dutycycle is on a scale of -1 (full reverse) to 1 (full forward)
+    private final double intakeDutycycle = 0.3;
+    private final double adjustDutycycle = -0.1;
+    private final double readjustDutycycle = -0.4;
+    private final double shootDutycycle = 0.5;
+    private final double reverseDutycycle = -0.3;
+    private final double stopped = 0;
+
     private DigitalInput beamBreak = new DigitalInput(1);
 
     private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
@@ -126,40 +134,40 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private void intake() {
         // Placeholder values. Wheels active
-        barrel.setSpeed(DegreesPerSecond.of(60)).execute();;
+        barrel.set(intakeDutycycle).execute();
     }
 
     private void adjust() {
         //  Placeholder values. Moves wheels backward slowly
-        barrel.setSpeed(DegreesPerSecond.of(-40)).execute();
+        barrel.set(adjustDutycycle).execute();
     }
 
     private void readjust() {
         //  Placeholder values. Moves wheels forward
-        barrel.setSpeed(DegreesPerSecond.of(-80)).execute();
+        barrel.set(readjustDutycycle).execute();
     }
 
     private void shoot() {
         // Placeholder values. Wheels will be active at full speed
-        barrel.setSpeed(DegreesPerSecond.of(180)).execute();
+        barrel.set(shootDutycycle).execute();
     }
 
     private void reverse() {
         // Placeholder values. Sets wheels reversing slowly
-        barrel.setSpeed(DegreesPerSecond.of(-60)).execute();
+        barrel.set(reverseDutycycle).execute();
     }
 
     private void unloaded() {
-
+        barrel.set(stopped).execute();
     }
 
     private void loaded() {
         // Game piece is stored, wheels inactive
-
+        barrel.set(stopped).execute();
     }
 
     private void defaultState() {
         //  Wheels inactive
-        barrel.setSpeed(DegreesPerSecond.of(0));
+        barrel.set(stopped).execute();
     }
 }
