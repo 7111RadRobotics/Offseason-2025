@@ -102,6 +102,7 @@ public class RobotContainer {
             .onTrue(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, true))
             .onFalse(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, false));
 
-            
+        operatorController.back().onTrue(superStructure.flipManualCommand());
+           
     }
 }
