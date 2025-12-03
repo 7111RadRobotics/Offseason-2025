@@ -115,6 +115,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
 
+    public void setManualSpeed(double speed){
+        shooter.setSpeed(RPM.of(speed));
+    }
+
+    public void addManualAngle(double angleIncrement){
+        pivot.setAngle(Degrees.of(pivot.getMechanismSetpoint().get().in(Degrees) + angleIncrement));
+    }
+
     public ShooterSubsystem() {
         
     }

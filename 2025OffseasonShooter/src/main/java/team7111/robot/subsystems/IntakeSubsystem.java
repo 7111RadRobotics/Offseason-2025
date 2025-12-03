@@ -130,11 +130,11 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param speed -the speed to set it to in dutycycle
      */
     public void setManualSpeed(double speed){
-
+        flywheels.setSpeed(RPM.of(speed));
     }
 
     public void addManualAngle(double angleIncrement){
-        
+        pivot.setAngle(Degrees.of(manualPivotSetpoint + angleIncrement));
     }
 
     // all subsytems that contain a state enum must contain a getState, setState, manageState, and methods for each state
