@@ -184,7 +184,6 @@ public class SuperStructure extends SubsystemBase{
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelState.intake);
-        System.out.println("Intake Switch");
         if (barrel.getBeamBreak()) {
             setSuperState(SuperState.secure);
         }
