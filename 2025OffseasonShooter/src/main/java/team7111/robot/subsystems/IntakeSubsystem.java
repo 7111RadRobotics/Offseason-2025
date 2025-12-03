@@ -76,7 +76,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(4, 0, 0)
+        .withClosedLoopController(0.5, 0.2, 0)
         .withGearing(pivotGearing)
         .withIdleMode(MotorMode.BRAKE)
         .withMotorInverted(false)
@@ -179,6 +179,7 @@ public class IntakeSubsystem extends SubsystemBase{
         // placeholder values. pivot will be extended and wheels intaking
         flywheels.set(intakeDutycycle).execute();
         pivot.setAngle(Degrees.of(48)).execute();
+        System.out.println(pivot.getAngle());
     }
 
     private void transition() {
