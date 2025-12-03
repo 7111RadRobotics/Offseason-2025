@@ -125,6 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns false if an error has occurred.
      */
     public void periodic() {
+        pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
