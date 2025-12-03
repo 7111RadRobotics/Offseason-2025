@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team7111.robot.utils.encoder.GenericEncoder;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -58,6 +59,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(14, MotorType.kBrushless);
+
+    private GenericEncoder pivotEncoder;
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
