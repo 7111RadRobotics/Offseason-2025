@@ -291,16 +291,16 @@ public class SuperStructure extends SubsystemBase{
             barrel.setManualSpeed(0);  
         }
         if (manualForwardIntakePivot) {
-            intake.addManualAngle(45);
+            intake.addManualAngle(5);
         } else if (manualBackwardIntakePivot) {
-            intake.addManualAngle(-45);
+            intake.addManualAngle(-5);
         } else {
             intake.addManualAngle(0);
         }
         if (manualForwardShooterPivot) {
-            shooter.addManualAngle(45);
+            shooter.addManualAngle(5);
         } else if (manualBackwardShooterPivot) {
-            shooter.addManualAngle(-45);
+            shooter.addManualAngle(-5);
         } else {
             shooter.addManualAngle(0);
         }
