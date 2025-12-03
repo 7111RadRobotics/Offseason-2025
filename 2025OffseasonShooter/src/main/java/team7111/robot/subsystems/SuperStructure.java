@@ -184,6 +184,7 @@ public class SuperStructure extends SubsystemBase{
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelState.intake);
+        System.out.println("Intake Switch");
         if (barrel.getBeamBreak()) {
             setSuperState(SuperState.secure);
         }
@@ -196,7 +197,7 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
         shooter.setState(ShooterState.prepareShot);
         intake.setState(IntakeState.transition);
-        barrel.setState(BarrelState.adjust);
+        barrel.setState(BarrelState.readjust);
         if (!barrel.getBeamBreak()) {
             if (barrel.getState() == BarrelState.readjust) {
             } else {
@@ -255,10 +256,10 @@ public class SuperStructure extends SubsystemBase{
         shooter.setState(ShooterState.shoot);
         barrel.setState(BarrelState.shoot);
         intake.setState(IntakeState.store);
-        if (barrel.getBeamBreak() || shotTimer >= 50) {
+        if (!barrel.getBeamBreak() || shotTimer >= 50) {
             shotTimer = 0;
         }
-        if (!barrel.getBeamBreak()) {
+        if (barrel.getBeamBreak()) {
             shotTimer += 1;
         }
         if (shotTimer >= 50) {

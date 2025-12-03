@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(10, 0, 0)
+        .withClosedLoopController(4, 0, 0)
         .withIdleMode(MotorMode.BRAKE)
         //.withSoftLimit(Degree.of(0), Degree.of(90))
         .withMotorInverted(false)
@@ -83,7 +83,6 @@ public class ShooterSubsystem extends SubsystemBase {
     
     private PivotConfig pivotConfig = new PivotConfig(pivotController)
         .withStartingPosition(Degrees.of(0))
-        .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Inches.of(15.5), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30))
         .withTelemetry("ShooterPivot", TelemetryVerbosity.HIGH);
