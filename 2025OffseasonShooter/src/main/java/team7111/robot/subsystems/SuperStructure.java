@@ -51,11 +51,16 @@ public class SuperStructure extends SubsystemBase{
     private boolean shootTrigger = false;
     private boolean manualToggle = false;
     //TODO Add manual Logic in manual method
-    private boolean manualIntakeWheels = false;
-    private boolean manualIntakePivot = false;
-    private boolean manualBarrelWheels = false;
-    private boolean manualShooterWheels = false;
-    private boolean manualShooterPivot = false;
+    private boolean manualForwardIntakeWheels = false;
+    private boolean manualBackwardIntakeWheels = false;
+    private boolean manualForwardIntakePivot = false;
+    private boolean manualBackwardIntakePivot = false;
+    private boolean manualForwardBarrelWheels = false;
+    private boolean manualBackwardBarrelWheels = false;
+    private boolean manualForwardsShooterWheels = false;
+    private boolean manualBackwardShooterWheels = false;
+    private boolean manualForwardShooterPivot = false;
+    private boolean manualBackwardShooterPivot = false;
 
     private SuperState superState = SuperState.unloaded;
 
@@ -191,7 +196,7 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
         shooter.setState(ShooterState.prepareShot);
         intake.setState(IntakeState.transition);
-        barrel.setState(BarrelState.adjust);
+        barrel.setState(BarrelState.readjust);
         if (!barrel.getBeamBreak()) {
             if (barrel.getState() == BarrelState.readjust) {
             } else {
@@ -250,10 +255,10 @@ public class SuperStructure extends SubsystemBase{
         shooter.setState(ShooterState.shoot);
         barrel.setState(BarrelState.shoot);
         intake.setState(IntakeState.store);
-        if (barrel.getBeamBreak() || shotTimer >= 50) {
+        if (!barrel.getBeamBreak() || shotTimer >= 50) {
             shotTimer = 0;
         }
-        if (!barrel.getBeamBreak()) {
+        if (barrel.getBeamBreak()) {
             shotTimer += 1;
         }
         if (shotTimer >= 50) {
@@ -278,5 +283,33 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter, and intake to their default state, making them inactive
         shooter.setState(ShooterState.defaultState);
         intake.setState(IntakeState.defualtState);
+        if (manualForwardBarrelWheels) {
+            barrel.setManualSpeed(1);
+        } else if (manualBackwardBarrelWheels) {
+            barrel.setManualSpeed(-1);
+        } else {
+            barrel.setManualSpeed(0);  
+        }
+        if (manualForwardIntakePivot) {
+            intake.addManualAngle(5);
+        } else if (manualBackwardIntakePivot) {
+            intake.addManualAngle(-5);
+        } else {
+            intake.addManualAngle(0);
+        }
+        if (manualForwardShooterPivot) {
+            shooter.addManualAngle(5);
+        } else if (manualBackwardShooterPivot) {
+            shooter.addManualAngle(-5);
+        } else {
+            shooter.addManualAngle(0);
+        }
+        if (manualForwardsShooterWheels) {
+            shooter.setManualSpeed(1);
+        } else if (manualBackwardShooterWheels) {
+            shooter.setManualSpeed(-1);
+        } else {
+            shooter.setManualSpeed(0);
+        }
     }
 }

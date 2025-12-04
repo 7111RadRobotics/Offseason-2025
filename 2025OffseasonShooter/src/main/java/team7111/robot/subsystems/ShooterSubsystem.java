@@ -60,11 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(14, MotorType.kBrushless);
 
-    private GenericEncoder pivotEncoder;
+    //private GenericEncoder pivotEncoder;
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(10, 0, 0)
+        .withClosedLoopController(4, 0, 0)
         .withIdleMode(MotorMode.BRAKE)
         //.withSoftLimit(Degree.of(0), Degree.of(90))
         .withMotorInverted(false)
@@ -83,7 +83,6 @@ public class ShooterSubsystem extends SubsystemBase {
     
     private PivotConfig pivotConfig = new PivotConfig(pivotController)
         .withStartingPosition(Degrees.of(0))
-        .withHardLimit(Degrees.of(0), Degrees.of(720))
         .withMOI(Inches.of(15.5), Pounds.of(3.953))
         .withHardLimit(Degrees.of(0), Degrees.of(30))
         .withTelemetry("ShooterPivot", TelemetryVerbosity.HIGH);
@@ -115,6 +114,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
 
+    public void setManualSpeed(double speed){
+        shooter.setSpeed(RPM.of(speed));
+    }
+
+    public void addManualAngle(double angleIncrement){
+        pivot.setAngle(Degrees.of(pivot.getMechanismSetpoint().get().in(Degrees) + angleIncrement));
+    }
+
     public ShooterSubsystem() {
         
     }
@@ -125,7 +132,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns false if an error has occurred.
      */
     public void periodic() {
-        pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
+        //pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();

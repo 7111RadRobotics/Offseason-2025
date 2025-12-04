@@ -77,6 +77,10 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private BarrelState state = BarrelState.defaultState;
 
+    public void setManualSpeed(double speed){
+        barrel.setSpeed(RPM.of(speed));
+    }
+
     //Constructor for class
     public BarrelSubsystem() {}
 

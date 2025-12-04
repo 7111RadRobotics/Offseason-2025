@@ -57,11 +57,14 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoubleSupplier joystickXTranslation = () -> 0;
     private DoubleSupplier joystickYaw = () -> 0;
 
+    private double snapAngleVariable = 45;
+
     public enum SwerveState{
         initializePath,
         runPath,
         manual,
-        stationary
+        stationary,
+        snapAngle
     };
 
     public SwerveSubsystem() {
@@ -156,6 +159,9 @@ public class SwerveSubsystem extends SubsystemBase {
                 break;
             case stationary:
                 manual(0, 0, 0, false, false);
+            case snapAngle:
+                manual(joystickXTranslation.getAsDouble(), joystickYTranslation.getAsDouble(), snapAngleVariable, isDriveFieldRelative, false);
+                break;
             default:
                 break;
         }
@@ -201,6 +207,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Command setSwerveStateCommand(SwerveState swerveState){
         return runOnce(()-> currentSwerveState = swerveState);
+    }
+    
+    public void setSnapAngle(Double snapNumber) {
+        snapAngleVariable = snapNumber;
     }
 
     /** To be used by auto. Use the drive method during teleop. */
