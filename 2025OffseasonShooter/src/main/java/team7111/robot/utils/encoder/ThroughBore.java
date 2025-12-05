@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj.Encoder;
 
 public class ThroughBore implements GenericEncoder {
 
-      Encoder m_encoder = new Encoder(0, 1);
+    private Encoder m_encoder;
 
     private Rotation2d zeroOffset = new Rotation2d();
 
-    public ThroughBore(double conversionFactor) {
+    public ThroughBore(int channelA, int channelB, double conversionFactor) {
+        m_encoder = new Encoder(channelA, channelB);
         m_encoder.setDistancePerPulse(conversionFactor);
+        
     }
 
     @Override
