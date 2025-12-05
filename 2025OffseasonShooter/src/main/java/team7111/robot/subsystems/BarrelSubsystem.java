@@ -51,7 +51,7 @@ public class BarrelSubsystem extends SubsystemBase {
     private final double reverseDutycycle = -0.3;
     private final double stopped = 0;
 
-    private DigitalInput beamBreak = new DigitalInput(1);
+    private DigitalInput beamBreak = new DigitalInput(8);
 
     private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)

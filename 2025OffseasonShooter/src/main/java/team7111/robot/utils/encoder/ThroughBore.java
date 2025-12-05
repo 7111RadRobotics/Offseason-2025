@@ -18,7 +18,7 @@ public class ThroughBore implements GenericEncoder {
 
     @Override
     public Rotation2d getPosition() {
-       return Rotation2d.fromDegrees(m_encoder.get());
+       return Rotation2d.fromRotations(m_encoder.getDistance());
     }
 
     @Override

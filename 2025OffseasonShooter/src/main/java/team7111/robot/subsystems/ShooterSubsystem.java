@@ -61,12 +61,12 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(14, MotorType.kBrushless);
 
-    private GenericEncoder pivotEncoder = new ThroughBore(1);
+    private GenericEncoder pivotEncoder = new ThroughBore(0, 1, 1/(8192*17.5) * 4);
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(4, 0, 0)
-        .withIdleMode(MotorMode.BRAKE)
+        .withIdleMode(MotorMode.COAST)
         //.withSoftLimit(Degree.of(0), Degree.of(90))
         .withMotorInverted(false)
         .withClosedLoopRampRate(Seconds.of(0.25))
