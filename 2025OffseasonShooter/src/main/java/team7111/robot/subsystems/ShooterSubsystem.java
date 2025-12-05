@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team7111.robot.utils.encoder.GenericEncoder;
+import team7111.robot.utils.encoder.ThroughBore;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -60,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(14, MotorType.kBrushless);
 
-    //private GenericEncoder pivotEncoder;
+    private GenericEncoder pivotEncoder = new ThroughBore(1);
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -132,7 +133,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns false if an error has occurred.
      */
     public void periodic() {
-        //pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
+        pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
@@ -140,6 +141,8 @@ public class ShooterSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("shooter angle setpoint", pivot.getMechanismSetpoint().get().in(Degrees));
         }else
             SmartDashboard.putNumber("shooter angle setpoint", -1);
+        SmartDashboard.putNumber("throughbore position", pivotEncoder.getPosition().getDegrees());
+        SmartDashboard.putNumber("pivot position", pivot.getAngle().in(Degrees));
     }
 
     public void simulationPeriodic(){
