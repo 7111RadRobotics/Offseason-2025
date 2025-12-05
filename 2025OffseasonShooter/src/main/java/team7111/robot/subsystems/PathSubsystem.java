@@ -1,6 +1,10 @@
 package team7111.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import team7111.lib.pathfinding.Path;
+import team7111.lib.pathfinding.Waypoint;
+import team7111.lib.pathfinding.WaypointConstraints;
 
 public class PathSubsystem {
     
@@ -24,7 +28,12 @@ public class PathSubsystem {
     public void setCurrentPath(paths path) {
         switch (path) {
             case home:
-
+            /*
+                Waypoint waypoints[] = {
+                new Waypoint(new Pose2d(0, 0, new Rotation2d(0)), new WaypointConstraints(1, 0, 0), new WaypointConstraints(1, 0, 0)),
+            };
+                currentPath = new Path(waypoints);*/
+                currentPath = null;
                 break;
             default:
                 currentPath = null;
@@ -38,6 +47,7 @@ public class PathSubsystem {
     public void setCustomPath(Path path) {
         currentPath = path;
     }
+
 
     /**
      * Calls periodic method for the current path.

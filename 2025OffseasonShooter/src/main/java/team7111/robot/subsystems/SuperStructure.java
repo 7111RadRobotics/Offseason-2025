@@ -4,9 +4,11 @@ package team7111.robot.subsystems;
 import team7111.robot.subsystems.IntakeSubsystem.IntakeState;
 import team7111.robot.subsystems.ShooterSubsystem.ShooterState;
 import team7111.robot.subsystems.BarrelSubsystem.BarrelState;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import team7111.robot.subsystems.BarrelSubsystem;
 
 public class SuperStructure extends SubsystemBase{
@@ -67,9 +69,12 @@ public class SuperStructure extends SubsystemBase{
     private double shotTimer = 0;
     private double ejectTimer = 0;
 
+    private XboxController operatorController;
+
     public SuperStructure(
         VisionSubsystem vision, SwerveSubsystem swerve, PathSubsystem paths, 
-        IntakeSubsystem intake, BarrelSubsystem barrel, ShooterSubsystem shooter
+        IntakeSubsystem intake, BarrelSubsystem barrel, ShooterSubsystem shooter,
+        int operatorPort
     ){
         this.vision = vision;
         this.swerve = swerve;
@@ -77,6 +82,8 @@ public class SuperStructure extends SubsystemBase{
         this.intake = intake;
         this.barrel = barrel;
         this.shooter = shooter;
+
+        this.operatorController = new XboxController(operatorPort);
     }
 
     public void periodic() {
@@ -272,9 +279,25 @@ public class SuperStructure extends SubsystemBase{
     }
 
     private void manual() {
-        // Sets shooter, and inatke to manual for manual controlState
-        shooter.setState(ShooterState.manual);
+        // Sets shooter, and intake to manual for manual controlState
+        shooter.setAngle(operatorController.getLeftY());
         intake.setState(IntakeState.manual);
+        intake.addManualAngle(operatorController.getRightX());
+        
+        //Barrel
+        if(operatorController.getRightTriggerAxis() > 0.1) {
+            barrel.setManualSpeed(operatorController.getRightTriggerAxis());
+        } else if(operatorController.getLeftTriggerAxis() > 0.1) {
+            barrel.setManualSpeed(operatorController.getLeftTriggerAxis());
+        }
+
+        //Intake
+        if(operatorController.getRightBumperButton()) {
+            intake.setManualSpeed(1);
+        } else if(operatorController.getLeftBumperButton()) {
+            intake.setManualSpeed(-1);
+        }
+
         if (!manualToggle)
             setSuperState(superState.unloaded);
     }

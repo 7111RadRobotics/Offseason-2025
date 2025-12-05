@@ -33,7 +33,7 @@ import team7111.robot.subsystems.SwerveSubsystem.SwerveState;
  */
 public class RobotContainer {
     public final CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverControllerID);
-    public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.driverControllerID);
+    public final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.operatorControllerID);
     public final SwerveSubsystem swerve;
     public final VisionSubsystem vision;
     public final PathSubsystem paths;
@@ -51,7 +51,7 @@ public class RobotContainer {
         intake = new IntakeSubsystem();
         barrel = new BarrelSubsystem();
         shooter = new ShooterSubsystem();
-        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter);
+        superStructure = new SuperStructure(vision, swerve, paths, intake, barrel, shooter, ControllerConstants.operatorControllerID);
 
         autoChooser = new SendableChooser<>();
 
@@ -103,6 +103,5 @@ public class RobotContainer {
             .onFalse(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, false));
 
         operatorController.back().onTrue(superStructure.flipManualCommand());
-           
     }
 }
