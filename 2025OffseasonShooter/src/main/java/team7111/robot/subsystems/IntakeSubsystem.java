@@ -133,7 +133,7 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param speed -the speed to set it to in dutycycle
      */
     public void setManualSpeed(double speed){
-        flywheels.setSpeed(RPM.of(speed));
+        flywheels.set(speed);
     }
 
     public void addManualAngle(double angleIncrement){
