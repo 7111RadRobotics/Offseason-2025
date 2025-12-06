@@ -40,7 +40,8 @@ public class BarrelSubsystem extends SubsystemBase {
         reverse,
         unload,
         loaded,
-        defaultState
+        defaultState,
+        manual,
     };
 
     //Dutycycle is on a scale of -1 (full reverse) to 1 (full forward)
@@ -77,10 +78,6 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private BarrelState state = BarrelState.defaultState;
 
-    public void setManualSpeed(double dutycycle){
-        barrel.set(dutycycle);
-    }
-
     //Constructor for class
     public BarrelSubsystem() {}
 
@@ -93,6 +90,10 @@ public class BarrelSubsystem extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         barrel.simIterate();
+    }
+
+    public void setManualSpeed(double dutycycle){
+        barrel.set(dutycycle).execute();
     }
 
     private void manageState() {
@@ -117,6 +118,9 @@ public class BarrelSubsystem extends SubsystemBase {
                 break;
             case loaded:
                 loaded();
+                break;
+            case manual:
+                manual();
                 break;
             case defaultState:
                 defaultState();
@@ -168,6 +172,10 @@ public class BarrelSubsystem extends SubsystemBase {
     private void loaded() {
         // Game piece is stored, wheels inactive
         barrel.set(stopped).execute();
+    }
+
+    private void manual() {
+
     }
 
     private void defaultState() {
