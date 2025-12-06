@@ -18,6 +18,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -133,7 +134,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns false if an error has occurred.
      */
     public void periodic() {
-        pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
+        
+        if(RobotBase.isReal()) {
+            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
+        }
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
