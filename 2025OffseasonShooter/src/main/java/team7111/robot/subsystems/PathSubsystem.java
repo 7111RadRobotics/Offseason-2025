@@ -41,11 +41,14 @@ public class PathSubsystem {
         }
     }
 
-    /**
-     * Sets the current path to be a custom path rather than a preset.
-     */
-    public void setCustomPath(Path path) {
-        currentPath = path;
+    public Path getPaths(paths PathName) {
+        switch (PathName) {
+            case home:
+                // Copy of switch statement in setCurrentPath
+                return new Path(null);
+        }
+
+        return null;
     }
 
 
@@ -55,5 +58,6 @@ public class PathSubsystem {
      * Returns false if an error has occurred.
      */
     public void periodic() {
+        currentPath.periodic();
     }
 }
