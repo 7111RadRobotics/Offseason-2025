@@ -232,9 +232,11 @@ public class Path {
             return;
         }
 
+        
 
-        //Figure out pathfinding algorithm.
-        //https://en.wikipedia.org/wiki/Pathfinding
+        //Figure out pathfinding algorithm. TODO
+        //https://en.wikipedia.org/wiki/A*_search_algorithm
+        //Use A* algorithm?
     }
     
     /**
