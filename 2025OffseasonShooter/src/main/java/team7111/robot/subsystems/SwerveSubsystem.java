@@ -2,6 +2,7 @@ package team7111.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -59,6 +60,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private double snapAngleVariable = 45;
 
+    private PIDController yawController;
+
     public enum SwerveState{
         initializePath,
         runPath,
@@ -88,6 +91,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveOdometry = new SwerveDriveOdometry(SwerveConstants.kinematics, getYaw(), getPositions());
         
+        yawController = new PIDController(1.0, 0.0, 0.0);
     }
 
     @Override 
@@ -160,7 +164,7 @@ public class SwerveSubsystem extends SubsystemBase {
             case stationary:
                 manual(0, 0, 0, false, false);
             case snapAngle:
-                manual(joystickXTranslation.getAsDouble(), joystickYTranslation.getAsDouble(), snapAngleVariable, isDriveFieldRelative, false);
+                manual(joystickXTranslation.getAsDouble(), joystickYTranslation.getAsDouble(), yawController.calculate(snapAngleVariable), isDriveFieldRelative, false);
                 break;
             default:
                 break;
