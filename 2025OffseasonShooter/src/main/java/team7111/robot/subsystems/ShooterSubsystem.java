@@ -194,7 +194,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private void idle() {
         shooter.setSpeed(RPM.of(100)).execute();
-        pivot.setAngle(Degrees.of(0)).execute();;
+        pivot.setAngle(Degrees.of(0)).execute();
     }
 
     private void prepareShot() {

@@ -91,7 +91,7 @@ public class SuperStructure extends SubsystemBase{
         SmartDashboard.putString("SuperState", superState.name());
         SmartDashboard.putBoolean("ManualToggle", manualToggle);
         if (manualToggle)
-            setSuperState(superState.manual);
+            setSuperState(SuperState.manual);
     }
 
     private void manageSuperState() {
@@ -180,8 +180,8 @@ public class SuperStructure extends SubsystemBase{
         if (intakeTrigger) {
             setSuperState(SuperState.intake);
         }
-        if (superState != superState.manual && manualToggle == true)
-            setSuperState(superState.manual);
+        if (superState != SuperState.manual && manualToggle == true)
+            setSuperState(SuperState.manual);
         
 
 
@@ -191,6 +191,7 @@ public class SuperStructure extends SubsystemBase{
         // Sets intake to deploy, and barrel to intake. If beambreak is active, sets main state to secure
         intake.setState(IntakeState.deploy);
         barrel.setState(BarrelState.intake);
+        shooter.setState(ShooterState.idle);
         if (barrel.getBeamBreak()) {
             setSuperState(SuperState.secure);
         }
@@ -299,7 +300,7 @@ public class SuperStructure extends SubsystemBase{
         }
 
         if (!manualToggle)
-            setSuperState(superState.unloaded);
+            setSuperState(SuperState.unloaded);
     }
 
     private void defaultState() {

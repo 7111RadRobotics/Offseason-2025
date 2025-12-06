@@ -133,7 +133,7 @@ public class BarrelSubsystem extends SubsystemBase {
     }
 
     public boolean getBeamBreak() {
-        return beamBreak.get();
+        return false;//!beamBreak.get();
     }
 
     private void intake() {

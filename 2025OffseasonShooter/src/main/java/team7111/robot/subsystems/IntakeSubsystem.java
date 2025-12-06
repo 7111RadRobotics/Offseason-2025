@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -79,7 +80,7 @@ public class IntakeSubsystem extends SubsystemBase{
         .withClosedLoopController(0.5, 0.2, 0)
         .withGearing(pivotGearing)
         .withIdleMode(MotorMode.BRAKE)
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withStatorCurrentLimit(Amps.of(40))
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withOpenLoopRampRate(Seconds.of(0.25))
@@ -118,6 +119,8 @@ public class IntakeSubsystem extends SubsystemBase{
         pivot.updateTelemetry();
         if(pivot.getMechanismSetpoint().isPresent())
             manualPivotSetpoint = pivot.getMechanismSetpoint().get().in(Degrees);
+        SmartDashboard.putNumber("intake pos", pivot.getAngle().in(Degrees));
+        SmartDashboard.putNumber("intake speed", pivotController.getRotorVelocity().in(RPM));
     }
 
     @Override
