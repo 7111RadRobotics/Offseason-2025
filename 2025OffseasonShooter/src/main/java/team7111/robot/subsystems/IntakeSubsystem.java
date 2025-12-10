@@ -73,18 +73,15 @@ public class IntakeSubsystem extends SubsystemBase{
 
     // variables relating to intake pivot
     private SparkMax pivotMotor = new SparkMax(11, MotorType.kBrushless);
-    private MechanismGearing pivotGearing = new MechanismGearing(GearBox.fromReductionStages(18, 1));
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(0.5, 0.2, 0)
-        .withGearing(pivotGearing)
+        .withGearing(18)
         .withIdleMode(MotorMode.BRAKE)
         .withMotorInverted(true)
         .withStatorCurrentLimit(Amps.of(40))
-        .withClosedLoopRampRate(Seconds.of(0.25))
-        .withOpenLoopRampRate(Seconds.of(0.25))
-        ;//.withMomentOfInertia(Inches.of(8.876), Pounds.of(7.015));
+        .withClosedLoopRampRate(Seconds.of(0.25));
     
     private SmartMotorController pivotController = new SparkWrapper(pivotMotor, DCMotor.getNEO(1), pivotMotorConfig);
     private PivotConfig pivotConfig = new PivotConfig(pivotController)

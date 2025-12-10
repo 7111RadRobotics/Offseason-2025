@@ -162,10 +162,6 @@ public class SuperStructure extends SubsystemBase{
         if (intakeTrigger) {
             setSuperState(SuperState.intake);
         }
-        if (superState != SuperState.manual && manualToggle == true)
-            setSuperState(SuperState.manual);
-        
-
 
     }
 
@@ -184,9 +180,9 @@ public class SuperStructure extends SubsystemBase{
 
     private void secure() {
         // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
-        shooter.setState(ShooterState.prepareShot);
+        shooter.setState(ShooterState.idle);
         intake.setState(IntakeState.transition);
-        barrel.setState(BarrelState.readjust);
+        
         if (!barrel.getBeamBreak()) {
             if (barrel.getState() == BarrelState.readjust) {
             } else {
@@ -200,6 +196,7 @@ public class SuperStructure extends SubsystemBase{
     }
 
     private void loaded() {
+        // The state in which there is a gamepiece inside the barrel of the robot
         intake.setState(IntakeState.store);
         barrel.setState(BarrelState.loaded);
         shooter.setState(ShooterState.idle);
@@ -215,10 +212,11 @@ public class SuperStructure extends SubsystemBase{
         // Sets the shooter state to shoot, to eject the game piece from intake and set superstate to unloaded
         intake.setState(IntakeState.eject);
         barrel.setState(BarrelState.reverse);
+        shooter.setState(ShooterState.reverse);
         if (!barrel.getBeamBreak()) {
             ejectTimer += 1;
         }
-        if (ejectTimer >= 500) {
+        if (ejectTimer >= 150) {
             setSuperState(SuperState.unloaded);
             ejectTimer = 0;
         }

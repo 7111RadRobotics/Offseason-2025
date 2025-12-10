@@ -164,7 +164,7 @@ public class BarrelSubsystem extends SubsystemBase {
      * CURRENTLY HARD CODED TO FALSE
      */
     public boolean getBeamBreak() {
-        return false;//!beamBreak.get();
+        return !beamBreak.get();
     }
 
     /**
