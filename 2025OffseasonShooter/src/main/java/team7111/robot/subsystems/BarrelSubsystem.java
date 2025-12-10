@@ -81,21 +81,36 @@ public class BarrelSubsystem extends SubsystemBase {
     //Constructor for class
     public BarrelSubsystem() {}
 
+    /**
+     * Updates the barrel telemetry
+     */
     @Override
     public void periodic() {
         manageState();
         barrel.updateTelemetry();
     }
 
+    /**
+     * Runs the barrel in simulation settings.
+     */
     @Override
     public void simulationPeriodic() {
         barrel.simIterate();
     }
 
+    /**
+     * Spins the motor to shoot the projectile using dutycycle.
+     * @param dutycycle Value of -1 (full reverse) to 1 (full forward).
+     */
     public void setManualSpeed(double dutycycle){
         barrel.set(dutycycle).execute();
     }
 
+    /**
+     * Takes action on what the current set state is.
+     * @see setState -Sets the state for this method to act on.
+     * @see getState -Returns the current state, useful for debugging.
+     */
     private void manageState() {
         switch(state) {
             case intake:
@@ -128,56 +143,95 @@ public class BarrelSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Returns the currently set state. Useful for debugging and printing to smart dashboard.
+     */
     public BarrelState getState() {
         return state;
     }
 
+    /**
+     * Sets the current state.
+     * @see manageState -Acts on the current state, this method does nothing if manageState is not called.
+     */
     public void setState(BarrelState state) {
         this.state = state;
     }
 
+    /**
+     * Gets the boolean for the beambrake. True is beam broken, false is beam is not broken.
+     * <p>
+     * CURRENTLY HARD CODED TO FALSE
+     */
     public boolean getBeamBreak() {
         return false;//!beamBreak.get();
     }
 
+    /**
+     * Sets the barrel to the intake dutycycle. 
+     */
     private void intake() {
         // Placeholder values. Wheels active
         barrel.set(intakeDutycycle).execute();
     }
 
+    /**
+     * Sets the barrel to slowly move backwards.
+     */
     private void adjust() {
         //  Placeholder values. Moves wheels backward slowly
         barrel.set(adjustDutycycle).execute();
     }
 
+    /**
+     * Sets the barrel to move the wheels forward.
+     */
     private void readjust() {
         //  Placeholder values. Moves wheels forward
         barrel.set(readjustDutycycle).execute();
     }
 
+    /**
+     * Sets the barrel to move the wheels at full speed forward.
+     */
     private void shoot() {
         // Placeholder values. Wheels will be active at full speed
         barrel.set(shootDutycycle).execute();
     }
 
+    /**
+     * Sets the barrel to move the wheels slowly backward.
+     */
     private void reverse() {
         // Placeholder values. Sets wheels reversing slowly
         barrel.set(reverseDutycycle).execute();
     }
 
+    /**
+     * Sets the barrel wheels to be stopped.
+     */
     private void unloaded() {
         barrel.set(stopped).execute();
     }
 
+    /**
+     * Sets the barrel wheels to be stopped.
+     */
     private void loaded() {
         // Game piece is stored, wheels inactive
         barrel.set(stopped).execute();
     }
 
+    /**
+     * Manual code for the barrel.
+     */
     private void manual() {
 
     }
 
+    /**
+     * Sets the barrel to the default state of stopped.
+     */
     private void defaultState() {
         //  Wheels inactive
         barrel.set(stopped).execute();
