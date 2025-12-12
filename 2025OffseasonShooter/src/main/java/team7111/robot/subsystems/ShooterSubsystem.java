@@ -59,8 +59,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double visionSpeed = 0;
     private double previousAngle = 0;
 
-    private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
-    private SparkMax flywheelFollowerMotor = new SparkMax(14, MotorType.kBrushless);
+    private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
+    private SparkMax flywheelFollowerMotor = new SparkMax(12, MotorType.kBrushless);
 
     private GenericEncoder pivotEncoder = new ThroughBore(0, 1, 1/(8192*17.5) * 4);
 

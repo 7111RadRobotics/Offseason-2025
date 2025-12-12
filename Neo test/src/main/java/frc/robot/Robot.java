@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -17,6 +18,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -27,31 +29,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  private PIDController pid = new PIDController(0.01, 0.00000000, 0.0008);
+  private SparkMax spark1 = new SparkMax(13, MotorType.kBrushless);
+  private SparkMax spark2 = new SparkMax(11, MotorType.kBrushless);
+  private SparkMax spark3 = new SparkMax(10, MotorType.kBrushless);
+  private SparkMax spark4 = new SparkMax(12, MotorType.kBrushless);
+  private SparkMax spark5 = new SparkMax(14, MotorType.kBrushless);
+  private TalonFX talon1 = new TalonFX(15);
+  
 
-  private SparkMax spark1 = new SparkMax(3, MotorType.kBrushless);
-  private SparkMax spark2 = new SparkMax(5, MotorType.kBrushless);
-  private SparkMax spark3 = new SparkMax(1, MotorType.kBrushless);
-  private SparkMax spark4 = new SparkMax(7, MotorType.kBrushless);
-
-  private SparkClosedLoopController spark1PID;
-  private SparkClosedLoopController spark2PID;
-  private SparkClosedLoopController spark3PID;
-  private SparkClosedLoopController spark4PID;
-
+  private XboxController controller1 = new XboxController(1);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
     //var spark1PIDConfig = new ClosedLoopConfig().pid(0.005, 0.000000001, 0.005);
-    var spark1EncConfig = new EncoderConfig();
     
-    spark4.configure(new SparkMaxConfig().apply(spark1EncConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    spark1PID = spark1.getClosedLoopController();
-    spark2PID = spark2.getClosedLoopController();
-    spark3PID = spark3.getClosedLoopController();
-    spark4PID = spark4.getClosedLoopController();
   }
 
   /**
@@ -63,9 +56,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("velocity", spark4.getEncoder().getVelocity());
-    SmartDashboard.putNumber("position", spark4.getEncoder().getPosition() * (6.75/1));
-    SmartDashboard.putNumber("Error", pid.getError());
+
   }
 
   /**
@@ -91,13 +82,56 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    
+  }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    spark4.setVoltage(pid.calculate(spark4.getEncoder().getVelocity() / 6.75, 1000));
-    //spark1PID.setReference(0.25, ControlType.kDutyCycle);
+   if (controller1.getAButton()) {
+    spark1.set(0.2);
+   }
+   else if (controller1.getBButton()) {
+    spark1.set(-0.2);
+   }
+   else if (controller1.getXButton()) {
+    spark2.set(0.05);
+   }
+   else if (controller1.getYButton()) {
+    spark2.set(-0.05);
+   }
+   else if (controller1.getLeftBumperButton()) {
+    spark3.set(0.5);
+    spark4.set(-0.5);
+   }
+   else if (controller1.getRightBumperButton()) {
+    spark3.set(-0.5);
+    spark4.set(0.5);
+   }
+   else if (controller1.getLeftStickButton()) {
+    spark5.set(0.25);
+   }
+   else if (controller1.getRightStickButton()) {
+    spark5.set(-0.25);
+   }
+
+   else if (controller1.getBackButton()){
+    talon1.set(0.1);
+   }
+
+   else if (controller1.getStartButton()){
+    talon1.set(-0.1);
+   }
+
+   else {
+    spark1.set(0);
+    spark2.set(0);
+    spark3.set(0);
+    spark4.set(0);
+    spark5.set(0);
+    talon1.set(0);
+    }
   }
 
   /** This function is called once when the robot is disabled. */

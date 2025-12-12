@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -53,7 +54,7 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private DigitalInput beamBreak = new DigitalInput(8);
 
-    private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
+    private SparkMax barrelMotor = new SparkMax(14, MotorType.kBrushless);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopController(new PIDController(0.1, 0, 0))
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(2.5, 1)))
@@ -88,6 +89,7 @@ public class BarrelSubsystem extends SubsystemBase {
     public void periodic() {
         manageState();
         barrel.updateTelemetry();
+        SmartDashboard.putBoolean("isBeamBroken", getBeamBreak());
     }
 
     @Override
@@ -133,7 +135,8 @@ public class BarrelSubsystem extends SubsystemBase {
     }
 
     public boolean getBeamBreak() {
-        return false;//!beamBreak.get();
+        // returns true if beam is broken
+        return !beamBreak.get();
     }
 
     private void intake() {
