@@ -277,9 +277,16 @@ public class SuperStructure extends SubsystemBase{
         double manualIntakeSpeed = 0;
         double manualBarrelSpeed = 0;
         double manualShooterSpeed = 0;
-
-        shooter.addManualAngle(-operatorController.getLeftY() * 5);
-        intake.addManualAngle(-operatorController.getRightY() * 5);
+        if (-operatorController.getLeftY() >= 0.2 || operatorController.getLeftY() >= 0.2)
+        {
+            shooter.addManualAngle(-operatorController.getLeftY() * 5);
+        }
+        if (-operatorController.getRightY() >= 0.2 || operatorController.getRightY() >= 0.2)
+        {
+            intake.addManualAngle(-operatorController.getRightY() * 5);
+        }
+        
+        
         
         if(intakeSpeed > 0.05){
             manualIntakeSpeed = intakeSpeed;

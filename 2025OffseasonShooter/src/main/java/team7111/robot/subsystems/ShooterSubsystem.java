@@ -85,18 +85,18 @@ public class ShooterSubsystem extends SubsystemBase {
     private SmartMotorController pivotController = new TalonFXWrapper(pivotMotor, DCMotor.getKrakenX60(1), pivotControllerConfig);
     
     private PivotConfig pivotConfig = new PivotConfig(pivotController)
-        .withStartingPosition(Degrees.of(35))
+        .withStartingPosition(Degrees.of(37))
         .withMOI(Inches.of(15.5), Pounds.of(3.953))
-        .withHardLimit(Degrees.of(35), Degrees.of(65))
+        .withHardLimit(Degrees.of(37), Degrees.of(67))
         .withTelemetry("ShooterPivot", TelemetryVerbosity.HIGH);
 
     private Pivot pivot = new Pivot(pivotConfig);
 
     private SmartMotorControllerConfig flywheelControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(1, 0, 0)
+        .withClosedLoopController(0.1, 0, 0)
         .withIdleMode(MotorMode.BRAKE)
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withOpenLoopRampRate(Seconds.of(0.25))
         .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
@@ -128,7 +128,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void periodic() {
         if(RobotBase.isReal()) {
-            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 35));
+            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 37));
         }
         pivot.updateTelemetry();
         shooter.updateTelemetry();

@@ -62,7 +62,7 @@ public class BarrelSubsystem extends SubsystemBase {
         .withIdleMode(MotorMode.BRAKE)
         .withTelemetry("BarrelMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withOpenLoopRampRate(Seconds.of(0.25))
         .withFeedforward(new SimpleMotorFeedforward(0, 0))
