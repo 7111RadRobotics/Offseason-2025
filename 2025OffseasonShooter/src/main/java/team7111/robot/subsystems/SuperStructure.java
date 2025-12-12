@@ -30,6 +30,7 @@ public class SuperStructure extends SubsystemBase{
         manual,
         unloaded,
         loaded,
+        autonomous,
         defaultState,
     }
 
@@ -110,6 +111,9 @@ public class SuperStructure extends SubsystemBase{
                 break;
             case loaded:
                 loaded();
+                break;
+            case autonomous:
+                autonomous();
                 break;
             default:
                 break;
@@ -257,6 +261,10 @@ public class SuperStructure extends SubsystemBase{
     private void shootVision() {
         // sets the shooter state to shoot. Will aim using vision
         shooter.setState(ShooterState.shoot);
+    }
+
+    private void autonomous(){
+        
     }
 
     private void manual() {
