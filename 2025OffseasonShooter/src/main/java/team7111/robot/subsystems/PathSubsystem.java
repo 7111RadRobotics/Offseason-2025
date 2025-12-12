@@ -1,21 +1,27 @@
 package team7111.robot.subsystems;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team7111.lib.pathfinding.Path;
 import team7111.lib.pathfinding.Waypoint;
 import team7111.lib.pathfinding.WaypointConstraints;
 
-public class PathSubsystem {
+public class PathSubsystem extends SubsystemBase{
     
     private Path currentPath;
+    private SuperStructure superStructure;
+    private ArrayList<Object> selectedAuto = new ArrayList<>();
 
     /**
      * Defaults current path to be null.
      */
-    public PathSubsystem() 
+    public PathSubsystem(SuperStructure superStructure) 
     {
-        currentPath = null;
+            this.superStructure = superStructure;
     }
 
     public enum Paths {
@@ -23,7 +29,16 @@ public class PathSubsystem {
         straight,
     };
 
- 
+
+
+    public enum Autos {
+        forwardAuto,
+
+    }
+
+    public void periodic() {
+
+    }
 
     public Path getPath(Paths pathName) {
         Waypoint[] waypoints;
