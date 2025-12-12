@@ -256,6 +256,7 @@ public class SuperStructure extends SubsystemBase{
 
     private void shootVision() {
         // sets the shooter state to shoot. Will aim using vision
+        shooter.setAngle(vision.shooterAngle());
         shooter.setState(ShooterState.shoot);
     }
 
