@@ -1,11 +1,13 @@
 package team7111.robot.subsystems;
 
 import java.util.Optional;
+import java.lang.Math;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -74,5 +76,31 @@ public class VisionSubsystem extends SubsystemBase{
 
             camera.periodic();
         }
+    }
+
+    /**
+     * Calculates distance to the target and uses a pre-determined formula to find the angle to hit the target
+     * @return value between 0 and 30 digrees
+     */
+    public double shooterAngle() {
+        
+        Transform3d distanceToTarget = cameraList[0].getCamToTarget();
+
+        double height = distanceToTarget.getZ();
+        double distance = distanceToTarget.getX();
+
+        double directDistance = height * height + distance * distance;
+        directDistance = Math.sqrt(directDistance);
+
+        double calculatedAngle = Math.asin(height/directDistance);
+        calculatedAngle = calculatedAngle * 180/Math.PI;
+        
+        if(calculatedAngle > 30) {
+            calculatedAngle = 30;
+        } else if(calculatedAngle < 0) {
+            calculatedAngle = 0;
+        }
+
+        return calculatedAngle;
     }
 }

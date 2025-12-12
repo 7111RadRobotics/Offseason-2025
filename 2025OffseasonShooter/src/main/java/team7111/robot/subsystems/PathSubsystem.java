@@ -18,37 +18,34 @@ public class PathSubsystem {
         currentPath = null;
     }
 
-    public enum paths {
+    public enum Paths {
         home,
+        straight,
     };
 
-    /**
-     * Sets current path using an enum for presets to choose from.
-     */
-    public void setCurrentPath(paths path) {
-        switch (path) {
+ 
+
+    public Path getPath(Paths pathName) {
+        Waypoint[] waypoints;
+
+        switch (pathName) {
             case home:
-            /*
-                Waypoint waypoints[] = {
-                new Waypoint(new Pose2d(0, 0, new Rotation2d(0)), new WaypointConstraints(1, 0, 0), new WaypointConstraints(1, 0, 0)),
-            };
-                currentPath = new Path(waypoints);*/
-                currentPath = null;
+                waypoints = new Waypoint[]{};
+                break;
+            case straight:
+                waypoints = new Waypoint[] {
+                    new Waypoint(
+                        new Pose2d(0, 1, new Rotation2d()), 
+                        new WaypointConstraints(5, 0, 0.1), 
+                        new WaypointConstraints(360, 0, 5)
+                    ),
+                };
                 break;
             default:
-                currentPath = null;
-                break;
-        }
-    }
-
-    public Path getPaths(paths PathName) {
-        switch (PathName) {
-            case home:
-                // Copy of switch statement in setCurrentPath
-                return new Path(null);
+                waypoints = new Waypoint[]{};
         }
 
-        return null;
+        return new Path(waypoints);
     }
 
 

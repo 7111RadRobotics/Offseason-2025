@@ -125,5 +125,12 @@ public class Camera extends PhotonCamera{
             return latestResult;
         return new PhotonPipelineResult();
     }
+
+    /**
+     * Gets the distance from the camera to the target
+     */
+    public Transform3d getCamToTarget() {
+        return bestCameraToTarget;
+    }
 }
 

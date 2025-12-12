@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import team7111.robot.subsystems.BarrelSubsystem;
 
 public class SuperStructure extends SubsystemBase{
 
@@ -19,11 +17,6 @@ public class SuperStructure extends SubsystemBase{
         prepareShotTrigger,
         shootTrigger,
         manualToggle,
-        manualIntakeWheels,
-        manualIntakePivot,
-        manualBarrelWheels,
-        manualShooterWheels,
-        manualShooterPivot,
     }
 
     private enum SuperState {
@@ -37,6 +30,7 @@ public class SuperStructure extends SubsystemBase{
         manual,
         unloaded,
         loaded,
+        autonomous,
         defaultState,
     }
 
@@ -52,19 +46,8 @@ public class SuperStructure extends SubsystemBase{
     private boolean prepareShotTrigger = false;
     private boolean shootTrigger = false;
     private boolean manualToggle = false;
-    //TODO Add manual Logic in manual method
-    private boolean manualForwardIntakeWheels = false;
-    private boolean manualBackwardIntakeWheels = false;
-    private boolean manualForwardIntakePivot = false;
-    private boolean manualBackwardIntakePivot = false;
-    private boolean manualForwardBarrelWheels = false;
-    private boolean manualBackwardBarrelWheels = false;
-    private boolean manualForwardsShooterWheels = false;
-    private boolean manualBackwardShooterWheels = false;
-    private boolean manualForwardShooterPivot = false;
-    private boolean manualBackwardShooterPivot = false;
 
-    private SuperState superState = SuperState.unloaded;
+    private SuperState superState = SuperState.loaded;
 
     private double shotTimer = 0;
     private double ejectTimer = 0;
@@ -129,6 +112,9 @@ public class SuperStructure extends SubsystemBase{
             case loaded:
                 loaded();
                 break;
+            case autonomous:
+                autonomous();
+                break;
             default:
                 break;
         }
@@ -180,10 +166,6 @@ public class SuperStructure extends SubsystemBase{
         if (intakeTrigger) {
             setSuperState(SuperState.intake);
         }
-        if (superState != SuperState.manual && manualToggle == true)
-            setSuperState(SuperState.manual);
-        
-
 
     }
 
@@ -202,9 +184,9 @@ public class SuperStructure extends SubsystemBase{
 
     private void secure() {
         // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
-        shooter.setState(ShooterState.prepareShot);
+        shooter.setState(ShooterState.idle);
         intake.setState(IntakeState.transition);
-        barrel.setState(BarrelState.readjust);
+        
         if (!barrel.getBeamBreak()) {
             if (barrel.getState() == BarrelState.readjust) {
             } else {
@@ -218,6 +200,7 @@ public class SuperStructure extends SubsystemBase{
     }
 
     private void loaded() {
+        // The state in which there is a gamepiece inside the barrel of the robot
         intake.setState(IntakeState.store);
         barrel.setState(BarrelState.loaded);
         shooter.setState(ShooterState.idle);
@@ -233,10 +216,11 @@ public class SuperStructure extends SubsystemBase{
         // Sets the shooter state to shoot, to eject the game piece from intake and set superstate to unloaded
         intake.setState(IntakeState.eject);
         barrel.setState(BarrelState.reverse);
+        shooter.setState(ShooterState.reverse);
         if (!barrel.getBeamBreak()) {
             ejectTimer += 1;
         }
-        if (ejectTimer >= 500) {
+        if (ejectTimer >= 150) {
             setSuperState(SuperState.unloaded);
             ejectTimer = 0;
         }
@@ -263,10 +247,10 @@ public class SuperStructure extends SubsystemBase{
         shooter.setState(ShooterState.shoot);
         barrel.setState(BarrelState.shoot);
         intake.setState(IntakeState.store);
-        if (!barrel.getBeamBreak() || shotTimer >= 50) {
+        if (barrel.getBeamBreak() || shotTimer >= 50) {
             shotTimer = 0;
         }
-        if (barrel.getBeamBreak()) {
+        if (!barrel.getBeamBreak()) {
             shotTimer += 1;
         }
         if (shotTimer >= 50) {
@@ -276,28 +260,45 @@ public class SuperStructure extends SubsystemBase{
 
     private void shootVision() {
         // sets the shooter state to shoot. Will aim using vision
+        shooter.setAngle(vision.shooterAngle());
         shooter.setState(ShooterState.shoot);
+    }
+
+    private void autonomous(){
+        
     }
 
     private void manual() {
         // Sets shooter, and intake to manual for manual controlState
-        shooter.setAngle(operatorController.getLeftY());
         intake.setState(IntakeState.manual);
-        intake.addManualAngle(operatorController.getRightX());
-        
-        //Barrel
-        if(operatorController.getRightTriggerAxis() > 0.1) {
-            barrel.setManualSpeed(operatorController.getRightTriggerAxis());
-        } else if(operatorController.getLeftTriggerAxis() > 0.1) {
-            barrel.setManualSpeed(operatorController.getLeftTriggerAxis());
-        }
+        barrel.setState(BarrelState.manual);
+        shooter.setState(ShooterState.manual);
 
-        //Intake
-        if(operatorController.getRightBumperButton()) {
-            intake.setManualSpeed(1);
-        } else if(operatorController.getLeftBumperButton()) {
-            intake.setManualSpeed(-1);
+        double intakeSpeed = operatorController.getLeftTriggerAxis();
+        double chargeShotSpeed = operatorController.getRightTriggerAxis();
+        boolean shoot = operatorController.getLeftBumperButton();
+
+        // intake and barrel speeds are in duty cycle, shooter in RPM
+        double manualIntakeSpeed = 0;
+        double manualBarrelSpeed = 0;
+        double manualShooterSpeed = 0;
+
+        shooter.addManualAngle(-operatorController.getLeftY() * 5);
+        intake.addManualAngle(-operatorController.getRightY() * 5);
+        
+        if(intakeSpeed > 0.05){
+            manualIntakeSpeed = intakeSpeed;
+            manualBarrelSpeed = intakeSpeed;
         }
+        if(chargeShotSpeed > 0.05){
+            manualShooterSpeed = chargeShotSpeed * 2000;
+        }
+        if(shoot){
+            manualBarrelSpeed = 0.75;
+        }
+        intake.setManualSpeed(manualIntakeSpeed);
+        barrel.setManualSpeed(manualBarrelSpeed);
+        shooter.setManualSpeed(manualShooterSpeed);
 
         if (!manualToggle)
             setSuperState(SuperState.unloaded);
@@ -307,33 +308,6 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter, and intake to their default state, making them inactive
         shooter.setState(ShooterState.defaultState);
         intake.setState(IntakeState.defualtState);
-        if (manualForwardBarrelWheels) {
-            barrel.setManualSpeed(1);
-        } else if (manualBackwardBarrelWheels) {
-            barrel.setManualSpeed(-1);
-        } else {
-            barrel.setManualSpeed(0);  
-        }
-        if (manualForwardIntakePivot) {
-            intake.addManualAngle(5);
-        } else if (manualBackwardIntakePivot) {
-            intake.addManualAngle(-5);
-        } else {
-            intake.addManualAngle(0);
-        }
-        if (manualForwardShooterPivot) {
-            shooter.addManualAngle(5);
-        } else if (manualBackwardShooterPivot) {
-            shooter.addManualAngle(-5);
-        } else {
-            shooter.addManualAngle(0);
-        }
-        if (manualForwardsShooterWheels) {
-            shooter.setManualSpeed(1);
-        } else if (manualBackwardShooterWheels) {
-            shooter.setManualSpeed(-1);
-        } else {
-            shooter.setManualSpeed(0);
-        }
+        barrel.setState(BarrelState.defaultState);
     }
 }

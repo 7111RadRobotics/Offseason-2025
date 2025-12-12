@@ -53,11 +53,12 @@ public class ShooterSubsystem extends SubsystemBase {
         idle,
     };
 
-    public ShooterState state = ShooterState.defaultState;
+    private ShooterState state = ShooterState.defaultState;
 
     private double visionAngle = 0;
     private double visionSpeed = 0;
     private double previousAngle = 0;
+    private double manualPivotSetpoint = 0;
 
     private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(12, MotorType.kBrushless);
@@ -66,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(4, 0, 0)
+        .withClosedLoopController(30, 0.0, 0)
         .withIdleMode(MotorMode.COAST)
         //.withSoftLimit(Degree.of(0), Degree.of(90))
         .withMotorInverted(false)
@@ -84,9 +85,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private SmartMotorController pivotController = new TalonFXWrapper(pivotMotor, DCMotor.getKrakenX60(1), pivotControllerConfig);
     
     private PivotConfig pivotConfig = new PivotConfig(pivotController)
-        .withStartingPosition(Degrees.of(0))
+        .withStartingPosition(Degrees.of(35))
         .withMOI(Inches.of(15.5), Pounds.of(3.953))
-        .withHardLimit(Degrees.of(0), Degrees.of(30))
+        .withHardLimit(Degrees.of(35), Degrees.of(65))
         .withTelemetry("ShooterPivot", TelemetryVerbosity.HIGH);
 
     private Pivot pivot = new Pivot(pivotConfig);
@@ -116,14 +117,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private FlyWheel shooter = new FlyWheel(flywheelConfig);
 
-    public void setManualSpeed(double speed){
-        shooter.setSpeed(RPM.of(speed));
-    }
-
-    public void addManualAngle(double angleIncrement){
-        pivot.setAngle(Degrees.of(pivot.getMechanismSetpoint().get().in(Degrees) + angleIncrement));
-    }
-
     public ShooterSubsystem() {
         
     }
@@ -131,20 +124,16 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Sets motor positions based off of state.
      * <p>
-     * Returns false if an error has occurred.
+     * 
      */
     public void periodic() {
-        
         if(RobotBase.isReal()) {
-            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees()));
+            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 35));
         }
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
-        if(pivot.getMechanismSetpoint().isPresent()){
-            SmartDashboard.putNumber("shooter angle setpoint", pivot.getMechanismSetpoint().get().in(Degrees));
-        }else
-            SmartDashboard.putNumber("shooter angle setpoint", -1);
+
         SmartDashboard.putNumber("throughbore position", pivotEncoder.getPosition().getDegrees());
         SmartDashboard.putNumber("pivot position", pivot.getAngle().in(Degrees));
     }
@@ -152,6 +141,27 @@ public class ShooterSubsystem extends SubsystemBase {
     public void simulationPeriodic(){
         pivot.simIterate();
         shooter.simIterate();
+    }
+
+    public void setManualSpeed(double speed){
+        shooter.setSpeed(RPM.of(speed)).execute();
+    }
+
+    public void addManualAngle(double angleIncrement){
+        manualPivotSetpoint += angleIncrement;
+        if(manualPivotSetpoint > 65)
+            manualPivotSetpoint = 65;
+        if(manualPivotSetpoint < 35)
+            manualPivotSetpoint = 35;
+        pivot.setAngle(Degrees.of(manualPivotSetpoint)).execute();
+    }
+
+    /**
+     * Sets the shooter angle from minimum to maximum shooter angle.
+     * Minimum angle is 
+     */
+    public void setAngle(double angle){
+        visionAngle = angle;
     }
 
     private void manageState() {
@@ -188,36 +198,32 @@ public class ShooterSubsystem extends SubsystemBase {
         return state;
     }
 
-    /**
-     * Sets the shooter angle from minimum to maximum shooter angle.
-     * Minimum angle is 
-     */
-    public void setAngle(double angle){
-        visionAngle = angle;
-    }
-
     private void idle() {
         shooter.setSpeed(RPM.of(100)).execute();
-        pivot.setAngle(Degrees.of(0)).execute();
+        pivot.setAngle(Degrees.of(35)).execute();
+        manualPivotSetpoint = 0;
     }
 
     private void prepareShot() {
         // placeholder values. pivot will be extended and wheels will rev-up
         shooter.setSpeed(RPM.of(300)).execute();
-        pivot.setAngle(Degrees.of(30)).execute();
-        previousAngle = 30;
+        pivot.setAngle(Degrees.of(65)).execute();
+        previousAngle = 65;
+        manualPivotSetpoint = 30;
     }
 
     private void shoot() {
         // placeholder values. wheels will be shooting
         shooter.setSpeed(RPM.of(300)).execute();
         pivot.setAngle(Degrees.of(previousAngle)).execute();
+        manualPivotSetpoint = previousAngle;
     }
 
     private void reverse() {
         // placeholder values. wheels will be reversed
         shooter.setSpeed(RPM.of(-80)).execute();
-        pivot.setAngle(Degrees.of(30)).execute();
+        pivot.setAngle(Degrees.of(65)).execute();
+        manualPivotSetpoint = 65;
     }
 
     private void prepareShotVision() {
@@ -225,6 +231,7 @@ public class ShooterSubsystem extends SubsystemBase {
         pivot.setAngle(Degrees.of(visionAngle)).execute();
         shooter.setSpeed(RPM.of(visionSpeed)).execute();
         previousAngle = visionAngle;
+        manualPivotSetpoint = previousAngle;
     }
 
     private void defaultState() {} 
