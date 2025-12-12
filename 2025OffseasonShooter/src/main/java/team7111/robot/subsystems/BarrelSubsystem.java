@@ -55,7 +55,7 @@ public class BarrelSubsystem extends SubsystemBase {
 
     private DigitalInput beamBreak = new DigitalInput(8);
 
-    private SparkMax barrelMotor = new SparkMax(12, MotorType.kBrushless);
+    private SparkMax barrelMotor = new SparkMax(14, MotorType.kBrushless);
     private SmartMotorControllerConfig barrelMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopController(new PIDController(0.1, 0, 0))
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(2.5, 1)))
@@ -89,7 +89,7 @@ public class BarrelSubsystem extends SubsystemBase {
     public void periodic() {
         manageState();
         barrel.updateTelemetry();
-        SmartDashboard.putBoolean("Beam Break", getBeamBreak());
+        SmartDashboard.putBoolean("isBeamBroken", getBeamBreak());
     }
 
     /**

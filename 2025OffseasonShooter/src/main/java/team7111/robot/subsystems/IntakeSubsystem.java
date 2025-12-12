@@ -49,7 +49,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private final double transitionDutycycle = 1;
     private final double ejectDutycycle = -1;
     // variables relating to intake flywheels
-    private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
+    private SparkMax flywheelMotor = new SparkMax(13, MotorType.kBrushless);
     private SmartMotorControllerConfig flywheelMotorConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.OPEN_LOOP)
         .withClosedLoopController(new PIDController(0.1, 0, 0))

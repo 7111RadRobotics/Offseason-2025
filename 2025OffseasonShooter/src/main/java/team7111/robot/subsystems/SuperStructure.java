@@ -51,6 +51,7 @@ public class SuperStructure extends SubsystemBase{
 
     private double shotTimer = 0;
     private double ejectTimer = 0;
+    private double secureTimer = 0;
 
     private XboxController operatorController;
 
@@ -186,16 +187,10 @@ public class SuperStructure extends SubsystemBase{
         // Sets shooter to prepare shot, inatke to transition, and barrel to adjust. If beambreak is false, sets barrel to readjust. If beambreak active sets superstate to loaded
         shooter.setState(ShooterState.idle);
         intake.setState(IntakeState.transition);
-        
-        if (!barrel.getBeamBreak()) {
-            if (barrel.getState() == BarrelState.readjust) {
-            } else {
-                barrel.setState(BarrelState.readjust);
-            }
-        } else {
-            if (barrel.getState() == BarrelState.readjust) {
-                setSuperState(SuperState.loaded);
-            }
+        barrel.setState(BarrelState.loaded);
+        secureTimer += 1;
+        if (secureTimer >= 50) {
+            setSuperState(SuperState.loaded);
         }
     }
 
