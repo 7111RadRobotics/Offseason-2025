@@ -47,7 +47,7 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
         swerve = new SwerveSubsystem();
         vision = new VisionSubsystem();
-        paths = new PathSubsystem();
+        paths = new PathSubsystem(null);
         intake = new IntakeSubsystem();
         barrel = new BarrelSubsystem();
         shooter = new ShooterSubsystem();

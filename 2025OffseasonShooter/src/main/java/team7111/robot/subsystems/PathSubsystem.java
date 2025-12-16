@@ -63,13 +63,4 @@ public class PathSubsystem extends SubsystemBase{
         return new Path(waypoints);
     }
 
-
-    /**
-     * Calls periodic method for the current path.
-     * <p>
-     * Returns false if an error has occurred.
-     */
-    public void periodic() {
-        currentPath.periodic();
-    }
 }
