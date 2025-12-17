@@ -132,17 +132,20 @@ public class ShooterSubsystem extends SubsystemBase {
         if(RobotBase.isReal()) {
             pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 37));
         }
-        pivot.simIterate();
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
 
         SmartDashboard.putNumber("throughbore position", pivotEncoder.getPosition().getDegrees());
         SmartDashboard.putNumber("pivot position", pivot.getAngle().in(Degrees));
+        SmartDashboard.putNumber("Pivot Velocity", pivotController.getMechanismVelocity().in(RPM));
+        if (pivotController.getMechanismPositionSetpoint().isPresent()) {
+        SmartDashboard.putNumber("Pivot Setpoint", pivotController.getMechanismPositionSetpoint().get().in(Degrees));
+        }
     }
 
     public void simulationPeriodic(){
-        
+        pivot.simIterate();
         shooter.simIterate();
     }
 
