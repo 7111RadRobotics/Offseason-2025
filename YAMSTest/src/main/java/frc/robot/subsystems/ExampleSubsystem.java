@@ -19,6 +19,7 @@ import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class ExampleSubsystem extends SubsystemBase {
@@ -26,17 +27,18 @@ public class ExampleSubsystem extends SubsystemBase {
     private TalonFX talon = new TalonFX(15);
     private SmartMotorControllerConfig talonConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(0.1, 0, 0)
+        .withClosedLoopController(1000, 0, 0)
         .withGearing(1)
         .withIdleMode(MotorMode.BRAKE)
         .withMotorInverted(false)
-        
+        .withTelemetry(TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40));
     private SmartMotorController motorController = new TalonFXWrapper(talon, DCMotor.getKrakenX60(1), talonConfig);
     private PivotConfig pivotConfig = new PivotConfig(motorController)
         .withHardLimit(Degrees.of(0), Degrees.of(37))
         .withMOI(0.0001)
-        .withStartingPosition(Degrees.of(0));
+        .withStartingPosition(Degrees.of(0))
+        .withTelemetry("pivot", TelemetryVerbosity.HIGH);
     private Pivot pivot = new Pivot(pivotConfig);
     
     /** Creates a new ExampleSubsystem. */
@@ -65,11 +67,12 @@ public class ExampleSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
+        pivot.updateTelemetry();
     }
 
     @Override
     public void simulationPeriodic() {
+        pivot.simIterate();
         // This method will be called once per scheduler run during simulation
     }
 }
