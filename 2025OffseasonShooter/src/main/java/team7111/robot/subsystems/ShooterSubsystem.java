@@ -17,6 +17,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -75,6 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
         .withTelemetry("shooterPivotMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(48/12, 24/15, 210/12)))
+        .withStartingPosition(Degrees.of(37))
         //.withExternalEncoder(new Encoder(4, 5))
         //.withExternalEncoderGearing(210/12)
         //.withExternalEncoderInverted(false)
@@ -130,6 +132,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if(RobotBase.isReal()) {
             pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 37));
         }
+        pivot.simIterate();
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
@@ -139,7 +142,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void simulationPeriodic(){
-        pivot.simIterate();
+        
         shooter.simIterate();
     }
 
@@ -153,7 +156,8 @@ public class ShooterSubsystem extends SubsystemBase {
             manualPivotSetpoint = 65;
         if(manualPivotSetpoint < 35)
             manualPivotSetpoint = 35;
-        pivot.setAngle(Degrees.of(manualPivotSetpoint)).execute();
+        pivotController.setPosition(Degrees.of(manualPivotSetpoint));
+        
     }
 
     /**
