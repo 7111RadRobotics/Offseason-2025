@@ -9,14 +9,19 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -61,17 +66,19 @@ public class ShooterSubsystem extends SubsystemBase {
     private double previousAngle = 0;
     private double manualPivotSetpoint = 0;
 
+    private double currentSetpoint = 35;
+
     private SparkMax flywheelMotor = new SparkMax(10, MotorType.kBrushless);
     private SparkMax flywheelFollowerMotor = new SparkMax(12, MotorType.kBrushless);
 
-    private GenericEncoder pivotEncoder = new ThroughBore(0, 1, 1/(8192*17.5) * 4);
+    private GenericEncoder pivotEncoder = new ThroughBore(1, 2, 1/(8192*17.5) * 4);
 
     private SmartMotorControllerConfig pivotControllerConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(30, 0.0, 0)
+        .withClosedLoopController(5, 0.0, 0)
         .withIdleMode(MotorMode.COAST)
         //.withSoftLimit(Degree.of(0), Degree.of(90))
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withClosedLoopRampRate(Seconds.of(0.25))
         .withTelemetry("shooterPivotMotor", TelemetryVerbosity.HIGH)
         .withStatorCurrentLimit(Amps.of(40))
@@ -130,18 +137,16 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void periodic() {
         if(RobotBase.isReal()) {
-            pivotController.setEncoderPosition(Degrees.of(pivotEncoder.getPosition().getDegrees() + 37));
+            pivotMotor.setPosition(Degrees.of(-pivotEncoder.getPosition().getDegrees() + 37).in(Rotations));
         }
         pivot.updateTelemetry();
         shooter.updateTelemetry();
         manageState();
 
-        SmartDashboard.putNumber("throughbore position", pivotEncoder.getPosition().getDegrees());
-        SmartDashboard.putNumber("pivot position", pivot.getAngle().in(Degrees));
-        SmartDashboard.putNumber("Pivot Velocity", pivotController.getMechanismVelocity().in(RPM));
-        if (pivotController.getMechanismPositionSetpoint().isPresent()) {
-        SmartDashboard.putNumber("Pivot Setpoint", pivotController.getMechanismPositionSetpoint().get().in(Degrees));
-        }
+        SmartDashboard.putNumber("throughbore position", -pivotEncoder.getPosition().getDegrees());
+        SmartDashboard.putNumber("pivot position", Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble()));
+        SmartDashboard.putNumber("Pivot Velocity", pivotMotor.getVelocity().getValueAsDouble() * 60);
+        SmartDashboard.putNumber("Pivot Setpoint", currentSetpoint);
     }
 
     public void simulationPeriodic(){
@@ -155,11 +160,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void addManualAngle(double angleIncrement){
         manualPivotSetpoint += angleIncrement;
-        if(manualPivotSetpoint > 65)
-            manualPivotSetpoint = 65;
-        if(manualPivotSetpoint < 35)
-            manualPivotSetpoint = 35;
-        pivotController.setPosition(Degrees.of(manualPivotSetpoint));
+        if(manualPivotSetpoint > 67)
+            manualPivotSetpoint = 67;
+        if(manualPivotSetpoint < 37)
+            manualPivotSetpoint = 37;
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(manualPivotSetpoint).in(Rotations)));
         
     }
 
@@ -206,37 +211,39 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private void idle() {
-        shooter.setSpeed(RPM.of(100)).execute();
-        pivot.setAngle(Degrees.of(35)).execute();
+
+        flywheelMotor.set(0);
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(37).in(Rotations)));
         manualPivotSetpoint = 0;
+        currentSetpoint = 50;
     }
 
     private void prepareShot() {
         // placeholder values. pivot will be extended and wheels will rev-up
-        shooter.setSpeed(RPM.of(300)).execute();
-        pivot.setAngle(Degrees.of(65)).execute();
+        flywheelMotor.set(0.8);
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(67).in(Rotations)));
         previousAngle = 65;
         manualPivotSetpoint = 30;
     }
 
     private void shoot() {
         // placeholder values. wheels will be shooting
-        shooter.setSpeed(RPM.of(300)).execute();
-        pivot.setAngle(Degrees.of(previousAngle)).execute();
+        flywheelMotor.set(0.8);
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(previousAngle).in(Rotations)));
         manualPivotSetpoint = previousAngle;
     }
 
     private void reverse() {
         // placeholder values. wheels will be reversed
-        shooter.setSpeed(RPM.of(-80)).execute();
-        pivot.setAngle(Degrees.of(65)).execute();
+        flywheelMotor.set(-0.25);
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(65).in(Rotations)));
         manualPivotSetpoint = 65;
     }
 
     private void prepareShotVision() {
         // set shooterPivot to visionAngle and shooter to visionSpeed
-        pivot.setAngle(Degrees.of(visionAngle)).execute();
-        shooter.setSpeed(RPM.of(visionSpeed)).execute();
+        pivotMotor.setControl(new PositionDutyCycle(Degrees.of(visionAngle).in(Rotations)));
+        flywheelMotor.set(visionSpeed);
         previousAngle = visionAngle;
         manualPivotSetpoint = previousAngle;
     }

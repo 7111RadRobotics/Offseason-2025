@@ -47,7 +47,7 @@ public class SuperStructure extends SubsystemBase{
     private boolean shootTrigger = false;
     private boolean manualToggle = false;
 
-    private SuperState superState = SuperState.loaded;
+    private SuperState superState = SuperState.unloaded;
 
     private double shotTimer = 0;
     private double ejectTimer = 0;

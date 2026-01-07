@@ -76,7 +76,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(0.5, 0.2, 0)
+        .withClosedLoopController(0.0, 0.0, 0)
         .withGearing(18)
         .withIdleMode(MotorMode.BRAKE)
         .withMotorInverted(true)
