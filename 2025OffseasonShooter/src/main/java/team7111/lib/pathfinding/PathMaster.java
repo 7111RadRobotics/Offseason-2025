@@ -38,6 +38,7 @@ public class PathMaster {
     private Translation2d initialPosition = null;
     private Translation2d currentPosition = null;
     private double distance = 0;
+    private boolean pathfinding = false;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -115,6 +116,7 @@ public class PathMaster {
     
     void useBrokenPathFinding(boolean avoidFieldElements){
         this.avoidFieldElements = avoidFieldElements;
+        pathfinding = true;
         initialPosition = suppliedPose.get().getTranslation();
     }
 
@@ -130,6 +132,10 @@ public class PathMaster {
         path.initialize();
     }
 
+    Translation2d waypoint_pos = null;
+    Translation2d current_pos = null;
+    double H = 0;
+
     /**
      * Runs the path's periodic and calculates the speed suppliers for x, y, and rotation.
      */
@@ -140,8 +146,13 @@ public class PathMaster {
         rotCalculation = rotPID.calculate(
                             suppliedPose.get().getRotation().getDegrees(), 
                             path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
-        currentPosition = suppliedPose.get().getTranslation();
-        distance = Math.sqrt(Math.pow((initialPosition.getX() - initialPosition.getY()), 2) + Math.pow((currentPosition.getX() - currentPosition.getY()), 2));
+        if (pathfinding) {
+            waypoint_pos = path.getCurrentWaypoint().getPose().getTranslation();
+            current_pos = suppliedPose.get().getTranslation();
+            H = Math.pow(waypoint_pos.getY()-current_pos.getY(), 2) + Math.pow(waypoint_pos.getX()-current_pos.getX(), 2);
+            currentPosition = suppliedPose.get().getTranslation();
+            distance = Math.sqrt(Math.pow((initialPosition.getX() - initialPosition.getY()), 2) + Math.pow((currentPosition.getX() - currentPosition.getY()), 2));
+        }
     }
 
     /**
