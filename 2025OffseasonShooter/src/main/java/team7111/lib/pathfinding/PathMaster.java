@@ -5,7 +5,10 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import team7111.robot.subsystems.PathSubsystem;
+import team7111.robot.subsystems.SwerveSubsystem;
 
 public class PathMaster {
     private PIDController xPID;
@@ -32,6 +35,9 @@ public class PathMaster {
     private boolean fieldRelative = false;
 
     private boolean avoidFieldElements = false;
+    private Translation2d initialPosition = null;
+    private Translation2d currentPosition = null;
+    private double distance = 0;
     
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
@@ -109,6 +115,7 @@ public class PathMaster {
     
     void useBrokenPathFinding(boolean avoidFieldElements){
         this.avoidFieldElements = avoidFieldElements;
+        initialPosition = suppliedPose.get().getTranslation();
     }
 
     
@@ -133,7 +140,8 @@ public class PathMaster {
         rotCalculation = rotPID.calculate(
                             suppliedPose.get().getRotation().getDegrees(), 
                             path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
-
+        currentPosition = suppliedPose.get().getTranslation();
+        distance = Math.sqrt(Math.pow((initialPosition.getX() - initialPosition.getY()), 2) + Math.pow((currentPosition.getX() - currentPosition.getY()), 2));
     }
 
     /**
