@@ -1,0 +1,13 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Mechanisms/IntakeFlywheels/IntakeWheelMotor/Commands/LiveTuning": "Command",
+      "/SmartDashboard/Mechanisms/IntakeFlywheels/IntakeWheelMotor/Commands/ZeroEncoder": "Command",
+      "/SmartDashboard/PhotonAlerts": "Alerts"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
