@@ -2,6 +2,7 @@ package team7111.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
@@ -9,11 +10,13 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -45,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     //
     private final double stopped = 0;
-    private final double intakeDutycycle = 1;
+    private final double intakeDutycycle = 0.6;
     private final double transitionDutycycle = 1;
     private final double ejectDutycycle = -1;
     // variables relating to intake flywheels
@@ -73,6 +76,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     // variables relating to intake pivot
     private SparkMax pivotMotor = new SparkMax(11, MotorType.kBrushless);
+    private PIDController pid = new PIDController(5, 0, 0);
     private SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopControlPeriod(Seconds.of(0.25))
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -86,12 +90,11 @@ public class IntakeSubsystem extends SubsystemBase{
     private SmartMotorController pivotController = new SparkWrapper(pivotMotor, DCMotor.getNEO(1), pivotMotorConfig);
     private PivotConfig pivotConfig = new PivotConfig(pivotController)
         .withStartingPosition(Degrees.of(0))
-        .withHardLimit(Degrees.of(0), Degrees.of(48))
+        .withHardLimit(Degrees.of(0), Degrees.of(44))
         .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH)
         .withMOI(Inches.of(8.876), Pounds.of(7.015));
 
     private Pivot pivot = new Pivot(pivotConfig);
-
     // other variables
     private IntakeState state = IntakeState.defualtState;
 
@@ -109,8 +112,8 @@ public class IntakeSubsystem extends SubsystemBase{
         flywheels.updateTelemetry();
         pivot.updateTelemetry();
         
-        SmartDashboard.putNumber("intake pos", pivot.getAngle().in(Degrees));
-        SmartDashboard.putNumber("intake speed", pivotController.getRotorVelocity().in(RPM));
+        SmartDashboard.putNumber("intake pos", Units.rotationsToDegrees(pivotMotor.getEncoder().getPosition()));
+        SmartDashboard.putNumber("intake speed", pivotMotor.getEncoder().getVelocity());
     }
 
     @Override
@@ -123,16 +126,16 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param speed -the speed to set it to in dutycycle
      */
     public void setManualSpeed(double speed){
-        flywheels.set(speed).execute();
+        flywheelMotor.set(speed);
     }
 
     public void addManualAngle(double angleIncrement){
         manualPivotSetpoint += angleIncrement;
-        if(manualPivotSetpoint > 48)
-            manualPivotSetpoint = 48;
+        if(manualPivotSetpoint > 44)
+            manualPivotSetpoint = 44;
         if(manualPivotSetpoint < 0)
             manualPivotSetpoint = 0;
-        pivot.setAngle(Degrees.of(manualPivotSetpoint)).execute();
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(manualPivotSetpoint).in(Rotations)));
     }
 
     // all subsytems that contain a state enum must contain a getState, setState, manageState, and methods for each state
@@ -170,33 +173,32 @@ public class IntakeSubsystem extends SubsystemBase{
     private void store() {
         // pivot will be inside and wheels stopped
         flywheels.set(stopped).execute(); // execute must be called if the method is a command
-        pivot.setAngle(Degrees.of(0)).execute();
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(0).in(Rotations)));
         manualPivotSetpoint = 0;
     }
 
     private void deploy() {
         // placeholder values. pivot will be extended and wheels intaking
         flywheels.set(intakeDutycycle).execute();
-        pivot.setAngle(Degrees.of(48)).execute();
-        manualPivotSetpoint = 48;
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(44).in(Rotations)));
+        manualPivotSetpoint = 44;
     }
 
     private void transition() {
         // placeholder values. pivot will be inside and wheels intaking
         flywheels.set(transitionDutycycle).execute();
-        pivot.setAngle(Degrees.of(0)).execute();
-        manualPivotSetpoint = 0;
-    }
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(0).in(Rotations)));
+        manualPivotSetpoint = 0;    }
 
     private void eject() {
         // placeholder values. pivot will be extended and wheels reversing
         flywheels.set(ejectDutycycle).execute();
-        pivot.setAngle(Degrees.of(48)).execute();
-        manualPivotSetpoint = 48;
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(44).in(Rotations)));
+        manualPivotSetpoint = 44;
     }
 
     private void manual() {
         flywheels.set(manualFlywheelSpeed);
-        pivot.setAngle(Degrees.of(manualPivotSetpoint));
+        pivotMotor.setVoltage(pid.calculate(pivotMotor.getEncoder().getPosition(), Degrees.of(manualPivotSetpoint).in(Rotations)));
     }
 }
