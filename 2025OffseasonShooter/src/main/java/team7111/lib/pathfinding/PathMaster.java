@@ -1,6 +1,11 @@
 package team7111.lib.pathfinding;
 
+import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import team7111.robot.subsystems.PathSubsystem;
 import team7111.robot.subsystems.SwerveSubsystem;
+import team7111.lib.pathfinding.PosePlanning;
 
 public class PathMaster {
     private PIDController xPID;
@@ -37,9 +43,9 @@ public class PathMaster {
     private boolean avoidFieldElements = false;
     private Translation2d initialPosition = null;
     private Translation2d currentPosition = null;
-    private double distance = 0;
+    private double G = 0;
     private boolean pathfinding = false;
-    
+
     public PathMaster(Supplier<Pose2d> suppliedPose, Supplier<Rotation2d> gyroYaw){
 
         xPID = new PIDController(1, 0, 0);
@@ -132,9 +138,27 @@ public class PathMaster {
         path.initialize();
     }
 
-    Translation2d waypoint_pos = null;
-    Translation2d current_pos = null;
+    Translation2d waypointPos = null;
+    Translation2d currentPos = null;
     double H = 0;
+    double fieldLength = 0;
+    double fieldWidth = 0;
+    final double gridSize = 0.25;
+    final double robotRadius = 0.4;
+    private PosePlanning planner = new PosePlanning();
+    double[][] directions = {
+        {1,0},
+        {0,1},
+        {-1,0},
+        {0,-1},
+        {1,1},
+        {-1,1},
+        {1,-1},
+        {-1,-1},
+    };
+    double currentX = 0;
+    double currentY = 0;
+    double F = 0;
 
     /**
      * Runs the path's periodic and calculates the speed suppliers for x, y, and rotation.
@@ -147,11 +171,33 @@ public class PathMaster {
                             suppliedPose.get().getRotation().getDegrees(), 
                             path.getCurrentWaypoint().getPose().getRotation().getDegrees()) * invertedRot;
         if (pathfinding) {
-            waypoint_pos = path.getCurrentWaypoint().getPose().getTranslation();
-            current_pos = suppliedPose.get().getTranslation();
-            H = Math.pow(waypoint_pos.getY()-current_pos.getY(), 2) + Math.pow(waypoint_pos.getX()-current_pos.getX(), 2);
+            waypointPos = path.getCurrentWaypoint().getPose().getTranslation();
+            currentPos = suppliedPose.get().getTranslation();
+            currentX = currentPos.getX();
+            currentY = currentPos.getY();
+            H = Math.hypot(
+                waypointPos.getX() - currentPos.getX(),
+                waypointPos.getY() - currentPos.getY()
+            );
             currentPosition = suppliedPose.get().getTranslation();
-            distance = Math.sqrt(Math.pow((initialPosition.getX() - initialPosition.getY()), 2) + Math.pow((currentPosition.getX() - currentPosition.getY()), 2));
+            G = Math.sqrt(
+                Math.pow(currentPosition.getX() - initialPosition.getX(), 2) +
+                Math.pow(currentPosition.getY() - initialPosition.getY(), 2)
+            );
+            F = H + G;
+            for (double[] dir : directions) {
+                double nx = currentX + dir[0];
+                double ny = currentY + dir[1];
+            
+                double neighborX = nx * gridSize;
+                double neighborY = ny * gridSize;
+
+                Translation2d neighbor = new Translation2d(neighborX, neighborY);
+
+                if (planner.isBlocked(neighbor, robotRadius)) {
+                    continue;
+                }
+            }
         }
     }
 
