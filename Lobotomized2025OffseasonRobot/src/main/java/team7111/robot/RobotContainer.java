@@ -86,30 +86,10 @@ public class RobotContainer {
         swerve.setJoysickInputs(
             () -> -ControllerConstants.xDriveLimiter.calculate((Math.pow(driverController.getLeftX(), 1) / SwerveConstants.sensitivity)), 
             () -> -ControllerConstants.yDriveLimiter.calculate((Math.pow(driverController.getLeftY(), 1) / SwerveConstants.sensitivity)),  
-            () -> ControllerConstants.rotationLimiter.calculate((Math.pow(driverController.getRightX(), 3) / SwerveConstants.sensitivity)));
+            () -> -ControllerConstants.rotationLimiter.calculate((Math.pow(driverController.getRightX(), 3) / SwerveConstants.sensitivity)));
 
         swerve.setDriveFieldRelative(true);
 
         driverController.start().onTrue(swerve.zeroGyroCommand());
-
-        driverController.a()
-        .onTrue(superStructure.setControlStateCommand(ControlState.shootVision, true))
-        .onFalse(superStructure.setControlStateCommand(ControlState.shootVision, false));
-
-        driverController.b()
-            .onTrue(superStructure.setControlStateCommand(ControlState.runPath, true))
-            .onFalse(superStructure.setControlStateCommand(ControlState.runPath, false));
-            
-        operatorController.rightTrigger()
-            .onTrue(superStructure.setControlStateCommand(ControlState.shootTrigger, true))
-            .onFalse(superStructure.setControlStateCommand(ControlState.shootTrigger, false));
-        operatorController.leftTrigger()
-            .onTrue(superStructure.setControlStateCommand(ControlState.intakeTrigger, true))
-            .onFalse(superStructure.setControlStateCommand(ControlState.intakeTrigger, false));
-        operatorController.leftBumper()
-            .onTrue(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, true))
-            .onFalse(superStructure.setControlStateCommand(ControlState.prepareShotTrigger, false));
-
-        operatorController.back().onTrue(superStructure.flipManualCommand());
     }
 }
