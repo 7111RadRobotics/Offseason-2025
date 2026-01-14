@@ -15,6 +15,7 @@ public class SuperStructure extends SubsystemBase{
         intakeTrigger,
         ejectTrigger,
         prepareShotTrigger,
+        prepareShotVisionTrigger,
         shootTrigger,
         manualToggle,
     }
@@ -44,6 +45,7 @@ public class SuperStructure extends SubsystemBase{
     private boolean intakeTrigger = false;
     private boolean ejectTrigger = false;
     private boolean prepareShotTrigger = false;
+    private boolean prepareShotVisionTrigger = false;
     private boolean shootTrigger = false;
     private boolean manualToggle = false;
 
@@ -134,6 +136,8 @@ public class SuperStructure extends SubsystemBase{
             case shootTrigger:
                 shootTrigger = state;
                 break;
+            case prepareShotVisionTrigger:
+                prepareShotVisionTrigger = state;
             case manualToggle:
                 manualToggle = state;
                 break;
@@ -234,7 +238,7 @@ public class SuperStructure extends SubsystemBase{
     }
 
     private void prepareShotVision() {
-
+        
     }
 
     private void shoot() {
